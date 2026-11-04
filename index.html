@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ARE PcM + PjM + CE Study Aid</title>
+<!-- ui-refresh fonts --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link id="ui-refresh-fonts" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <style>
   /* ── PALETTE ── */
   :root {
@@ -614,6 +615,505 @@
   // Apply saved theme before paint to avoid a flash
   (function(){ try { document.documentElement.setAttribute('data-theme', localStorage.getItem('areStudy.theme') === 'light' ? 'light' : 'dark'); } catch(e){} })();
 </script>
+<style id="ui-refresh">
+  /* ===== UI REFRESH: architectural drafting ===== */
+  :root, :root[data-theme="dark"] {
+    --bg: #151618;
+    --surface: #1c1d20;
+    --surface2: #232529;
+    --inset: #191a1d;
+    --border: #2e3035;
+    --border2: #43464d;
+    --hover: #26282c;
+    --row-hover: #222428;
+    --rule: #8b8982;
+    --text: #e8e6e1;
+    --text-bright: #f5f3ee;
+    --muted: #a3a19a;
+    --strong: #f5f3ee;
+    --ok: #8cc09c;
+    --bad: #e9958a;
+    --green: #8cc09c;
+    --red: #e9958a;
+    --gold: #c99a45;
+    --gold-ink: #d9b26a;
+    --on-gold: #17140e;
+    --gold-bg: #262117;
+    --pri-bg: #201e1a;
+    --pri-hover: #28251e;
+    --callout-bg: #191a1d;
+    --know-bg: #1b2620;
+    --review-bg: #2b1e1c;
+    --warn-bg: #2b1e1c;
+    --indigo: #93a9bf;
+    --watermark: transparent;
+    --card-shadow: rgba(0,0,0,.35);
+    --accent: #26282c;
+    --accent2: #43464d;
+    --nav-bg: #111214;
+    --nav-text: #e8e6e1;
+    --field: #73767e;
+    --all3: #e29a90;
+    --both: #d4b47d;
+    --pa: #aeaadb;
+    --pcm: #aeaadb;
+    --ppd: #93b6d3;
+    --pjm: #93b6d3;
+    --pdd: #8fc4b8;
+    --ce: #8fc4b8;
+    --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --r: 2px;
+    --s1: 8px; --s2: 16px; --s3: 24px; --s4: 32px; --s5: 48px;
+    color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --bg: #fbfaf7;
+    --surface: #ffffff;
+    --surface2: #f4f2ec;
+    --inset: #f7f5f0;
+    --border: #e4e0d6;
+    --border2: #cbc6b9;
+    --hover: #f1eee6;
+    --row-hover: #f7f4ec;
+    --rule: #1d1d1f;
+    --text: #1d1d1f;
+    --text-bright: #111112;
+    --muted: #5d5b56;
+    --strong: #111112;
+    --ok: #2d6843;
+    --bad: #a2372a;
+    --green: #2d6843;
+    --red: #a2372a;
+    --gold: #b8862b;
+    --gold-ink: #835e18;
+    --on-gold: #1d1d1f;
+    --gold-bg: #faf4e6;
+    --pri-bg: #fbf6ea;
+    --pri-hover: #f6eedb;
+    --callout-bg: #f7f5f0;
+    --know-bg: #eef5f0;
+    --review-bg: #fbefed;
+    --warn-bg: #fbefed;
+    --indigo: #4a5f75;
+    --watermark: transparent;
+    --card-shadow: rgba(40,36,28,.12);
+    --accent: #f1eee6;
+    --accent2: #cbc6b9;
+    --nav-bg: #fbfaf7;
+    --nav-text: #1d1d1f;
+    --field: #8c877b;
+    --all3: #93402f;
+    --both: #7d5d22;
+    --pa: #55508a;
+    --pcm: #55508a;
+    --ppd: #365f7e;
+    --pjm: #365f7e;
+    --pdd: #33685e;
+    --ce: #33685e;
+    color-scheme: light;
+  }
+  .badge-all3, .toc-all3, .f-all3, .tl-d-all3, [class*="tl-"][style*="var(--all3)"] { --d: var(--all3); }
+  .badge-both, .toc-both, .f-both, .tl-d-both, [class*="tl-"][style*="var(--both)"] { --d: var(--both); }
+  .badge-pa, .toc-pa, .f-pa, .tl-d-pa, [class*="tl-"][style*="var(--pa)"] { --d: var(--pa); }
+  .badge-ppd, .toc-ppd, .f-ppd, .tl-d-ppd, [class*="tl-"][style*="var(--ppd)"] { --d: var(--ppd); }
+  .badge-pdd, .toc-pdd, .f-pdd, .tl-d-pdd, [class*="tl-"][style*="var(--pdd)"] { --d: var(--pdd); }
+  .badge-pcm, .toc-pcm, .f-pcm, .tl-d-pcm, [class*="tl-"][style*="var(--pcm)"] { --d: var(--pcm); }
+  .badge-pjm, .toc-pjm, .f-pjm, .tl-d-pjm, [class*="tl-"][style*="var(--pjm)"] { --d: var(--pjm); }
+  .badge-ce, .toc-ce, .f-ce, .tl-d-ce, [class*="tl-"][style*="var(--ce)"] { --d: var(--ce); }
+  .f-review { --d: var(--bad); }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--font-sans); font-size: 15px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  button, input, select, textarea { font-family: inherit; }
+  .ico { width: 16px; height: 16px; flex: none; display: inline-block; vertical-align: -3px; }
+  .rev { display: inline-flex; color: var(--gold-ink); margin-left: 6px; vertical-align: 1px; }
+  .rev svg { display: block; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .nav-tab:focus-visible { outline-offset: -4px; }
+  ::selection { background: color-mix(in srgb, var(--gold) 30%, transparent); }
+  mark, mark.sh { background: color-mix(in srgb, var(--gold) 32%, transparent); color: inherit; padding: 0 1px; }
+
+  /* ---- quiet tags (badges, toc tags, section tags) ---- */
+  .card-division-badge, .qz-badge, .toc-tag, .sum-section-tag, .new-badge {
+    background: color-mix(in srgb, var(--d, var(--muted)) 9%, transparent) !important;
+    color: var(--d, var(--muted)) !important;
+    border: 1px solid color-mix(in srgb, var(--d, var(--muted)) 42%, transparent);
+    border-radius: var(--r);
+    font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; line-height: 1.3;
+    letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px;
+  }
+  .new-badge { --d: var(--all3); }
+
+  /* ---- NAV ---- */
+  .nav { background: var(--nav-bg); border-bottom: 1px solid var(--border2); box-shadow: none; padding: 0 24px; }
+  .nav::after { display: none; }
+  .nav-brand {
+    color: var(--text); font-family: var(--font-sans); font-weight: 600; font-size: 12px;
+    letter-spacing: .12em; padding: 12px 20px 12px 0; margin-right: 8px; border-right: 1px solid var(--border);
+  }
+  .nav-brand > div:first-child > div:first-child {
+    font-family: var(--font-mono); font-weight: 500; font-size: 9.5px !important;
+    letter-spacing: .18em !important; opacity: 1 !important; color: var(--muted); margin-bottom: 3px !important;
+  }
+  .nav-brand-accent { display: none; }
+  .nav-tab {
+    color: var(--muted); font-family: var(--font-sans); font-weight: 500; font-size: 12px;
+    letter-spacing: .08em; padding: 18px 14px 16px; gap: 8px;
+    border-bottom: 2px solid transparent; transition: color .15s, border-color .15s;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--text); border-bottom-color: var(--gold); }
+  .nav-tab .ico { opacity: .85; }
+  .nav-tab.active .ico { opacity: 1; }
+  .nav-profile {
+    background: transparent; border: 1px solid var(--border2); color: var(--text);
+    border-radius: var(--r); padding: 4px 10px 4px 4px; font-size: 12px; font-weight: 500; letter-spacing: .02em;
+  }
+  .nav-profile:hover { background: var(--hover); border-color: var(--muted); }
+  .nav-profile-dot { width: 22px; height: 22px; border-radius: var(--r); font-family: var(--font-mono); font-weight: 500; font-size: 11px; }
+  .nav-profile-caret { display: inline-flex; opacity: .7; }
+  .nav-profile-caret .ico { width: 14px; height: 14px; }
+  .nav-theme {
+    background: transparent; border: 1px solid var(--border2); color: var(--text);
+    width: 34px; height: 34px; border-radius: var(--r);
+  }
+  .nav-theme:hover { background: var(--hover); border-color: var(--muted); transform: none; }
+  #navThemeIcon { display: inline-flex; }
+
+  /* ---- MODAL ---- */
+  .modal-overlay { background: rgba(17,18,20,.5); backdrop-filter: none; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border2); border-radius: 3px;
+    box-shadow: 0 16px 40px var(--card-shadow); padding: 24px;
+  }
+  .modal-head { margin-bottom: 8px; }
+  .modal-head h3 { font-size: 13px; font-weight: 600; letter-spacing: .12em; }
+  .modal-x { display: inline-flex; padding: 4px; border-radius: var(--r); }
+  .modal-sub { font-size: 13px; line-height: 1.6; }
+  .profile-list { gap: 8px; }
+  .profile-row { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 8px 12px; }
+  .profile-row:hover { border-color: var(--border2); background: var(--hover); }
+  .profile-row.current { border-color: var(--gold); }
+  .profile-row .pr-dot { border-radius: var(--r); font-family: var(--font-mono); font-weight: 500; }
+  .profile-row .pr-name { font-weight: 500; }
+  .profile-row .pr-meta, .pr-current-tag { font-family: var(--font-mono); font-weight: 500; letter-spacing: .1em; }
+  .pr-current-tag { color: var(--gold-ink); }
+  .pr-btn { display: inline-flex; padding: 4px; border-radius: var(--r); }
+  .pr-btn .ico { width: 15px; height: 15px; }
+  .profile-add input { background: var(--surface); border: 1px solid var(--field); border-radius: var(--r); font-size: 14px; }
+  .profile-add input:focus { border-color: var(--gold); }
+
+  /* ---- PANELS / HEADINGS ---- */
+  #flashcards, #quiz { padding: 32px 24px 48px; }
+  #tables, #summary { padding: 32px 24px 48px; }
+  #tools { padding: 32px 24px 48px; max-width: 1080px; margin: 0 auto; }
+  .fc-header, .qz-header {
+    gap: 12px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--rule);
+  }
+  .fc-header h2, .qz-header h2, #tables h2, .sum-header h2 {
+    font-size: 26px; font-weight: 600; letter-spacing: -.01em; text-transform: none; line-height: 1.2;
+  }
+  #tables h2 { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
+  .sum-header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
+  .sum-header h2 { margin-bottom: 6px; }
+  .sum-header p { font-size: 13px; line-height: 1.55; }
+
+  /* ---- STATS ---- */
+  .fc-stats, .qz-stats { gap: 8px; }
+  .fc-stat, .qz-stat {
+    background: transparent; border: 1px solid var(--border); border-radius: var(--r);
+    padding: 6px 12px; font-family: var(--font-mono); font-weight: 500; font-size: 10px;
+    letter-spacing: .1em; color: var(--muted);
+  }
+  .fc-stat span, .qz-stat span { font-family: var(--font-mono); font-weight: 500; font-size: 17px; color: var(--text); margin-top: 2px; }
+  .stat-known span, .stat-correct span { color: var(--ok); }
+  .stat-review span, .stat-wrong span { color: var(--bad); }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: var(--r);
+    color: var(--muted); font-family: var(--font-sans); font-weight: 500; font-size: 11.5px; letter-spacing: .08em;
+  }
+  .btn-ghost:hover { color: var(--text); background: var(--hover); }
+  .btn-ghost .ico { width: 14px; height: 14px; }
+
+  /* ---- FILTER CHIPS + TABLE NAV ---- */
+  .fc-filters, .qz-filters { gap: 8px; margin-bottom: 16px; }
+  .table-nav { gap: 8px; margin-bottom: 24px; }
+  .fc-filter, .table-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border: 1px solid var(--border2) !important; border-radius: var(--r);
+    background: transparent !important; color: var(--text) !important;
+    font-family: var(--font-sans); font-weight: 500; font-size: 11px; letter-spacing: .08em; line-height: 1.4;
+    transition: background .12s, border-color .12s, color .12s; user-select: none;
+  }
+  .table-btn { color: var(--muted) !important; }
+  .fc-filter:hover, .table-btn:hover { background: var(--hover) !important; color: var(--text) !important; border-color: var(--muted) !important; }
+  .fc-filter.active, .table-btn.active {
+    background: var(--text) !important; color: var(--bg) !important; border-color: var(--text) !important;
+  }
+  .fc-filter[class*=" f-"]::before {
+    content: ""; width: 8px; height: 8px; flex: none; background: var(--d); border-radius: 1px;
+  }
+  .fc-filter.active[class*=" f-"]::before { box-shadow: 0 0 0 1px var(--bg); }
+  .fc-progress, .qz-progress { height: 2px; background: var(--border); margin-bottom: 24px; border-radius: 0; }
+  .fc-progress-bar, .qz-progress-bar { background: var(--gold); }
+
+  /* ---- BUTTONS ---- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 9px 16px; border: 1px solid var(--border2); border-radius: var(--r);
+    font-family: var(--font-sans); font-weight: 600; font-size: 11.5px; line-height: 1.2; letter-spacing: .08em;
+    transition: background .12s, border-color .12s, color .12s;
+  }
+  .btn-know { background: transparent; border-color: var(--ok); color: var(--ok); }
+  .btn-know:hover { background: var(--know-bg); color: var(--ok); }
+  .btn-review { background: transparent; border-color: var(--bad); color: var(--bad); }
+  .btn-review:hover { background: var(--review-bg); color: var(--bad); }
+  .btn-outline { background: transparent; border-color: var(--border2); color: var(--text); }
+  .btn-outline:hover { border-color: var(--text); background: var(--hover); }
+  .btn-primary { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+  .btn-primary:hover { background: color-mix(in srgb, var(--gold) 82%, #fff); border-color: color-mix(in srgb, var(--gold) 82%, #fff); color: var(--on-gold); }
+  .btn:disabled { opacity: .35; }
+  .btn:disabled:hover { background: transparent; }
+  #qzNextBtn::after {
+    content: ""; width: 16px; height: 16px; flex: none; background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8h10M9 4l4 4-4 4'/%3E%3C/svg%3E") center / 16px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8h10M9 4l4 4-4 4'/%3E%3C/svg%3E") center / 16px no-repeat;
+  }
+  .fc-controls, .qz-controls { gap: 8px; margin-top: 16px; }
+  .fc-counter { font-family: var(--font-mono); font-weight: 500; font-size: 12px; letter-spacing: .04em; color: var(--muted); min-width: 72px; }
+
+  /* ---- FLASHCARD: drawing sheet ---- */
+  .card {
+    background: var(--surface); border: 1px solid var(--border2); border-radius: var(--r);
+    box-shadow: none; min-height: 320px; transition: border-color .15s;
+  }
+  .card[class*="div-"], .card { border-left: 1px solid var(--border2); }
+  .card:hover { box-shadow: none; border-color: var(--muted); }
+  .card::before { content: ""; position: absolute; left: 0; right: 0; top: 40px; border-top: 1px solid var(--border); pointer-events: none; }
+  .card-section-tag {
+    top: 0; left: 0; right: 132px; height: 40px; display: flex; align-items: center; padding: 0 20px;
+    font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .12em; color: var(--muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .card-division-badge { top: 9px; right: 14px; font-size: 10px; padding: 3px 8px; }
+  .card-watermark { display: none !important; }
+  .card-inner { padding: 72px 40px 32px; }
+  .card-q { font-size: 20px; font-weight: 500; line-height: 1.45; letter-spacing: -.003em; min-height: 104px; color: var(--text); }
+  .card-hint {
+    margin: 0; padding: 10px 20px; border-top: 1px solid var(--border); text-align: left;
+    font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .12em; color: var(--muted);
+  }
+  .card-a, .card[class*="div-"] .card-a {
+    margin-top: 24px; padding: 20px 0 0; background: transparent; border-top: 1px solid var(--rule);
+    border-radius: 0; font-size: 15.5px; line-height: 1.7; color: var(--text); text-align: left;
+  }
+  .card-a::before {
+    content: "Answer"; display: block; margin-bottom: 8px;
+    font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; line-height: 1.2; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .card-src, .qz-src {
+    margin-top: 16px; padding-top: 8px; border-top: 1px solid var(--border); opacity: 1;
+    font-family: var(--font-mono); font-weight: 400; font-size: 11px; line-height: 1.55; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .fc-complete, .qz-complete { padding: 56px 24px; border: 1px solid var(--border2); border-radius: var(--r); background: var(--surface); }
+  .fc-complete h3, .qz-complete h3 { font-size: 22px; font-weight: 600; text-transform: none; letter-spacing: -.01em; }
+  .qz-complete .qz-score { font-family: var(--font-mono); font-weight: 500; font-size: 44px; }
+
+  /* ---- QUIZ ---- */
+  .qz-card, .qz-card[class*="div-"] {
+    background: var(--surface); border: 1px solid var(--border2); border-radius: var(--r);
+    box-shadow: none; padding: 0 28px 24px; margin-bottom: 16px;
+  }
+  .qz-meta { margin: 0 -28px 24px; padding: 0 20px; min-height: 40px; border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: nowrap; }
+  .qz-badge { flex: none; font-size: 10px; }
+  .qz-section { font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .12em; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .qz-q { font-size: 18px; font-weight: 500; line-height: 1.5; margin-bottom: 24px; }
+  .qz-options { gap: 8px; }
+  .qz-opt {
+    align-items: flex-start; gap: 12px; padding: 12px 14px; background: var(--surface);
+    border: 1px solid var(--border2); border-radius: var(--r); font-size: 15px; line-height: 1.5; color: var(--text);
+    transition: border-color .12s, background .12s;
+  }
+  .qz-opt:hover:not(:disabled) { border-color: var(--gold); background: var(--surface); }
+  .qz-opt-letter {
+    display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; padding: 0; margin-top: -1px;
+    border: 1px solid var(--border2); border-radius: var(--r);
+    font-family: var(--font-mono); font-weight: 500; font-size: 11.5px; color: var(--muted);
+  }
+  .qz-opt.correct { border-color: var(--ok); background: var(--know-bg); }
+  .qz-opt.correct .qz-opt-letter { border-color: var(--ok); color: var(--ok); }
+  .qz-opt.wrong { border-color: var(--bad); background: var(--review-bg); }
+  .qz-opt.wrong .qz-opt-letter { border-color: var(--bad); color: var(--bad); }
+  .qz-opt-mark { display: inline-flex; padding-top: 2px; }
+  .qz-opt.correct .qz-opt-mark { color: var(--ok); }
+  .qz-opt.wrong .qz-opt-mark { color: var(--bad); }
+  .qz-explain, .qz-card[class*="div-"] .qz-explain {
+    margin-top: 24px; padding: 20px 0 0; background: transparent; border-top: 1px solid var(--rule);
+    font-size: 15px; line-height: 1.7; color: var(--text);
+  }
+  .qz-explain strong, .sum-body strong { color: var(--strong); font-weight: 600; }
+  .qz-explain .qz-verdict { font-family: var(--font-mono); font-weight: 500; font-size: 11px; letter-spacing: .14em; margin-bottom: 8px; }
+
+  /* ---- TABLES ---- */
+  .table-section h3 {
+    font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--rule);
+  }
+  .tbl-wrap { border: 1px solid var(--border2); border-radius: var(--r); background: var(--surface); box-shadow: none; margin-bottom: 24px; }
+  table { font-size: 14px; }
+  th, .inline-table th {
+    background: var(--surface2); color: var(--text);
+    font-family: var(--font-sans); font-weight: 600; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 10px 14px; border-bottom: 1px solid var(--border2);
+  }
+  th[style*="color:var(--all3)"] { background: var(--surface2) !important; color: var(--all3) !important; }
+  th[style*="color:var(--both)"] { background: var(--surface2) !important; color: var(--both) !important; }
+  th[style*="color:var(--pa)"] { background: var(--surface2) !important; color: var(--pa) !important; }
+  th[style*="color:var(--ppd)"] { background: var(--surface2) !important; color: var(--ppd) !important; }
+  th[style*="color:var(--pdd)"] { background: var(--surface2) !important; color: var(--pdd) !important; }
+  th[style*="color:var(--pcm)"] { background: var(--surface2) !important; color: var(--pcm) !important; }
+  th[style*="color:var(--pjm)"] { background: var(--surface2) !important; color: var(--pjm) !important; }
+  th[style*="color:var(--ce)"] { background: var(--surface2) !important; color: var(--ce) !important; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); line-height: 1.55; }
+  tr:nth-child(even) td, .inline-table tr:nth-child(even) td { background: transparent; }
+  tr:hover td { background: var(--row-hover) !important; }
+  .priority-row td { background: var(--pri-bg); border-left: 0; }
+  .priority-row td:first-child { border-left: 2px solid var(--gold); }
+  .priority-row:hover td { background: var(--pri-hover) !important; }
+  .pill { border-radius: var(--r); font-family: var(--font-mono); font-weight: 500; font-size: 11px; letter-spacing: .06em; vertical-align: 1px; }
+  .pill .ico { width: 14px; height: 14px; vertical-align: -2px; }
+  .pill-yes { color: var(--ok); }
+  .pill-no { background: transparent; color: var(--muted); }
+  .pill-pri { background: transparent; border: 1px solid var(--gold); color: var(--gold-ink); padding: 1px 6px; }
+  .star { color: var(--gold-ink); }
+
+  /* ---- SUMMARY ---- */
+  .sum-toc { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--r); box-shadow: none; padding: 16px 20px; margin-bottom: 32px; }
+  .sum-toc h4 { font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .14em; margin-bottom: 8px; }
+  .sum-toc ul { gap: 0; }
+  .sum-toc li + li { border-top: 1px solid var(--border); }
+  .sum-toc li a { font-size: 14px; padding: 7px 0; gap: 12px; }
+  .sum-toc li a:hover { color: var(--gold-ink); }
+  .toc-tag { font-size: 9.5px; padding: 2px 6px; min-width: 52px; text-align: center; }
+  .sum-section { margin-bottom: 48px; }
+  .sum-section-header { gap: 12px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--rule) !important; }
+  .sum-section-header h3 { font-size: 21px; font-weight: 600; text-transform: none; letter-spacing: -.01em; line-height: 1.3; }
+  .sum-section-tag { font-size: 9.5px; }
+  .sum-subsection { margin-bottom: 24px; }
+  .sum-subsection h4 { font-size: 12px; font-weight: 600; letter-spacing: .1em; gap: 8px; margin-bottom: 8px; }
+  .sum-subsection h4::before { width: 12px; height: 1px; background: var(--gold); }
+  .sum-body { font-size: 15px; line-height: 1.7; }
+  .sum-body p { margin-bottom: 12px; }
+  .sum-body ul { gap: 6px; margin-bottom: 12px; }
+  .callout, .callout.warn, .callout.gold {
+    background: var(--inset); border: 1px solid var(--border); border-left: 2px solid var(--indigo);
+    border-radius: var(--r); box-shadow: none; padding: 12px 16px; margin: 16px 0; font-size: 14.5px; line-height: 1.65;
+  }
+  .callout.warn { border-left-color: var(--bad); }
+  .callout.gold { border-left-color: var(--gold); }
+  .inline-table { border: 1px solid var(--border2); box-shadow: none; font-size: 13.5px; margin: 8px 0 16px; }
+  .inline-table td { padding: 8px 10px; }
+  #sumSearch {
+    border: 1px solid var(--field) !important; border-radius: var(--r) !important; background: var(--surface) !important;
+    font-size: 15px !important; padding: 11px 40px 11px 14px !important;
+  }
+  #sumSearch:focus { border-color: var(--gold) !important; }
+  button[onclick^="clearSearch"] { display: inline-flex; padding: 4px !important; }
+
+  /* ---- TOOLS TAB (scripts add their own CSS later; these win by specificity) ---- */
+  body #tools { --tl-r: var(--r); }
+  body #tools [class*="tl-"], body #tools input, body #tools select, body #tools code { border-radius: var(--r) !important; }
+  body #tools .tl-h, body #tools h2.tl-top {
+    font-size: 26px; font-weight: 600; letter-spacing: -.01em; text-transform: none; color: var(--text);
+    line-height: 1.2; margin: 0 0 12px; padding-bottom: 16px; border-bottom: 1px solid var(--rule);
+  }
+  body #tools .tl-sec, body #tools .tl-flabel {
+    font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .14em; color: var(--muted);
+  }
+  body #tools .tl-chip, body #tools .tl-segbtn, body #tools .tl-pill {
+    background: transparent; color: var(--text); border: 1px solid var(--border2);
+    font-weight: 500; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 6px 12px;
+  }
+  body #tools .tl-chip:hover, body #tools .tl-segbtn:hover, body #tools .tl-pill:hover { background: var(--hover); border-color: var(--muted); color: var(--text); }
+  body #tools .tl-chip.on, body #tools .tl-chip.active, body #tools .tl-segbtn.on, body #tools .tl-pill:has(input:checked) {
+    background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 500;
+  }
+  body #tools .tl-card { border: 1px solid var(--border2); box-shadow: none; }
+  body #tools .tl-card h3 { font-weight: 600; letter-spacing: -.005em; }
+  body #tools .tl-tag, body #tools .tl-badge {
+    background: color-mix(in srgb, var(--d, var(--muted)) 9%, transparent) !important; color: var(--d, var(--muted)) !important;
+    border: 1px solid color-mix(in srgb, var(--d, var(--muted)) 42%, transparent);
+    font-family: var(--font-mono); font-weight: 500; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 2px 7px;
+  }
+  body #tools .tl-btn, body #tools .tl-del { background: transparent; border: 1px solid var(--border2); color: var(--text); }
+  body #tools .tl-btn:hover { background: var(--hover); border-color: var(--text); }
+  body #tools .tl-res > div, body #tools .tl-r, body #tools .tl-phrow, body #tools .tl-row { border-color: var(--border); box-shadow: none; }
+  body #tools .tl-res dd, body #tools .tl-rv b { font-family: var(--font-mono); font-weight: 500; }
+  body #tools .tl-note { border-left-width: 2px; }
+  body #tools .tl-concept { color: var(--gold-ink); }
+  body #tools .tl-how summary { font-size: 11.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text); }
+  body #tools .tl-src {
+    font-family: var(--font-mono); font-size: 11px; line-height: 1.55; letter-spacing: .04em; color: var(--muted);
+    border-top: 1px solid var(--border); padding-top: 8px; margin-top: 12px;
+  }
+  body #tools .tl-f input, body #tools .tl-fi, body #tools .tl-sel { border-color: var(--field); }
+  body #tools .tl-f input:focus, body #tools .tl-fi:focus-within, body #tools .tl-sel:focus { border-color: var(--gold); }
+  body #tools .tl-svg text { font-family: var(--font-sans); }
+
+  /* ---- LIBRARY TAB (if re-enabled) ---- */
+  #library { padding: 32px 24px 48px; max-width: 1080px; margin: 0 auto; }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 760px) {
+    .nav { padding: 0 12px; }
+    .nav-brand { padding: 10px 12px 10px 0; margin-right: 4px; }
+    .nav-tab { padding: 14px 10px 12px; font-size: 11px; letter-spacing: .06em; gap: 6px; }
+    .nav-theme { width: 32px; height: 32px; }
+    #flashcards, #tables, #summary, #quiz, #tools, #library { padding: 20px 16px 40px; }
+    .fc-header h2, .qz-header h2, #tables h2, .sum-header h2, body #tools .tl-h, body #tools h2.tl-top { font-size: 22px; }
+    .card { min-height: 280px; }
+    .card-inner { padding: 64px 20px 24px; }
+    .card-q { font-size: 18px; min-height: 80px; }
+    .card-section-tag { padding: 0 16px; right: 120px; }
+    .qz-card, .qz-card[class*="div-"] { padding: 0 16px 20px; }
+    .qz-meta { margin: 0 -16px 20px; padding: 0 16px; }
+    .qz-q { font-size: 17px; }
+    .qz-opt { padding: 11px 12px; font-size: 14.5px; }
+    th, td { padding: 9px 10px; }
+    td { font-size: 13.5px; }
+    .sum-section-header h3 { font-size: 19px; }
+    .inline-table { display: block; overflow-x: auto; max-width: 100%; }
+    .inline-table th { white-space: normal; }
+  }
+  @media (max-width: 480px) {
+    .nav { flex-wrap: wrap; padding: 0 12px; }
+    .nav-brand { border-right: none; font-size: 11px; letter-spacing: .1em; padding: 10px 0 8px; flex: 1 1 auto; min-width: 0; }
+    .nav-right { order: 2; padding: 6px 0 4px; }
+    .nav-tabs { order: 3; flex: 1 1 100%; margin: 0 -12px; padding: 0 4px; border-top: 1px solid var(--border); }
+    .nav-tab .ico { display: none; }
+    .nav-tab { padding: 12px 8px 10px; font-size: 10.5px; letter-spacing: .05em; }
+    .fc-header h2, .qz-header h2, #tables h2, .sum-header h2, body #tools .tl-h, body #tools h2.tl-top { font-size: 20px; }
+    .fc-stat, .qz-stat { padding: 5px 8px; }
+    .fc-filter, .table-btn { padding: 5px 9px; font-size: 10.5px; letter-spacing: .06em; gap: 6px; }
+    .btn { padding: 8px 11px; font-size: 10.5px; gap: 6px; letter-spacing: .06em; }
+    .btn .ico, #qzNextBtn::after { width: 14px; height: 14px; }
+    .fc-counter { min-width: 52px; font-size: 11px; }
+    .fc-controls::after { content: ""; order: 1; flex-basis: 100%; height: 0; }
+    .fc-controls > .btn-review, .fc-controls > .btn-know { order: 2; flex: 1 1 0; }
+    .card-inner { padding: 60px 16px 20px; }
+    .card-q { font-size: 17px; }
+    .card-a, .card[class*="div-"] .card-a { font-size: 15px; padding-top: 16px; }
+    .sum-body, .sum-body ul { font-size: 14.5px; }
+    .inline-table { font-size: 12.5px; }
+    th, td { padding: 8px 8px; font-size: 12.5px; }
+    th { font-size: 10px; }
+  }
+</style>
 </head>
 <body>
 <nav class="nav">
@@ -629,19 +1129,19 @@
     </div>
   </div>
   <div class="nav-tabs" role="tablist" aria-label="Study sections">
-    <button class="nav-tab active" role="tab" aria-selected="true" aria-controls="flashcards" onclick="switchPanel('flashcards',this)">⚡ Flashcards</button>
-    <button class="nav-tab" role="tab" aria-selected="false" aria-controls="tables" onclick="switchPanel('tables',this)">📊 Tables</button>
-    <button class="nav-tab" role="tab" aria-selected="false" aria-controls="summary" onclick="switchPanel('summary',this)">📖 Summary</button>
-    <button class="nav-tab" role="tab" aria-selected="false" aria-controls="quiz" onclick="switchPanel('quiz',this)">📝 Practice Q</button>
+    <button class="nav-tab active" role="tab" aria-selected="true" aria-controls="flashcards" onclick="switchPanel('flashcards',this)"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="9" height="9"/><path d="M5 2.5h8.5V11"/></svg>Flashcards</button>
+    <button class="nav-tab" role="tab" aria-selected="false" aria-controls="tables" onclick="switchPanel('tables',this)"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="2.5" width="12" height="11"/><path d="M2 6h12M2 9.75h12M6.5 6v7.5"/></svg>Tables</button>
+    <button class="nav-tab" role="tab" aria-selected="false" aria-controls="summary" onclick="switchPanel('summary',this)"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 1.75h6l3 3v9.5h-9z"/><path d="M9.5 1.75v3h3M5.75 8h4.5M5.75 10.5h4.5M5.75 13h2.5"/></svg>Summary</button>
+    <button class="nav-tab" role="tab" aria-selected="false" aria-controls="quiz" onclick="switchPanel('quiz',this)"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2.25" y="2.25" width="11.5" height="11.5"/><path d="M5 8.2l2.1 2.1L11 6"/></svg>Practice Q</button>
   </div>
   <div class="nav-right">
     <button class="nav-profile" id="navProfile" onclick="openProfileModal()" title="Switch or manage study profiles" aria-label="Study profile">
       <span class="nav-profile-dot" id="navProfileDot">C</span>
       <span class="nav-profile-name" id="navProfileName">Default</span>
-      <span class="nav-profile-caret">▾</span>
+      <span class="nav-profile-caret"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 6.25L8 9.75l3.5-3.5"/></svg></span>
     </button>
     <button class="nav-theme" id="navTheme" onclick="toggleTheme()" title="Toggle light / dark theme" aria-label="Toggle light or dark theme">
-      <span id="navThemeIcon">🌙</span>
+      <span id="navThemeIcon"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13.25 9.6A5.75 5.75 0 0 1 6.4 2.75a5.75 5.75 0 1 0 6.85 6.85z"/></svg></span>
     </button>
   </div>
 </nav>
@@ -650,7 +1150,7 @@
   <div class="modal">
     <div class="modal-head">
       <h3 id="pmTitle">Study Profiles</h3>
-      <button class="modal-x" onclick="closeProfileModal()" aria-label="Close">✕</button>
+      <button class="modal-x" onclick="closeProfileModal()" aria-label="Close"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
     </div>
     <p class="modal-sub">Each profile keeps its own flashcard, quiz, and filter progress on this computer. No account or internet needed. Up to 20 profiles.</p>
     <div class="profile-list" id="profileList"></div>
@@ -670,22 +1170,22 @@
       <div class="fc-stat stat-review">Review: <span id="reviewCount">0</span></div>
       <div class="fc-stat">Left: <span id="remCount">0</span></div>
     </div>
-    <button class="btn-ghost" onclick="resetDeck()">↺ Reset</button>
+    <button class="btn-ghost" onclick="resetDeck()"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13.25 8A5.25 5.25 0 1 1 11.7 4.3"/><path d="M12.25 1.5v3h-3"/></svg>Reset</button>
   </div>
   <div class="fc-filters">
     <div class="fc-filter active" onclick="setFilter('all',this)">All Cards</div>
-    <div class="fc-filter f-all3" onclick="setFilter('all3',this)">🔺 All 3 Exams</div>
-    <div class="fc-filter f-both" onclick="setFilter('both',this)">⭐ PcM + PjM</div>
+    <div class="fc-filter f-all3" onclick="setFilter('all3',this)">All 3 Exams</div>
+    <div class="fc-filter f-both" onclick="setFilter('both',this)">PcM + PjM</div>
     <div class="fc-filter f-pcm" onclick="setFilter('pcm',this)">PcM Only</div>
     <div class="fc-filter f-pjm" onclick="setFilter('pjm',this)">PjM Only</div>
     <div class="fc-filter f-ce" onclick="setFilter('ce',this)">CE / CA</div>
-    <div class="fc-filter f-review" onclick="setFilter('review',this)">🔁 Needs Review</div>
+    <div class="fc-filter f-review" onclick="setFilter('review',this)">Needs Review</div>
   </div>
   <div class="fc-progress"><div class="fc-progress-bar" id="progressBar" style="width:0%"></div></div>
   <div id="cardArea">
     <div class="card" id="flashcard" onclick="flipCard()">
       <div class="card-section-tag" id="cardSection"></div>
-      <div class="card-division-badge badge-both" id="cardBadge">⭐ BOTH</div>
+      <div class="card-division-badge badge-both" id="cardBadge">BOTH</div>
       <div class="card-inner">
         <div class="card-q" id="cardQ">Loading...</div>
         <div class="card-a" id="cardA"></div>
@@ -694,11 +1194,11 @@
     </div>
   </div>
   <div class="fc-controls">
-    <button class="btn btn-review" id="btnReview" onclick="markCard('review')" disabled>✗ Review</button>
-    <button class="btn btn-outline" onclick="prevCard()">← Back</button>
+    <button class="btn btn-review" id="btnReview" onclick="markCard('review')" disabled><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8"/></svg>Review</button>
+    <button class="btn btn-outline" onclick="prevCard()"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 8H3M7 4L3 8l4 4"/></svg>Back</button>
     <div class="fc-counter" id="cardCounter">1 / 0</div>
-    <button class="btn btn-outline" onclick="nextCard()">Skip →</button>
-    <button class="btn btn-know" id="btnKnow" onclick="markCard('know')" disabled>✓ Got It</button>
+    <button class="btn btn-outline" onclick="nextCard()">Skip<svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+    <button class="btn btn-know" id="btnKnow" onclick="markCard('know')" disabled><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg>Got It</button>
   </div>
 </div>
 <!-- TABLES -->
@@ -706,18 +1206,18 @@
   <h2>Reference Tables</h2>
   <div class="table-nav">
     <div class="table-btn active" onclick="showTable('t-snapshot',this)">Division Snapshot</div>
-    <div class="table-btn" onclick="showTable('t-overlap',this)">⭐ Overlapping Topics</div>
+    <div class="table-btn" onclick="showTable('t-overlap',this)">Overlapping Topics</div>
     <div class="table-btn" onclick="showTable('t-aia',this)">AIA Documents</div>
-    <div class="table-btn" onclick="showTable('t-gforms',this)">G-Series Forms ✦</div>
-    <div class="table-btn" onclick="showTable('t-ca',this)">CA Change Instruments ✦</div>
+    <div class="table-btn" onclick="showTable('t-gforms',this)">G-Series Forms<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></div>
+    <div class="table-btn" onclick="showTable('t-ca',this)">CA Change Instruments<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></div>
     <div class="table-btn" onclick="showTable('t-delivery',this)">Delivery Methods</div>
     <div class="table-btn" onclick="showTable('t-financial',this)">Financial Metrics</div>
-    <div class="table-btn" onclick="showTable('t-revenue',this)">Revenue Flow ✦</div>
+    <div class="table-btn" onclick="showTable('t-revenue',this)">Revenue Flow<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></div>
     <div class="table-btn" onclick="showTable('t-dispute',this)">Dispute Resolution</div>
     <div class="table-btn" onclick="showTable('t-rules',this)">NCARB Rules</div>
     <div class="table-btn" onclick="showTable('t-pcm',this)">PcM Exclusive</div>
     <div class="table-btn" onclick="showTable('t-pjm',this)">PjM Exclusive</div>
-    <div class="table-btn" onclick="showTable('t-ce',this)" style="color:var(--ce);border-color:#99f6e4;">CE Exclusive ✦</div>
+    <div class="table-btn" onclick="showTable('t-ce',this)">CE Exclusive<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></div>
   </div>
   <!-- Division Snapshot -->
   <div class="table-section active" id="t-snapshot">
@@ -745,17 +1245,17 @@
         <tr><td>Practice Methodologies</td><td>S4 (17–23%)</td><td>—</td><td>—</td><td>Firm structures, policies, documentation standards</td></tr>
         <tr><td>Resource Management</td><td>—</td><td>S1 (7–13%)</td><td>—</td><td>Smallest PjM section; staffing, consultant fees</td></tr>
         <tr><td>Project Work Planning</td><td>—</td><td>S2 (17–23%)</td><td>—</td><td>Gantt, CPM, float, PDCA, work plan</td></tr>
-        <tr class="priority-row"><td><strong>🔺 Contracts</strong></td><td>PcM S3 (part of 22–28%)</td><td>S3 (25–31%)</td><td>S1 Preconstruction (17–23%)</td><td>B101, A201, C401; delivery methods; bid process</td></tr>
+        <tr class="priority-row"><td><strong>Contracts</strong></td><td>PcM S3 (part of 22–28%)</td><td>S3 (25–31%)</td><td>S1 Preconstruction (17–23%)</td><td>B101, A201, C401; delivery methods; bid process</td></tr>
         <tr><td>Project Execution</td><td>—</td><td>S4 (17–23%)</td><td>—</td><td>Budget monitoring, AHJ approvals, scope changes</td></tr>
-        <tr class="priority-row"><td><strong>🔺 Quality Control / Observation</strong></td><td>PcM S4 (part of 17–23%)</td><td>S5 (19–25%)</td><td>S2 Construction Observation (32–38%)</td><td>Site visits, submittal review, conformance checking; tied for largest CE section (with S3)</td></tr>
-        <tr class="priority-row"><td><strong>🔺 CA Procedures</strong></td><td>Risk element of S2</td><td>S3 change instruments</td><td>S3 Admin Procedures (32–38%)</td><td>RFIs, change orders, pay applications, submittals; tied largest CE section</td></tr>
+        <tr class="priority-row"><td><strong>Quality Control / Observation</strong></td><td>PcM S4 (part of 17–23%)</td><td>S5 (19–25%)</td><td>S2 Construction Observation (32–38%)</td><td>Site visits, submittal review, conformance checking; tied for largest CE section (with S3)</td></tr>
+        <tr class="priority-row"><td><strong>CA Procedures</strong></td><td>Risk element of S2</td><td>S3 change instruments</td><td>S3 Admin Procedures (32–38%)</td><td>RFIs, change orders, pay applications, submittals; tied largest CE section</td></tr>
         <tr><td>Project Closeout &amp; Evaluation</td><td>—</td><td>—</td><td>S4 (7–13%)</td><td>Warranties, record drawings, punch list, commissioning, POE</td></tr>
       </tbody>
     </table></div>
   </div>
   <!-- Overlapping Topics -->
   <div class="table-section" id="t-overlap">
-    <h3>🔺 Overlapping Topics — Study These First (All 3 Exams)</h3>
+    <h3>Overlapping Topics — Study These First (All 3 Exams)</h3>
     <div class="tbl-wrap"><table>
       <thead><tr><th>Topic</th><th style="color:var(--pcm)">PcM tests</th><th style="color:var(--pjm)">PjM tests</th><th style="color:var(--ce)">CE tests</th><th>Key facts (expanded)</th></tr></thead>
       <tbody>
@@ -778,22 +1278,22 @@
       <thead><tr><th>Document</th><th>Description</th><th style="color:var(--pcm)">PcM</th><th style="color:var(--pjm)">PjM</th><th style="color:var(--ce)">CE</th></tr></thead>
       <tbody>
         <tr class="priority-row"><td><strong>B101-2017</strong></td><td>Owner-Architect Agreement (DBB) — 13 articles; defines basic, supplemental, and additional services; governs copyright, termination, dispute resolution</td><td><span class="pill pill-pri">Primary</span></td><td><span class="pill pill-pri">Primary</span></td><td><span class="pill pill-pri">Primary</span></td></tr>
-        <tr><td><strong>A101-2017</strong></td><td>Owner-Contractor Agreement (stipulated sum) — sets contract sum, schedule, and payment terms between owner and GC</td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-yes">✓</span></td></tr>
-        <tr><td><strong>A201-2017</strong></td><td>General Conditions — incorporated by reference into B101 and A101; defines architect's CA role; requires waiver of subrogation; governs means/methods vs. design intent distinction</td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-pri">Primary</span></td></tr>
+        <tr><td><strong>A101-2017</strong></td><td>Owner-Contractor Agreement (stipulated sum) — sets contract sum, schedule, and payment terms between owner and GC</td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td></tr>
+        <tr><td><strong>A201-2017</strong></td><td>General Conditions — incorporated by reference into B101 and A101; defines architect's CA role; requires waiver of subrogation; governs means/methods vs. design intent distinction</td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-pri">Primary</span></td></tr>
         <tr><td><strong>A132</strong></td><td>Owner-Contractor when CM is advisor/agent</td><td>Delivery</td><td>Delivery</td><td>Delivery</td></tr>
         <tr><td><strong>A133-2019</strong></td><td>Owner-CM as Constructor (cost plus + GMP) — GMP proposal at a time mutually agreed (A133 §3.2.1), often at DD or early CDs</td><td>Delivery</td><td>Delivery</td><td>Delivery</td></tr>
         <tr><td><strong>A141-2014</strong></td><td>Owner-Design-Builder — single entity contract</td><td>Delivery</td><td>Delivery</td><td>Delivery</td></tr>
-        <tr><td><strong>A195-2008</strong></td><td>Owner-Contractor for IPD — shared risk/reward; no-sue clause</td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-yes">✓</span></td></tr>
+        <tr><td><strong>A195-2008</strong></td><td>Owner-Contractor for IPD — shared risk/reward; no-sue clause</td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td></tr>
         <tr><td><strong>A310</strong></td><td>Bid Bond — guarantees bidder enters contract if selected; pays difference if winner walks</td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-pri">Primary</span></td></tr>
-        <tr><td><strong>A701</strong></td><td>Instructions to Bidders — pre-bid meeting, bid distribution, evaluation procedures</td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-yes">✓</span></td></tr>
-        <tr><td><strong>C401-2017</strong></td><td>Architect-Consultant Agreement — mirrors B101; consultant owns their instruments of service; cannot sub without written permission</td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-pri">Primary</span></td><td><span class="pill pill-no">—</span></td></tr>
-        <tr class="priority-row"><td><strong>G701-2017</strong></td><td>Change Order — post-contract change altering scope, cost, or schedule; all three parties sign</td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-pri">Primary</span></td></tr>
-        <tr class="priority-row"><td><strong>G702-1992</strong></td><td>Application and Certificate for Payment — contractor submits; architect certifies; owner pays; lists change orders, retainage, amount due</td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-pri">Primary</span></td></tr>
-        <tr class="priority-row"><td><strong>G704-2017</strong></td><td>Certificate of Substantial Completion — architect certifies; starts 1-year warranty; triggers retainage release; often coincides with Certificate of Occupancy</td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-pri">Primary</span></td></tr>
-        <tr><td><strong>G710</strong></td><td>ASI — minor change; no cost or schedule impact; architect signs only</td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-pri">Primary</span></td></tr>
-        <tr><td><strong>G714</strong></td><td>CCD — owner + architect sign (NOT contractor); cost TBD; keeps project moving</td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-pri">Primary</span></td></tr>
-        <tr><td><strong>G716</strong></td><td>RFI — contractor asks architect for clarification; not a contract document; response may trigger CO</td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-pri">Primary</span></td></tr>
-        <tr><td><strong>G802</strong></td><td>Amendment to Professional Services Agreement — used to add POE and other additional services after B101 execution; statute of limitations clock does not restart</td><td>Scope changes</td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-yes">✓</span></td></tr>
+        <tr><td><strong>A701</strong></td><td>Instructions to Bidders — pre-bid meeting, bid distribution, evaluation procedures</td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td></tr>
+        <tr><td><strong>C401-2017</strong></td><td>Architect-Consultant Agreement — mirrors B101; consultant owns their instruments of service; cannot sub without written permission</td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-pri">Primary</span></td><td><span class="pill pill-no">—</span></td></tr>
+        <tr class="priority-row"><td><strong>G701-2017</strong></td><td>Change Order — post-contract change altering scope, cost, or schedule; all three parties sign</td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-pri">Primary</span></td></tr>
+        <tr class="priority-row"><td><strong>G702-1992</strong></td><td>Application and Certificate for Payment — contractor submits; architect certifies; owner pays; lists change orders, retainage, amount due</td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-pri">Primary</span></td></tr>
+        <tr class="priority-row"><td><strong>G704-2017</strong></td><td>Certificate of Substantial Completion — architect certifies; starts 1-year warranty; triggers retainage release; often coincides with Certificate of Occupancy</td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-pri">Primary</span></td></tr>
+        <tr><td><strong>G710</strong></td><td>ASI — minor change; no cost or schedule impact; architect signs only</td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-pri">Primary</span></td></tr>
+        <tr><td><strong>G714</strong></td><td>CCD — owner + architect sign (NOT contractor); cost TBD; keeps project moving</td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-pri">Primary</span></td></tr>
+        <tr><td><strong>G716</strong></td><td>RFI — contractor asks architect for clarification; not a contract document; response may trigger CO</td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-pri">Primary</span></td></tr>
+        <tr><td><strong>G802</strong></td><td>Amendment to Professional Services Agreement — used to add POE and other additional services after B101 execution; statute of limitations clock does not restart</td><td>Scope changes</td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td><td><span class="pill pill-yes" aria-label="yes"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span></td></tr>
       </tbody>
     </table></div>
     <h3 style="margin-top:4px">Key Terms</h3>
@@ -1071,32 +1571,32 @@
 <div id="summary" class="panel">
   <div class="sum-header">
     <h2>PcM + PjM + CE Study Summary</h2>
-    <p>Compiled from NCARB ARE 5.0 Guidelines (October 2026 edition), AHPP 15th ed., NCARB Professional Conduct CE Series, PPI Review Manuals. ✦ = updated with new wiki content.</p>
+    <p>Compiled from NCARB ARE 5.0 Guidelines (October 2026 edition), AHPP 15th ed., NCARB Professional Conduct CE Series, PPI Review Manuals.<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span> = updated with new wiki content.</p>
     <div style="position:relative;margin-top:12px;">
-      <input id="sumSearch" type="text" placeholder="🔍  Search summary…" oninput="filterSummary(this.value)" style="width:100%;padding:10px 36px 10px 14px;background:var(--inset);border:1.5px solid var(--border2);border-radius:10px;color:var(--text);font-size:14px;outline:none;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
-      <button onclick="clearSearch()" title="Clear" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color: var(--muted);font-size:16px;line-height:1;">✕</button>
+      <input id="sumSearch" type="text" placeholder="Search summary…" oninput="filterSummary(this.value)" style="width:100%;padding:10px 36px 10px 14px;background:var(--inset);border:1.5px solid var(--border2);border-radius:10px;color:var(--text);font-size:14px;outline:none;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      <button onclick="clearSearch()" title="Clear" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color: var(--muted);font-size:16px;line-height:1;"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
     </div>
     <div id="sumSearchMsg" style="display:none;margin-top:8px;font-size:13px;color: var(--muted);"></div>
   </div>
   <div class="sum-toc">
     <h4>Contents</h4>
     <ul>
-      <li><a href="#s-b101"><span class="toc-tag toc-all3">🔺 ALL 3</span> B101 Owner-Architect Agreement</a></li>
-      <li><a href="#s-soc"><span class="toc-tag toc-all3">🔺 ALL 3</span> Standard of Care</a></li>
-      <li><a href="#s-delivery"><span class="toc-tag toc-all3">🔺 ALL 3</span> Project Delivery Methods</a></li>
-      <li><a href="#s-risk"><span class="toc-tag toc-all3">🔺 ALL 3</span> Risk Management &amp; Insurance</a></li>
-      <li><a href="#s-scope"><span class="toc-tag toc-all3">🔺 ALL 3</span> Scope Creep &amp; Scope Changes</a></li>
-      <li><a href="#s-qc"><span class="toc-tag toc-all3">🔺 ALL 3</span> Quality Control</a></li>
-      <li><a href="#s-ethics"><span class="toc-tag toc-all3">🔺 ALL 3</span> Ethics — NCARB Model Rules</a></li>
-      <li><a href="#s-ce-strategy"><span class="toc-tag toc-ce">CE</span> CE Exam Strategy &amp; Content Split ✦</a></li>
-      <li><a href="#s-ca"><span class="toc-tag toc-ce">CE / CA</span> Construction Administration ✦</a></li>
-      <li><a href="#s-commissioning"><span class="toc-tag toc-ce">CE</span> Building Commissioning &amp; POE ✦</a></li>
-      <li><a href="#s-aia"><span class="toc-tag toc-pjm">PjM</span> AIA Contract Documents — Detail ✦</a></li>
-      <li><a href="#s-pcm-fin"><span class="toc-tag toc-pcm">PcM</span> Finances, Risk &amp; Development (Section 2) ✦</a></li>
-      <li><a href="#s-pcm-ops"><span class="toc-tag toc-pcm">PcM</span> Business Operations &amp; Agency ✦</a></li>
+      <li><a href="#s-b101"><span class="toc-tag toc-all3">ALL 3</span> B101 Owner-Architect Agreement</a></li>
+      <li><a href="#s-soc"><span class="toc-tag toc-all3">ALL 3</span> Standard of Care</a></li>
+      <li><a href="#s-delivery"><span class="toc-tag toc-all3">ALL 3</span> Project Delivery Methods</a></li>
+      <li><a href="#s-risk"><span class="toc-tag toc-all3">ALL 3</span> Risk Management &amp; Insurance</a></li>
+      <li><a href="#s-scope"><span class="toc-tag toc-all3">ALL 3</span> Scope Creep &amp; Scope Changes</a></li>
+      <li><a href="#s-qc"><span class="toc-tag toc-all3">ALL 3</span> Quality Control</a></li>
+      <li><a href="#s-ethics"><span class="toc-tag toc-all3">ALL 3</span> Ethics — NCARB Model Rules</a></li>
+      <li><a href="#s-ce-strategy"><span class="toc-tag toc-ce">CE</span> CE Exam Strategy &amp; Content Split<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></a></li>
+      <li><a href="#s-ca"><span class="toc-tag toc-ce">CE / CA</span> Construction Administration<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></a></li>
+      <li><a href="#s-commissioning"><span class="toc-tag toc-ce">CE</span> Building Commissioning &amp; POE<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></a></li>
+      <li><a href="#s-aia"><span class="toc-tag toc-pjm">PjM</span> AIA Contract Documents — Detail<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></a></li>
+      <li><a href="#s-pcm-fin"><span class="toc-tag toc-pcm">PcM</span> Finances, Risk &amp; Development (Section 2)<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></a></li>
+      <li><a href="#s-pcm-ops"><span class="toc-tag toc-pcm">PcM</span> Business Operations &amp; Agency<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></a></li>
       <li><a href="#s-pcm-meth"><span class="toc-tag toc-pcm">PcM</span> Practice Methodologies (Section 4)</a></li>
       <li><a href="#s-pjm-plan"><span class="toc-tag toc-pjm">PjM</span> Project Work Planning (Section 2)</a></li>
-      <li><a href="#s-pjm-contracts"><span class="toc-tag toc-pjm">PjM</span> Contracts (Section 3) ✦</a></li>
+      <li><a href="#s-pjm-contracts"><span class="toc-tag toc-pjm">PjM</span> Contracts (Section 3)<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></a></li>
       <li><a href="#s-pjm-exec"><span class="toc-tag toc-pjm">PjM</span> Project Execution (Section 4)</a></li>
       <li><a href="#s-pjm-qc"><span class="toc-tag toc-pjm">PjM</span> Project Quality Control (Section 5)</a></li>
       <li><a href="#s-legend"><span class="toc-tag" style="background:var(--hover);color:var(--muted);">REF</span> Abbreviations Legend</a></li>
@@ -1104,7 +1604,7 @@
   </div>
   <!-- B101 -->
   <div class="sum-section" id="s-b101">
-    <div class="sum-section-header"><span class="sum-section-tag toc-all3">🔺 ALL 3 EXAMS</span><h3>B101 Owner-Architect Agreement</h3></div>
+    <div class="sum-section-header"><span class="sum-section-tag toc-all3">ALL 3 EXAMS</span><h3>B101 Owner-Architect Agreement</h3></div>
     <div class="sum-body">
       <p>B101 is the most tested document across both divisions. PcM tests <strong>analysis</strong> of contract types and delivery methods (PcM 3.2). PjM tests <strong>application</strong> — evaluate adherence, identify phase completions, determine billing (PjM 3.1).</p>
       <div class="sum-subsection"><h4>The 13 Articles</h4>
@@ -1140,7 +1640,7 @@
   </div>
   <!-- Standard of Care -->
   <div class="sum-section" id="s-soc">
-    <div class="sum-section-header"><span class="sum-section-tag toc-all3">🔺 ALL 3 EXAMS</span><h3>Standard of Care</h3></div>
+    <div class="sum-section-header"><span class="sum-section-tag toc-all3">ALL 3 EXAMS</span><h3>Standard of Care</h3></div>
     <div class="sum-body">
       <p>Skill, care, and diligence consistent with other architects in the <strong>same locality</strong> on <strong>similar projects</strong> at <strong>the same time</strong>. Not a guarantee of outcomes.</p>
       <div class="callout warn">Never modify standard of care language. "Highest standard of care," guarantees, warranties, and fiduciary-duty language are all nearly uninsurable — refuse each of them.</div>
@@ -1149,7 +1649,7 @@
   </div>
   <!-- Delivery Methods -->
   <div class="sum-section" id="s-delivery">
-    <div class="sum-section-header"><span class="sum-section-tag toc-all3">🔺 ALL 3 EXAMS</span><h3>Project Delivery Methods ✦</h3></div>
+    <div class="sum-section-header"><span class="sum-section-tag toc-all3">ALL 3 EXAMS</span><h3>Project Delivery Methods<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h3></div>
     <div class="sum-body">
       <table class="inline-table">
         <thead><tr><th>Method</th><th>Key characteristic</th><th>Contract</th><th>Architect risk</th></tr></thead>
@@ -1185,14 +1685,14 @@
       <div class="sum-subsection"><h4>Fast-Track vs. Phased Construction</h4>
         <p><strong>Fast-track</strong> overlaps design and construction phases to compress the overall schedule — requires staged bidding, a CM, and close coordination. Always charge as an additional service; the additional-service clause typically releases the architect from responsibility for the added margin of coordination error the compressed schedule creates. <strong>Phased construction</strong> staggers occupancy (portions open while others are still under construction) but does not necessarily overlap design and construction.</p>
       </div>
-      <div class="sum-subsection"><h4>Design-Assist ✦</h4>
+      <div class="sum-subsection"><h4>Design-Assist<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h4>
         <p><strong>Design-assist</strong> is a transitional form rather than a full delivery method. The owner still contracts with the architect in the usual way, but specialty subcontractors — curtain wall, structural steel, complex MEP — join during the design and construction-document phase. The architect guides selection of those subcontractors and incorporates their fabrication knowledge into the documents, which improves constructability and shortens the trade’s lead time. It differs from design-build because the architect keeps the design relationship with the owner: the subcontractor advises, it does not own the design.</p>
       </div>
     </div>
   </div>
   <!-- Risk Management -->
   <div class="sum-section" id="s-risk">
-    <div class="sum-section-header"><span class="sum-section-tag toc-all3">🔺 ALL 3 EXAMS</span><h3>Risk Management &amp; Insurance</h3></div>
+    <div class="sum-section-header"><span class="sum-section-tag toc-all3">ALL 3 EXAMS</span><h3>Risk Management &amp; Insurance</h3></div>
     <div class="sum-body">
       <div class="sum-subsection"><h4>Four Risk Methods</h4>
         <ul><li><strong>Avoid</strong> — turn down risky project types</li><li><strong>Assume</strong> — accept what you can cover</li><li><strong>Transfer</strong> — to insurance or consultants</li><li><strong>Control</strong> — QA/QC processes</li></ul>
@@ -1208,7 +1708,7 @@
         <p><strong>Privity:</strong> In DBB, contractor cannot generally sue architect directly for economic damages (no contract relationship between them). The same applies to the architect's subconsultants — the owner has no privity with a sub-consultant (e.g., the mechanical engineer hired by the architect) and would have to sue the architect, not the sub directly.</p>
         <p><strong>Breach vs. Negligence:</strong> To prove negligence, plaintiff must show: (1) architect owed a duty, (2) duty was breached, (3) breach caused an event, (4) damage occurred. Breach of contract is simpler — architect failed to do something required by contract.</p>
       </div>
-      <div class="sum-subsection"><h4>Codes Are a Minimum — Safe Harbor vs. Standard of Care ✦</h4>
+      <div class="sum-subsection"><h4>Codes Are a Minimum — Safe Harbor vs. Standard of Care<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h4>
         <p>Building codes and referenced standards set a <strong>floor</strong> for health and safety, not a ceiling. Meeting code gives the architect a <strong>"safe harbor"</strong> defense, but the standard of care can still require exceeding code minimums when the project’s use, location, or shared professional knowledge makes a code-minimum design foreseeably inadequate. The tension: exceeding code adds cost the client did not contract for, while merely meeting an outdated code may not meet the standard of care. The architect resolves this through documentation and clear contract language — not by silently choosing one.</p>
       </div>
       <div class="callout gold"><strong>Emerging coverages (supplemental — not yet confirmed NCARB-tested):</strong> Two exposures sit outside the traditional B101 insurance list and appear in current practice-management seminars. <strong>Cyber / data-breach liability</strong> covers the firm against ransomware, breach-response costs, and third-party claims when a vendor is the entry point. <strong>Climate / resilience exposure</strong> is the professional-liability tail created when a design built to a past-climate code later fails under conditions the profession had begun to anticipate. Neither is confirmed against an NCARB primary source — treat as background, not testable fact.</div>
@@ -1217,7 +1717,7 @@
   </div>
   <!-- Scope Creep -->
   <div class="sum-section" id="s-scope">
-    <div class="sum-section-header"><span class="sum-section-tag toc-all3">🔺 ALL 3 EXAMS</span><h3>Scope Creep &amp; Scope Changes</h3></div>
+    <div class="sum-section-header"><span class="sum-section-tag toc-all3">ALL 3 EXAMS</span><h3>Scope Creep &amp; Scope Changes</h3></div>
     <div class="sum-body">
       <p>Scope creep = incremental program additions during design that accumulate into significant budget and schedule impacts.</p>
       <div class="callout">Document every change → get written owner agreement → tie to fee and schedule → use AIA G802 to amend the agreement. Never proceed on verbal instructions.</div>
@@ -1225,7 +1725,7 @@
   </div>
   <!-- QC -->
   <div class="sum-section" id="s-qc">
-    <div class="sum-section-header"><span class="sum-section-tag toc-all3">🔺 ALL 3 EXAMS</span><h3>Quality Control</h3></div>
+    <div class="sum-section-header"><span class="sum-section-tag toc-all3">ALL 3 EXAMS</span><h3>Quality Control</h3></div>
     <div class="sum-body">
       <div class="sum-subsection"><h4>Two Quality Methods (QA + QC)</h4>
         <ul><li><strong>Process-based</strong> — performing tasks correctly the first time: checklists, BIM clash detection (semi-automated)</li><li><strong>Inspection/Checking-based</strong> — reviewing finished work before delivery: third-party drawing review by an architect not on the project</li></ul>
@@ -1238,7 +1738,7 @@
   </div>
   <!-- Ethics -->
   <div class="sum-section" id="s-ethics">
-    <div class="sum-section-header"><span class="sum-section-tag toc-all3">🔺 ALL 3 EXAMS</span><h3>Ethics — NCARB Model Rules of Conduct</h3></div>
+    <div class="sum-section-header"><span class="sum-section-tag toc-all3">ALL 3 EXAMS</span><h3>Ethics — NCARB Model Rules of Conduct</h3></div>
     <div class="sum-body">
       <div class="sum-subsection"><h4>Rule 1 — Competence</h4><p>Standard of care (1.1). Cannot perform outside competence without engaging a qualified consultant (1.3). Ordinary vs. gross negligence: ordinary = failed to meet standard; gross = reckless disregard.</p></div>
       <div class="sum-subsection"><h4>Rule 2 — Conflict of Interest</h4><p>No dual compensation without full disclosure and written waiver (2.1). <strong>Never accept compensation from material suppliers — no waiver permitted (2.2).</strong> Must act impartially as contract interpreter (2.4).</p></div>
@@ -1281,7 +1781,7 @@
           <li>Maintain field reports (G711)</li>
         </ul>
       </div>
-      <div class="sum-subsection"><h4>Submittals &amp; Shop Drawings ✦</h4>
+      <div class="sum-subsection"><h4>Submittals &amp; Shop Drawings<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h4>
         <p>A submittal is information the contractor provides during construction to show how a portion of the work will be supplied or installed, so the architect can confirm it conforms to the design intent <em>before</em> fabrication or installation. The three common types are <strong>shop drawings</strong> (contractor / fabricator drawings showing how an element is built — steel connections, curtain wall, casework), <strong>product data</strong> (manufacturer’s literature showing a product meets the spec), and <strong>samples</strong> (physical examples of material, finish, or assembly).</p>
         <p><strong>Division of responsibility (the most tested point):</strong> the contractor is responsible for the <em>accuracy</em> of submittals; the architect reviews <em>only</em> for conformance with the design intent — not for dimensions, quantities, or means and methods. Review does not relieve the contractor of the obligation to build per the contract documents. Review stamps therefore read "no exceptions taken" or "reviewed," not "approved." Submittals are <strong>not</strong> contract documents.</p>
         <table class="inline-table">
@@ -1381,7 +1881,7 @@
   </div>
   <!-- PcM Finances -->
   <div class="sum-section" id="s-pcm-fin">
-    <div class="sum-section-header"><span class="sum-section-tag toc-pcm">PcM — Section 2</span><h3>Finances, Risk &amp; Development (29–35% — LARGEST) ✦</h3></div>
+    <div class="sum-section-header"><span class="sum-section-tag toc-pcm">PcM — Section 2</span><h3>Finances, Risk &amp; Development (29–35% — LARGEST)<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h3></div>
     <div class="sum-body">
       <div class="sum-subsection"><h4>Revenue Flow Hierarchy</h4>
         <p><strong>Gross Revenue</strong> → deduct consultant fees and reimbursables → <strong>Net Operating Revenue (NOR)</strong> → deduct all employee costs, rent, indirect costs → <strong>Profits Before Taxes</strong> → deduct taxes → <strong>Current Earnings.</strong></p>
@@ -1409,7 +1909,7 @@
       <div class="sum-subsection"><h4>Revenue Planning</h4>
         <p><strong>Prospect</strong> = ≥50% likelihood of becoming a project. <strong>Suspect</strong> = &lt;50%. For planning, multiply projected fee × likelihood % to estimate expected revenue. <strong>Pro Forma</strong> = financial feasibility document tracking projects, fees, revenue, and profit projections.</p>
       </div>
-      <div class="sum-subsection"><h4>Fee Types &amp; Determination ✦</h4>
+      <div class="sum-subsection"><h4>Fee Types &amp; Determination<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h4>
         <p><strong>Fee structures:</strong> Percentage of construction cost (~15% residential; lower for large/economy, higher for complex) — most common; fixed (stipulated sum — use only when scope is very well defined); hourly/time charge (best for poorly-defined scope like renovations; can set a Not to Exceed cap); unit cost (repetitive buildings — fee = units × cost/unit); retainer (a pre-payment for availability, or an ongoing on-call arrangement for intermittent small work so a new contract isn't needed each time); combination.</p>
         <p><strong>Fee determination methods:</strong></p>
         <ul>
@@ -1418,7 +1918,7 @@
           <li><strong>Both together:</strong> Using top-down and bottom-up simultaneously establishes upper and lower fee limits.</li>
         </ul>
       </div>
-      <div class="sum-subsection"><h4>Bid Pricing Tools ✦</h4>
+      <div class="sum-subsection"><h4>Bid Pricing Tools<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h4>
         <ul>
           <li><strong>Allowances:</strong> Placeholder money in contract documents for items whose final price may change (window coverings, light fixtures, appliances). Contractor must include all installation costs within the allowance.</li>
           <li><strong>Unit prices:</strong> Set in the bid for items where the type is known but the quantity is not (e.g., contaminated soil removal per cubic yard). Quantity determined later.</li>
@@ -1430,7 +1930,7 @@
   </div>
   <!-- PcM Business Ops -->
   <div class="sum-section" id="s-pcm-ops">
-    <div class="sum-section-header"><span class="sum-section-tag toc-pcm">PcM — Section 1</span><h3>Business Operations &amp; Agency ✦</h3></div>
+    <div class="sum-section-header"><span class="sum-section-tag toc-pcm">PcM — Section 1</span><h3>Business Operations &amp; Agency<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h3></div>
     <div class="sum-body">
       <div class="sum-subsection"><h4>Agency</h4>
         <p>The architect acts as an <strong>agent</strong> of the owner (principal) in dealings with the contractor (third party) — acting on the owner's behalf, but only within the authority the owner grants. The architect cannot unilaterally bind the owner to changes. Contractors are vendors (act in own interest); architects are agents (act on owner's behalf).</p>
@@ -1455,7 +1955,7 @@
   </div>
   <!-- PcM Methodologies -->
   <div class="sum-section" id="s-pcm-meth">
-    <div class="sum-section-header"><span class="sum-section-tag toc-pcm">PcM — Section 4</span><h3>Practice Methodologies (17–23%) ✦</h3></div>
+    <div class="sum-section-header"><span class="sum-section-tag toc-pcm">PcM — Section 4</span><h3>Practice Methodologies (17–23%)<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h3></div>
     <div class="sum-body">
       <div class="sum-subsection"><h4>Business Entity Structures</h4>
         <table class="inline-table">
@@ -1510,7 +2010,7 @@
   </div>
   <!-- PjM Contracts -->
   <div class="sum-section" id="s-pjm-contracts">
-    <div class="sum-section-header"><span class="sum-section-tag toc-pjm">PjM — Section 3</span><h3>Contracts (25–31% — LARGEST) ✦</h3></div>
+    <div class="sum-section-header"><span class="sum-section-tag toc-pjm">PjM — Section 3</span><h3>Contracts (25–31% — LARGEST)<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h3></div>
     <div class="sum-body">
       <div class="sum-subsection"><h4>C401 — Architect-Consultant Agreement</h4>
         <p>Mirrors B101. Architect acts as "owner" to the consultant. Consultant owns their own instruments of service. Cannot sub-out work without architect's written permission. Must carry same insurance types as architect. Must redesign their portion for free if they blow their portion of the budget.</p>
@@ -1680,23 +2180,23 @@
       <div class="qz-stat stat-wrong">Wrong: <span id="qzWrong">0</span></div>
       <div class="qz-stat">Left: <span id="qzLeft">0</span></div>
     </div>
-    <button class="btn-ghost" onclick="resetQuiz()">↺ Reset</button>
+    <button class="btn-ghost" onclick="resetQuiz()"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13.25 8A5.25 5.25 0 1 1 11.7 4.3"/><path d="M12.25 1.5v3h-3"/></svg>Reset</button>
   </div>
   <div class="qz-filters">
     <div class="fc-filter active" onclick="setQzFilter('all',this)">All Questions</div>
-    <div class="fc-filter f-all3" onclick="setQzFilter('all3',this)">🔺 All 3 / Cross</div>
+    <div class="fc-filter f-all3" onclick="setQzFilter('all3',this)">All 3 / Cross</div>
     <div class="fc-filter f-pcm" onclick="setQzFilter('pcm',this)">PcM</div>
     <div class="fc-filter f-pjm" onclick="setQzFilter('pjm',this)">PjM</div>
     <div class="fc-filter f-ce" onclick="setQzFilter('ce',this)">CE / CA</div>
-    <div class="fc-filter f-both" onclick="setQzFilter('both',this)">⭐ PcM + PjM</div>
-    <div class="fc-filter f-review" onclick="setQzFilter('wrong',this)">🔁 Missed</div>
+    <div class="fc-filter f-both" onclick="setQzFilter('both',this)">PcM + PjM</div>
+    <div class="fc-filter f-review" onclick="setQzFilter('wrong',this)">Missed</div>
   </div>
   <div class="qz-progress"><div class="qz-progress-bar" id="qzProgressBar" style="width:0%"></div></div>
   <div id="qzArea"></div>
   <div class="qz-controls" id="qzControls">
-    <button class="btn btn-outline" onclick="prevQuestion()">← Back</button>
+    <button class="btn btn-outline" onclick="prevQuestion()"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 8H3M7 4L3 8l4 4"/></svg>Back</button>
     <div class="fc-counter" id="qzCounter">1 / 0</div>
-    <button class="btn btn-primary" id="qzNextBtn" onclick="nextQuestion()">Next →</button>
+    <button class="btn btn-primary" id="qzNextBtn" onclick="nextQuestion()">Next</button>
   </div>
 </div>
 <script>
@@ -2148,7 +2648,7 @@ function setFilter(f,el){
 function renderCard(){
   const area=document.getElementById('cardArea');
   if(deck.length===0){area.innerHTML='<div class="fc-complete"><h3>No cards in this filter.</h3><p>Try selecting a different category.</p></div>';document.getElementById('cardCounter').textContent='0 / 0';updateProgress();return;}
-  if(currentIndex>=deck.length){area.innerHTML=`<div class="fc-complete"><h3>🎉 Deck complete!</h3><p>You went through all ${deck.length} cards.</p><button class="btn btn-primary" onclick="buildDeck()">Restart</button></div>`;document.getElementById('cardCounter').textContent=`${deck.length} / ${deck.length}`;updateProgress();return;}
+  if(currentIndex>=deck.length){area.innerHTML=`<div class="fc-complete"><h3>Deck complete</h3><p>You went through all ${deck.length} cards.</p><button class="btn btn-primary" onclick="buildDeck()">Restart</button></div>`;document.getElementById('cardCounter').textContent=`${deck.length} / ${deck.length}`;updateProgress();return;}
   if(!document.getElementById('flashcard')){area.innerHTML='<div class="card" id="flashcard" onclick="flipCard()"><div class="card-section-tag" id="cardSection"></div><div class="card-division-badge badge-both" id="cardBadge"></div><div class="card-inner"><div class="card-q" id="cardQ"></div><div class="card-a" id="cardA"></div></div><div class="card-hint">Tap to reveal answer</div></div>';}
   const card=deck[currentIndex];
   document.getElementById('flashcard').classList.remove('flipped');
@@ -2461,19 +2961,19 @@ function renderQuestion(){
     let cls='qz-opt', mark='', dis='';
     if(prevAnswer!==undefined){
       dis='disabled';
-      if(i===item.correct){cls+=' correct';mark='<span class="qz-opt-mark">✓</span>';}
-      else if(i===answeredIdx){cls+=' wrong';mark='<span class="qz-opt-mark">✗</span>';}
+      if(i===item.correct){cls+=' correct';mark='<span class="qz-opt-mark" aria-label="correct answer"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span>';}
+      else if(i===answeredIdx){cls+=' wrong';mark='<span class="qz-opt-mark" aria-label="your answer"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8"/></svg></span>';}
     }
     html+=`<button class="${cls}" ${dis} onclick="answerQuestion(${i})"><span class="qz-opt-letter">${letters[i]}</span><span>${opt}</span>${mark}</button>`;
   });
   html+=`</div>`;
   const showExp=prevAnswer!==undefined?' show':'';
-  const verdict=prevAnswer==='correct'?'<span class="qz-verdict v-correct">✓ Correct</span>':(prevAnswer==='wrong'?'<span class="qz-verdict v-wrong">✗ Not quite</span>':'');
+  const verdict=prevAnswer==='correct'?'<span class="qz-verdict v-correct">Correct</span>':(prevAnswer==='wrong'?'<span class="qz-verdict v-wrong">Not quite</span>':'');
   html+=`<div class="qz-explain${showExp}" id="qzExplain">${verdict}${item.exp}${item.src?`<div class="qz-src">Source: ${item.src}</div>`:''}</div>`;
   html+=`</div>`;
   area.innerHTML=html;
   document.getElementById('qzCounter').textContent=`${qzIndex+1} / ${qzDeck.length}`;
-  document.getElementById('qzNextBtn').textContent=qzIndex===qzDeck.length-1?'Finish →':'Next →';
+  document.getElementById('qzNextBtn').textContent=qzIndex===qzDeck.length-1?'Finish':'Next';
   updateQzProgress();
 }
 function answerQuestion(i){
@@ -2576,7 +3076,7 @@ const MAX_PROFILES = 20;
 function applyTheme(t){
   document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
   const icon = document.getElementById('navThemeIcon');
-  if(icon) icon.textContent = (t === 'light') ? '☀️' : '🌙';
+  if(icon) icon.innerHTML = (t === 'light') ? '<svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="2.75"/><path d="M8 1.25v1.5M8 13.25v1.5M1.25 8h1.5M13.25 8h1.5M3.2 3.2l1.05 1.05M11.75 11.75l1.05 1.05M3.2 12.8l1.05-1.05M11.75 4.25l1.05-1.05"/></svg>' : '<svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13.25 9.6A5.75 5.75 0 0 1 6.4 2.75a5.75 5.75 0 1 0 6.85 6.85z"/></svg>';
 }
 function toggleTheme(){
   const cur = LS.getItem(STORE.theme) === 'light' ? 'light' : 'dark';
@@ -2677,8 +3177,8 @@ function renderProfileList(){
       <span class="pr-name">${escapeHtml(p.name)}</span>
       ${isCur?'<span class="pr-current-tag">Active</span>':`<span class="pr-meta">${known} marked</span>`}
       <span class="pr-actions">
-        <button class="pr-btn" title="Rename" onclick="event.stopPropagation();renameProfile('${p.id}')">✎</button>
-        ${profs.length>1?`<button class="pr-btn pr-del" title="Delete" onclick="event.stopPropagation();deleteProfile('${p.id}')">🗑</button>`:''}
+        <button class="pr-btn" title="Rename" onclick="event.stopPropagation();renameProfile('${p.id}')"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.5 2.5l3 3-8 8h-3v-3z"/><path d="M9 4l3 3"/></svg></button>
+        ${profs.length>1?`<button class="pr-btn pr-del" title="Delete" onclick="event.stopPropagation();deleteProfile('${p.id}')"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 4.25h11M6 4.25V2.5h4v1.75M4 4.25l.7 9.25h6.6l.7-9.25M6.75 6.75v4.5M9.25 6.75v4.5"/></svg></button>`:''}
       </span>
     </div>`;
   }).join('');
@@ -3006,6 +3506,836 @@ document.addEventListener('keydown', e=>{
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
+})();
+</script>
+<script id="tools-script">
+/* ===== TOOLS TAB (calculators + live diagrams) ===== */
+/* ===== TOOLS TAB (calculators + live diagrams) — Site 2: PcM / PjM / CE ===== */
+(function () {
+  "use strict";
+  const PID = "tools";
+  if (document.getElementById("tl-nav-tab") || document.getElementById(PID)) return;
+
+  /* ---------- helpers ---------- */
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fin = x => typeof x === "number" && isFinite(x);
+  const money = x => !fin(x) ? "—" : (x < -0.004 ? "−" : "") + "$" + Math.abs(x).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  const r2 = x => fin(x) ? x.toFixed(2) : "—";
+  const r3 = x => fin(x) ? x.toFixed(3) : "—";
+  const pc = (x, d) => fin(x) ? (x * 100).toFixed(d === undefined ? 1 : d) + "%" : "—";
+  const short = v => { const a = Math.abs(v); return a >= 1e6 ? (v / 1e6).toFixed(2) + "M" : a >= 1e3 ? (v / 1e3).toFixed(a >= 1e5 ? 0 : 1) + "k" : String(Math.round(v)); };
+
+  function fld(tool, k, label, val, o) {
+    o = o || {};
+    const type = o.type || "number";
+    return `<label class="tl-f ${o.cls || ""}"><span>${label}</span><input id="tl-${tool}-${o.id || k}" data-k="${k}" ${o.r !== undefined ? `data-r="${o.r}"` : ""} type="${type}"` +
+      `${type === "number" ? ' inputmode="decimal" step="any"' : ""} ${o.max ? `maxlength="${o.max}"` : ""} value="${val === "" || val == null ? "" : esc(val)}" ${o.ph ? `placeholder="${esc(o.ph)}"` : ""}></label>`;
+  }
+  /* parse a numeric field; push a problem into bads and return 0 when invalid */
+  function num(str, label, bads, neg) {
+    const s = String(str === undefined || str === null ? "" : str).trim();
+    if (s === "") return 0;
+    const v = Number(s);
+    if (!isFinite(v)) { bads.push(`${label} is not a number.`); return 0; }
+    if (v < 0 && !neg) { bads.push(`${label} can't be negative, so it is treated as 0.`); return 0; }
+    return v;
+  }
+  function res(tool, items) {
+    return `<dl class="tl-res">${items.map(i => `<div class="${i[3] || ""}"><dt>${i[1]}</dt><dd id="tl-${tool}-o-${i[0]}" data-o="${i[0]}">—</dd></div>`).join("")}</dl>`;
+  }
+  function setO(root, k, txt, raw) {
+    const e = root.querySelector(`[data-o="${k}"]`);
+    if (!e) return;
+    e.textContent = txt;
+    e.dataset.v = fin(raw) ? String(raw) : "";
+  }
+  function setNotes(root, arr) {
+    const ul = root.querySelector("[data-notes]");
+    if (!ul) return;
+    ul.innerHTML = arr.map(n => `<li class="tl-note tl-${n[0]}">${esc(n[1])}</li>`).join("");
+  }
+  const rdEl = (root, k) => root.querySelector(`[data-k="${k}"]:not([data-r])`);
+  function rd(root, k, bads, neg) {
+    const el = rdEl(root, k);
+    const lab = el && el.previousElementSibling ? el.previousElementSibling.textContent.replace(/\s*\(.*$/, "") : k;
+    const n0 = bads.length;
+    const v = num(el ? el.value : "", lab, bads, neg);
+    if (el) el.classList.toggle("tl-badin", bads.length > n0);
+    return v;
+  }
+
+  function card(o) {
+    return `<article class="tl-card ${o.wide ? "tl-wide" : ""}" data-divs="${o.divs.join(" ")}" id="tl-card-${o.id}">
+      <header class="tl-head"><h3>${o.title}</h3><div class="tl-tags">${o.divs.map(d => `<span class="tl-tag tl-d-${d.toLowerCase()}">${d}</span>`).join("")}</div></header>
+      <p class="tl-exam">${o.exam}</p>
+      <div class="tl-body" data-tool="${o.id}">${o.body}</div>
+      <details class="tl-how"><summary>How it works</summary><div class="tl-howbody" data-how></div></details>
+      <p class="tl-src">Source: ${o.source}</p>
+    </article>`;
+  }
+  const setHow = (root, html) => { const h = root.closest(".tl-card").querySelector("[data-how]"); if (h) h.innerHTML = html; };
+
+  /* ======================================================================
+     1. EARNED VALUE
+     ====================================================================== */
+  function evmCard() {
+    const body = `
+      <div class="tl-grid">
+        ${fld("evm", "bac", "Budget at completion, BAC ($)", 100000)}
+        ${fld("evm", "pv", "Planned value, PV ($)", 45000)}
+        ${fld("evm", "ev", "Earned value, EV ($)", 40000)}
+        ${fld("evm", "pct", "or % complete (fills EV)", "", { ph: "blank" })}
+        ${fld("evm", "ac", "Actual cost, AC ($)", 50000)}
+      </div>
+      ${res("evm", [["sv", "Schedule variance SV = EV − PV"], ["cv", "Cost variance CV = EV − AC"], ["spi", "SPI = EV ÷ PV"], ["cpi", "CPI = EV ÷ AC"], ["eac", "Estimate at completion EAC"], ["etc", "Estimate to complete ETC"], ["vac", "Variance at completion VAC"], ["tcpi", "TCPI (to hit BAC)"]])}
+      <ul class="tl-notes" data-notes></ul>
+      <svg class="tl-svg" data-svg viewBox="0 0 320 150" role="img" aria-label="Bar chart of planned value, earned value and actual cost against budget at completion"></svg>`;
+    return card({ id: "evm", title: "Earned value", divs: ["PjM"], exam: "Tells you if a project is ahead or behind schedule and over or under budget, using one set of dollar figures.", body, source: "AHPP 15th ed. Ch. 9.4 (SPI, CPI); PMI PMBOK earned value formulas (EAC = BAC ÷ CPI, TCPI). Wiki: firm-financials-metrics", how: 1 });
+  }
+  function evmWire(root) {
+    function calc() {
+      const bads = [];
+      const bac = rd(root, "bac", bads), pv = rd(root, "pv", bads), ac = rd(root, "ac", bads);
+      const pctEl = rdEl(root, "pct"), evEl = rdEl(root, "ev");
+      const pctStr = pctEl.value.trim();
+      let ev;
+      if (pctStr !== "") {
+        const p = rd(root, "pct", bads);
+        ev = bac * p / 100;
+        evEl.value = String(Math.round(ev * 100) / 100); evEl.readOnly = true;
+        if (p > 100) bads.push("% complete is over 100.");
+      } else { evEl.readOnly = false; ev = rd(root, "ev", bads); }
+      const sv = ev - pv, cv = ev - ac;
+      const spi = pv > 0 ? ev / pv : NaN, cpi = ac > 0 ? ev / ac : NaN;
+      const eac = cpi > 0 ? bac / cpi : NaN, etc = fin(eac) ? eac - ac : NaN, vac = fin(eac) ? bac - eac : NaN;
+      const tcpi = bac - ac > 0 ? (bac - ev) / (bac - ac) : NaN;
+      setO(root, "sv", money(sv), sv); setO(root, "cv", money(cv), cv);
+      setO(root, "spi", r3(spi), spi); setO(root, "cpi", r3(cpi), cpi);
+      setO(root, "eac", money(eac), eac); setO(root, "etc", money(etc), etc); setO(root, "vac", money(vac), vac); setO(root, "tcpi", r3(tcpi), tcpi);
+      const n = bads.map(b => ["warn", b]);
+      if (ev > bac && bac > 0) n.push(["warn", "EV is more than BAC. Check your numbers."]);
+      if (fin(spi)) n.push([spi < 0.995 ? "bad" : spi > 1.005 ? "ok" : "ok", spi < 0.995 ? `Behind schedule: SPI is ${r3(spi)}, below 1.0. Less work is done than planned.` : spi > 1.005 ? `Ahead of schedule: SPI is ${r3(spi)}.` : "On schedule: SPI is 1.0."]);
+      else n.push(["info", "Enter a planned value above 0 to see SPI."]);
+      if (fin(cpi)) n.push([cpi < 0.995 ? "bad" : "ok", cpi < 0.995 ? `Over budget: CPI is ${r3(cpi)}. Each $1 spent has earned ${money(cpi)} of work.` : cpi > 1.005 ? `Under budget: CPI is ${r3(cpi)}.` : "On budget: CPI is 1.0."]);
+      else n.push(["info", ac <= 0 ? "Enter an actual cost above 0 to see CPI." : "No earned value yet, so EAC can't be found."]);
+      if (!fin(tcpi) && bac > 0 && bac - ac <= 0) n.push(["bad", "The whole budget is already spent. TCPI can't be found."]);
+      else if (fin(tcpi) && tcpi > 1.005) n.push(["warn", `TCPI of ${r3(tcpi)} means the rest of the work must be done more efficiently than the budget assumed.`]);
+      setNotes(root, n);
+      draw(bac, pv, ev, ac);
+      setHow(root, `<p><b>SV</b> = EV − PV. <b>CV</b> = EV − AC. <b>SPI</b> = EV ÷ PV. <b>CPI</b> = EV ÷ AC. <b>EAC</b> = BAC ÷ CPI (assumes the cost trend continues). <b>ETC</b> = EAC − AC. <b>VAC</b> = BAC − EAC. <b>TCPI</b> = (BAC − EV) ÷ (BAC − AC). EV = BAC × % complete.</p>
+        <p class="tl-ex">With your numbers: SV = ${money(ev)} − ${money(pv)} = ${money(sv)}; CPI = ${money(ev)} ÷ ${money(ac)} = ${r3(cpi)}; EAC = ${money(bac)} ÷ ${r3(cpi)} = ${money(eac)}; TCPI = (${money(bac)} − ${money(ev)}) ÷ (${money(bac)} − ${money(ac)}) = ${r3(tcpi)}.</p>
+        <p>SPI below 1.0 means behind schedule. CPI below 1.0 means over budget. The Amber Book mixes these up on one card; AHPP governs (see wiki).</p>`);
+    }
+    function draw(bac, pv, ev, ac) {
+      const svg = root.querySelector("[data-svg]");
+      const B = 118, T = 20, mx = Math.max(bac, pv, ev, ac, 1) * 1.1, sc = v => (B - T) * Math.max(0, v) / mx;
+      const bars = [["PV", pv, "var(--pjm)"], ["EV", ev, "var(--ok)"], ["AC", ac, "var(--bad)"]];
+      let s = `<line x1="20" y1="${B}" x2="300" y2="${B}" stroke="currentColor" stroke-opacity=".4"/>`;
+      bars.forEach((b, i) => {
+        const x = 50 + i * 80, h = sc(b[1]);
+        s += `<rect x="${x}" y="${B - h}" width="50" height="${h}" rx="3" fill="${b[2]}" fill-opacity=".85"/><text x="${x + 25}" y="${B - h - 4}" text-anchor="middle" font-size="10" fill="currentColor">${short(b[1])}</text><text x="${x + 25}" y="${B + 14}" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">${b[0]}</text>`;
+      });
+      const yb = B - sc(bac);
+      s += `<line x1="20" y1="${yb}" x2="300" y2="${yb}" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="300" y="${yb - 3}" text-anchor="end" font-size="10" fill="var(--gold)">BAC ${short(bac)}</text>`;
+      svg.innerHTML = s;
+    }
+    root.addEventListener("input", calc);
+    calc();
+  }
+
+  /* ======================================================================
+     2. FIRM FINANCIAL METRICS
+     ====================================================================== */
+  function firmCard() {
+    const body = `
+      <div class="tl-grid">
+        ${fld("firm", "dse", "Direct salary expense, DSE ($)", 1000000)}
+        ${fld("firm", "tse", "Total salary expense ($)", 1600000)}
+        ${fld("firm", "oh", "Overhead = indirect expense ($)", 1500000)}
+        ${fld("firm", "nr", "Net revenue ($)", 3200000)}
+        ${fld("firm", "profit", "Profit ($)", 700000)}
+      </div>
+      ${res("firm", [["util", "Utilization rate = DSE ÷ total salary"], ["ohr", "Overhead rate = indirect ÷ DSE"], ["be", "Break-even multiplier = 1 + overhead rate"], ["nm", "Net multiplier = net revenue ÷ DSE"], ["pp", "Profit % of net revenue"]])}
+      <ul class="tl-notes" data-notes></ul>`;
+    return card({ id: "firm", title: "Firm financial metrics", divs: ["PcM"], exam: "Finds utilization, overhead rate, break-even and net multipliers, and profit from a firm's P&amp;L (profit and loss statement) numbers.", body, source: "AHPP 15th ed. (Student Ed.) Ch. 4.1 p. 188 and Ch. 4.3 p. 213, as recorded in wiki: firm-financials-metrics, firm-financial-statements" });
+  }
+  function firmWire(root) {
+    function calc() {
+      const bads = [];
+      const dse = rd(root, "dse", bads), tse = rd(root, "tse", bads), oh = rd(root, "oh", bads), nr = rd(root, "nr", bads), pr = rd(root, "profit", bads, true);
+      const util = tse > 0 ? dse / tse : NaN, ohr = dse > 0 ? oh / dse : NaN, be = fin(ohr) ? 1 + ohr : NaN, nm = dse > 0 ? nr / dse : NaN, pp = nr > 0 ? pr / nr : NaN;
+      setO(root, "util", r3(util), util); setO(root, "ohr", r3(ohr) + (fin(ohr) ? " (" + pc(ohr, 0) + ")" : ""), ohr);
+      setO(root, "be", r3(be), be); setO(root, "nm", r3(nm), nm); setO(root, "pp", pc(pp), pp);
+      const n = bads.map(b => ["warn", b]);
+      if (dse > tse && tse > 0) n.push(["warn", "DSE can't be more than total salary. Check the two salary numbers."]);
+      if (fin(util) && dse <= tse) n.push([util >= 0.6 && util <= 0.65 ? "ok" : "info", util >= 0.6 && util <= 0.65 ? "Utilization is inside the AHPP range where most profitable firms operate (0.60 to 0.65)." : util < 0.6 ? "Utilization is below 0.60, the AHPP range for most profitable firms (0.60 to 0.65)." : "Utilization is above 0.65. AHPP says most profitable firms run 0.60 to 0.65; some study aids quote higher, and AHPP governs."]);
+      if (fin(ohr)) n.push(["info", `AHPP: indirect expenses typically run 100% to 200% of DSE (overhead rate 1.0 to 2.0). Yours is ${pc(ohr, 0)}.`]);
+      if (fin(nm) && fin(be)) n.push([nm < be ? "bad" : "ok", nm < be ? "Net multiplier is below break-even. The firm loses money on every job at this rate." : `Net multiplier is above break-even by ${r2(nm - be)}. That gap is where profit comes from. Study aids call 3.0 to 4.0 a typical net (DSE) multiplier.`]);
+      if (fin(pp)) n.push(["info", `AHPP: average profit has been 7% to 8% of net revenue, more recently 11% to 12%, with 10% to 15% "reasonably attainable". Yours is ${pc(pp)}.`]);
+      if (nr > 0 && dse > 0) {
+        const implied = nr - dse - oh;
+        if (Math.abs(implied - pr) > Math.max(1, nr * 0.005)) n.push(["info", `Check: net revenue − DSE − overhead leaves ${money(implied)}, but you entered profit of ${money(pr)}. They should match.`]);
+      }
+      setNotes(root, n);
+      setHow(root, `<p><b>Utilization</b> = DSE ÷ total salary expense. <b>Overhead rate</b> = total indirect expense ÷ DSE. <b>Break-even multiplier</b> = 1 + overhead rate (the multiplier that covers direct pay plus overhead and no more). <b>Net multiplier</b> (same as DSE multiplier) = net revenue ÷ DSE. <b>Profit %</b> = profit ÷ net revenue. Net revenue is gross revenue less consultants and reimbursables.</p>
+        <p class="tl-ex">With your numbers: ${money(dse)} ÷ ${money(tse)} = ${r3(util)}; ${money(oh)} ÷ ${money(dse)} = ${r3(ohr)}; break-even = 1 + ${r3(ohr)} = ${r3(be)}; net multiplier = ${money(nr)} ÷ ${money(dse)} = ${r3(nm)}.</p>`);
+    }
+    root.addEventListener("input", calc);
+    calc();
+  }
+
+  /* ======================================================================
+     3. FEE BUILDER
+     ====================================================================== */
+  function feeCard() {
+    const body = `
+      <div data-rows></div>
+      <button type="button" class="tl-btn" data-add>+ Add staff row</button>
+      <div class="tl-grid">
+        ${fld("fee", "mult", "Multiplier (× direct salary)", 3)}
+        ${fld("fee", "reimb", "Reimbursables ($)", 5000)}
+        ${fld("fee", "cont", "Contingency (% of fee)", 5)}
+      </div>
+      ${res("fee", [["hours", "Total hours"], ["labor", "Labor cost (direct salary)"], ["fee", "Fee at multiplier"], ["contd", "Contingency"], ["reimbd", "Reimbursables"], ["total", "Total", "tl-strong"]])}
+      <h4 class="tl-sub">Phase split of the fee <span class="tl-faint">(typical, edit to suit)</span></h4>
+      <div class="tl-phases" data-phases></div>
+      <ul class="tl-notes" data-notes></ul>`;
+    return card({ id: "fee", title: "Fee builder", divs: ["PcM", "PjM"], exam: "Builds a fee from staff hours and a multiplier, the bottom-up method the exam compares with top-down and percentage fees.", body, source: "AHPP 15th ed. and Amber Book PjM cards 14, 67 as recorded in wiki: fee-structures-and-budgeting, firm-financials-metrics; B101 Art. 11 phases (SD, DD, CD, Bidding, CA)" });
+  }
+  function feeWire(root) {
+    const rows = [{ role: "Principal", h: 10, rate: 75 }, { role: "Project architect", h: 80, rate: 45 }, { role: "Designer", h: 200, rate: 32 }];
+    const phases = [["SD", "Schematic Design", 15], ["DD", "Design Development", 20], ["CD", "Construction Documents", 40], ["Bid", "Bidding", 5], ["CA", "Construction Administration", 20]];
+    const ph = phases.map(p => String(p[2]));
+    const rowsEl = root.querySelector("[data-rows]");
+    function draw() {
+      rowsEl.innerHTML = rows.map((r, i) => `<div class="tl-row"><div class="tl-rowhead">${fld("fee", "role", "Role", r.role, { type: "text", r: i, id: "r" + i + "-role", cls: "tl-grow", max: 40 })}<button type="button" class="tl-del" data-del="${i}" aria-label="Remove row ${i + 1}">✕</button></div>
+        <div class="tl-grid2">${fld("fee", "h", "Hours", r.h, { r: i, id: "r" + i + "-h" })}${fld("fee", "rate", "Direct salary rate ($/hr)", r.rate, { r: i, id: "r" + i + "-rate" })}</div></div>`).join("");
+      root.querySelector("[data-phases]").innerHTML = phases.map((p, i) => `<div class="tl-phrow"><label class="tl-f"><span>${p[0]} (${p[1]}) %</span><input id="tl-fee-ph${i}" data-ph="${i}" type="number" inputmode="decimal" step="any" value="${esc(ph[i])}"></label><b id="tl-fee-o-ph${i}" data-o="ph${i}">—</b></div>`).join("") + `<div class="tl-phrow tl-phtot"><span>Total</span><span><b id="tl-fee-o-phsum" data-o="phsum">—</b></span></div>`;
+    }
+    function calc() {
+      const bads = [];
+      let hours = 0, labor = 0;
+      rows.forEach((r, i) => { const h = num(r.h, `Row ${i + 1} hours`, bads), rt = num(r.rate, `Row ${i + 1} rate`, bads); hours += h; labor += h * rt; });
+      const mult = rd(root, "mult", bads), reimb = rd(root, "reimb", bads), cont = rd(root, "cont", bads);
+      const fee = labor * mult, contd = fee * cont / 100, total = fee + contd + reimb;
+      setO(root, "hours", hours.toLocaleString("en-US"), hours); setO(root, "labor", money(labor), labor); setO(root, "fee", money(fee), fee);
+      setO(root, "contd", money(contd), contd); setO(root, "reimbd", money(reimb), reimb); setO(root, "total", money(total), total);
+      let sum = 0;
+      ph.forEach((s, i) => { const p = num(s, `${phases[i][0]} percent`, bads); sum += p; setO(root, "ph" + i, money(fee * p / 100), fee * p / 100); });
+      setO(root, "phsum", sum.toFixed(1).replace(/\.0$/, "") + "%", sum);
+      const n = bads.map(b => ["warn", b]);
+      if (Math.abs(sum - 100) > 0.05) n.push(["warn", `Phase percentages add up to ${sum.toFixed(1).replace(/\.0$/, "")}%, not 100%.`]);
+      if (mult > 0 && mult < 2) n.push(["bad", "A multiplier below about 2 is under typical break-even (1 + overhead rate, usually 2.0 to 3.0). The firm would likely lose money."]);
+      else if (mult > 0) n.push(["info", "Study aids call a net (DSE) multiplier of 3.0 to 4.0 typical. One Amber Book card uses 3.5."]);
+      n.push(["info", "Phase percentages are placeholders. The wiki gives no standard B101 split, so edit them to suit the project."]);
+      setNotes(root, n);
+      setHow(root, `<p><b>Labor cost</b> = Σ (hours × direct salary rate). <b>Fee at multiplier</b> = labor cost × multiplier. <b>Contingency</b> = contingency % × fee. <b>Total</b> = fee + contingency + reimbursables (reimbursables are billed at cost, not multiplied). Each phase amount = phase % × fee at multiplier. B101 Art. 11 lets the parties pay a stipulated sum by phase milestone (SD, DD, CD, Bidding, CA).</p>
+        <p class="tl-ex">With your numbers: labor ${money(labor)} × ${mult} = ${money(fee)}; + contingency ${money(contd)} + reimbursables ${money(reimb)} = ${money(total)}.</p>`);
+    }
+    root.addEventListener("input", e => {
+      const t = e.target;
+      if (t.dataset.r !== undefined) { const r = rows[+t.dataset.r]; const k = t.dataset.k; if (r) r[k === "role" ? "role" : k] = t.value; }
+      else if (t.dataset.ph !== undefined) ph[+t.dataset.ph] = t.value;
+      calc();
+    });
+    root.addEventListener("click", e => {
+      const d = e.target.closest("[data-del]"), a = e.target.closest("[data-add]");
+      if (d && rows.length > 1) { rows.splice(+d.dataset.del, 1); draw(); calc(); }
+      if (a) { rows.push({ role: "Staff", h: 0, rate: 0 }); draw(); calc(); }
+    });
+    draw(); calc();
+  }
+
+  /* ======================================================================
+     4. PAY APPLICATION
+     ====================================================================== */
+  function payCard() {
+    const body = `
+      <div data-rows></div>
+      <button type="button" class="tl-btn" data-add>+ Add schedule-of-values row</button>
+      <div class="tl-grid">
+        ${fld("pay", "r1", "Retainage on completed work (%)", 10)}
+        ${fld("pay", "r2", "Retainage on stored materials (%)", 5)}
+        ${fld("pay", "prevcert", "Less previous certificates ($)", "", { ph: "blank = estimate" })}
+      </div>
+      <h4 class="tl-sub">G702 summary</h4>
+      ${res("pay", [["l1", "1. Original contract sum"], ["l2", "2. Net change by change orders"], ["l3", "3. Contract sum to date"], ["l4", "4. Total completed and stored to date"], ["l5a", "5a. Retainage on completed work"], ["l5b", "5b. Retainage on stored material"], ["l5", "5. Total retainage"], ["l6", "6. Total earned less retainage"], ["l7", "7. Less previous certificates"], ["l8", "8. Current payment due", "tl-strong"], ["l9", "9. Balance to finish, including retainage"]])}
+      <ul class="tl-notes" data-notes></ul>`;
+    return card({ id: "pay", title: "Pay application (G702 / G703)", divs: ["CE"], exam: "Fills in a G703 schedule of values and the G702 summary so you can check retainage and the amount the architect certifies.", body, wide: true, source: "AIA G702-1992 / G703-1992 line layout; retainage rates 10% work in place, 5% stored (wiki: construction-administration, from Pro_Practice_Notes_Part2; Amber Book PjM cards 132, 144 give 5% to 10%)" });
+  }
+  function payWire(root) {
+    const rows = [
+      { d: "General conditions", c: 50000, p: 20000, t: 5000, s: 0, co: false },
+      { d: "Concrete", c: 120000, p: 60000, t: 30000, s: 0, co: false },
+      { d: "Structural steel", c: 200000, p: 80000, t: 40000, s: 25000, co: false },
+      { d: "Change order 1: added scope", c: 10000, p: 0, t: 4000, s: 0, co: true }
+    ];
+    const rowsEl = root.querySelector("[data-rows]");
+    let rowOut = [];
+    function draw() {
+      rowsEl.innerHTML = rows.map((r, i) => `<div class="tl-row"><div class="tl-rowhead">${fld("pay", "d", "Description", r.d, { type: "text", r: i, id: "r" + i + "-d", cls: "tl-grow", max: 50 })}
+        <label class="tl-chk"><input type="checkbox" id="tl-pay-r${i}-co" data-k="co" data-r="${i}" ${r.co ? "checked" : ""}> CO row</label><button type="button" class="tl-del" data-del="${i}" aria-label="Remove row ${i + 1}">✕</button></div>
+        <div class="tl-grid4">${fld("pay", "c", "C. Scheduled value", r.c, { r: i, id: "r" + i + "-c" })}${fld("pay", "p", "D. Previous work", r.p, { r: i, id: "r" + i + "-p" })}${fld("pay", "t", "E. This period", r.t, { r: i, id: "r" + i + "-t" })}${fld("pay", "s", "F. Stored materials", r.s, { r: i, id: "r" + i + "-s" })}</div>
+        <p class="tl-rowout" data-ro="${i}"></p></div>`).join("");
+    }
+    function calc() {
+      const bads = [];
+      let orig = 0, co = 0, work = 0, stored = 0, prevWork = 0;
+      const rw = rows.map((r, i) => {
+        const c = num(r.c, `Row ${i + 1} scheduled value`, bads, true), p = num(r.p, `Row ${i + 1} previous work`, bads), t = num(r.t, `Row ${i + 1} this period`, bads), s = num(r.s, `Row ${i + 1} stored materials`, bads);
+        if (r.co) co += c; else orig += c;
+        work += p + t; stored += s; prevWork += p;
+        return { c, g: p + t + s, p, t, s };
+      });
+      const r1 = rd(root, "r1", bads), r2 = rd(root, "r2", bads);
+      const pcEl = rdEl(root, "prevcert");
+      const l3 = orig + co, l4 = work + stored, l5a = work * r1 / 100, l5b = stored * r2 / 100, l5 = l5a + l5b, l6 = l4 - l5;
+      let l7, est = false;
+      if (pcEl.value.trim() === "") { l7 = prevWork * (1 - r1 / 100); est = true; } else l7 = rd(root, "prevcert", bads);
+      const l8 = l6 - l7, l9 = l3 - l6;
+      setO(root, "l1", money(orig), orig); setO(root, "l2", money(co), co); setO(root, "l3", money(l3), l3); setO(root, "l4", money(l4), l4);
+      setO(root, "l5a", money(l5a), l5a); setO(root, "l5b", money(l5b), l5b); setO(root, "l5", money(l5), l5); setO(root, "l6", money(l6), l6);
+      setO(root, "l7", money(l7) + (est ? " (est.)" : ""), l7); setO(root, "l8", money(l8), l8); setO(root, "l9", money(l9), l9);
+      const n = bads.map(b => ["warn", b]);
+      rw.forEach((r, i) => {
+        const el = rowsEl.querySelector(`[data-ro="${i}"]`);
+        if (el) el.innerHTML = `G. Completed and stored: <b>${money(r.g)}</b> · H. ${r.c ? pc(r.g / r.c, 1) : "—"} · I. Balance to finish: <b>${money(r.c - r.g)}</b>`;
+        if (r.c >= 0 && r.g > r.c + 0.005) n.push(["warn", `Row ${i + 1} (${rows[i].d || "no name"}): completed and stored is more than the scheduled value.`]);
+      });
+      if (est) n.push(["info", "Previous certificates are estimated as previous work less retainage. Type line 8 from your last G702 for an exact figure."]);
+      if (l8 < -0.005) n.push(["bad", "Current payment due is negative. Check previous certificates and this period's work."]);
+      if (r1 > 100 || r2 > 100) n.push(["warn", "A retainage rate is over 100%."]);
+      setNotes(root, n);
+      setHow(root, `<p><b>G703:</b> G = D + E + F (completed and stored to date); H = G ÷ C; I = C − G. <b>G702:</b> line 1 = original contract sum; line 2 = net change orders; 3 = 1 + 2; 4 = total of G703 column G; 5a = retainage % × (D + E); 5b = stored-material retainage % × F; 5 = 5a + 5b; 6 = 4 − 5; 7 = line 6 of the last certified G702; 8 = 6 − 7 (what the architect certifies this time); 9 = 3 − 6. Tick "CO row" for approved change-order lines so they count in line 2, not line 1.</p>
+        <p class="tl-ex">With your numbers: line 4 = ${money(work)} + ${money(stored)} = ${money(l4)}; retainage = ${r1}% × ${money(work)} + ${r2}% × ${money(stored)} = ${money(l5)}; line 6 = ${money(l6)}; line 8 = ${money(l6)} − ${money(l7)} = ${money(l8)}.</p>`);
+    }
+    root.addEventListener("input", e => {
+      const t = e.target;
+      if (t.dataset.r !== undefined) { const r = rows[+t.dataset.r]; if (r) { const k = t.dataset.k; if (k === "co") r.co = t.checked; else r[k] = t.value; } }
+      calc();
+    });
+    root.addEventListener("click", e => {
+      const d = e.target.closest("[data-del]"), a = e.target.closest("[data-add]");
+      if (d && rows.length > 1) { rows.splice(+d.dataset.del, 1); draw(); calc(); }
+      if (a) { rows.push({ d: "New item", c: 0, p: 0, t: 0, s: 0, co: false }); draw(); calc(); }
+    });
+    draw(); calc();
+  }
+
+  /* ======================================================================
+     5. CHANGE ORDER TRACKER
+     ====================================================================== */
+  function coCard() {
+    const body = `
+      <div class="tl-grid">
+        ${fld("co", "orig", "Original contract sum ($)", 1000000)}
+        ${fld("co", "days", "Original contract time (days)", 300)}
+        ${fld("co", "start", "Start date", "2027-01-04", { type: "date" })}
+      </div>
+      <div data-rows></div>
+      <button type="button" class="tl-btn" data-add>+ Add change order</button>
+      ${res("co", [["net", "Net change in sum"], ["sum", "Contract sum to date", "tl-strong"], ["pct", "Change from original"], ["dnet", "Net change in time (days)"], ["time", "Contract time to date (days)"], ["end0", "Original completion date"], ["end", "New completion date", "tl-strong"]])}
+      <ul class="tl-notes" data-notes></ul>`;
+    return card({ id: "co", title: "Change order tracker", divs: ["CE"], exam: "Adds up change orders to get the new contract sum and the new completion date.", body, source: "AIA A201-2017 §7.2 (a change order states the change in the work, the adjustment to the Contract Sum and to the Contract Time) and §8.1.1; wiki: construction-administration" });
+  }
+  function coWire(root) {
+    const rows = [{ d: "CO 1: added storefront", a: 25000, t: 5 }, { d: "CO 2: deleted landscape", a: -8000, t: 0 }, { d: "CO 3: owner-requested upgrade", a: 40000, t: 10 }];
+    const rowsEl = root.querySelector("[data-rows]");
+    function draw() {
+      rowsEl.innerHTML = rows.map((r, i) => `<div class="tl-row"><div class="tl-rowhead">${fld("co", "d", "Change order", r.d, { type: "text", r: i, id: "r" + i + "-d", cls: "tl-grow", max: 50 })}<button type="button" class="tl-del" data-del="${i}" aria-label="Remove change order ${i + 1}">✕</button></div>
+        <div class="tl-grid2">${fld("co", "a", "Amount (+ or −, $)", r.a, { r: i, id: "r" + i + "-a" })}${fld("co", "t", "Days (+ or −)", r.t, { r: i, id: "r" + i + "-t" })}</div></div>`).join("");
+    }
+    const fmtDate = ms => new Date(ms).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
+    function calc() {
+      const bads = [];
+      const orig = rd(root, "orig", bads), days = rd(root, "days", bads);
+      let net = 0, dn = 0;
+      rows.forEach((r, i) => { net += num(r.a, `Change order ${i + 1} amount`, bads, true); dn += num(r.t, `Change order ${i + 1} days`, bads, true); });
+      const sum = orig + net, pct = orig > 0 ? net / orig : NaN, tdays = days + dn;
+      const st = rdEl(root, "start").value;
+      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(st);
+      const ms0 = m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : NaN;
+      const e0 = fin(ms0) ? ms0 + days * 864e5 : NaN, e1 = fin(ms0) ? ms0 + tdays * 864e5 : NaN;
+      setO(root, "net", money(net), net); setO(root, "sum", money(sum), sum); setO(root, "pct", fin(pct) ? (pct >= 0 ? "+" : "−") + pc(Math.abs(pct), 2) : "—", pct);
+      setO(root, "dnet", (dn > 0 ? "+" : dn < 0 ? "−" : "") + Math.abs(dn), dn); setO(root, "time", String(tdays), tdays);
+      setO(root, "end0", fin(e0) ? fmtDate(e0) : "—", e0); setO(root, "end", fin(e1) ? fmtDate(e1) : "—", e1);
+      const n = bads.map(b => ["warn", b]);
+      if (!fin(ms0)) n.push(["info", "Pick a start date to see completion dates."]);
+      if (tdays < 0) n.push(["bad", "Contract time to date is negative. Check the day changes."]);
+      if (sum < 0) n.push(["bad", "Contract sum to date is negative. Check the amounts."]);
+      if (fin(pct) && Math.abs(pct) > 0.1) n.push(["warn", "Changes are more than 10% of the original sum. Large totals often point to incomplete documents."]);
+      setNotes(root, n);
+      setHow(root, `<p><b>Contract sum to date</b> = original sum + Σ change-order amounts. <b>% change</b> = net change ÷ original sum. <b>Contract time to date</b> = original days + Σ day changes. <b>New completion date</b> = start date + contract time to date, counted in calendar days. Only fully signed change orders belong here; a construction change directive (CCD) is not counted until it becomes a change order.</p>
+        <p class="tl-ex">With your numbers: ${money(orig)} + ${money(net)} = ${money(sum)} (${fin(pct) ? pc(pct, 2) : "—"}); ${days} + ${dn} = ${tdays} days.</p>`);
+    }
+    root.addEventListener("input", e => {
+      const t = e.target;
+      if (t.dataset.r !== undefined) { const r = rows[+t.dataset.r]; if (r) r[t.dataset.k] = t.value; }
+      calc();
+    });
+    root.addEventListener("click", e => {
+      const d = e.target.closest("[data-del]"), a = e.target.closest("[data-add]");
+      if (d && rows.length > 1) { rows.splice(+d.dataset.del, 1); draw(); calc(); }
+      if (a) { rows.push({ d: "New change order", a: 0, t: 0 }); draw(); calc(); }
+    });
+    draw(); calc();
+  }
+
+  /* ======================================================================
+     6. CPM NETWORK
+     ====================================================================== */
+  function cpmCard() {
+    const body = `
+      <div class="tl-btnrow"><button type="button" class="tl-btn" data-preset>Load example</button><button type="button" class="tl-btn" data-add>+ Add activity</button></div>
+      <p class="tl-hint">Predecessors: type activity IDs separated by commas, for example <code>B, C</code>. Leave blank for a starting activity.</p>
+      <div data-rows></div>
+      ${res("cpm", [["dur", "Project duration (days)", "tl-strong"], ["path", "Critical path"]])}
+      <ul class="tl-notes" data-notes></ul>
+      <div class="tl-svgwrap"><svg class="tl-svg" data-svg role="img" aria-label="Activity-on-node network diagram with the critical path in gold"></svg></div>
+      <p class="tl-legend"><span class="tl-key tl-keyc"></span> critical path (gold, float 0) · each box: ID and duration, ES/EF (early start/finish), LS/LF (late start/finish), and total float (days an activity can slip without delaying the finish)</p>`;
+    return card({ id: "cpm", title: "CPM network", divs: ["PjM"], exam: "Runs the forward and backward pass of the critical path method (CPM) and shows which activities have float.", body, wide: true, source: "Critical path method as described in wiki: project-scheduling-and-management (critical path, total float); forward/backward pass is the standard CPM algorithm (PMI PMBOK)" });
+  }
+  function cpmCompute(rows) {
+    const err = [], acts = [], ids = new Set();
+    rows.forEach((r, i) => {
+      const id = String(r.id || "").trim().toUpperCase();
+      if (!id) { err.push(`Row ${i + 1} has no ID.`); return; }
+      if (ids.has(id)) { err.push(`ID ${id} is used twice.`); return; }
+      ids.add(id);
+      const ds = String(r.dur === undefined ? "" : r.dur).trim(), d = ds === "" ? NaN : Number(ds);
+      if (!isFinite(d) || d < 0) err.push(`Activity ${id} needs a duration of 0 or more days.`);
+      acts.push({ id, dur: isFinite(d) && d >= 0 ? d : 0, preds: [...new Set(String(r.pred || "").toUpperCase().split(/[\s,;]+/).filter(Boolean))] });
+    });
+    acts.forEach(a => a.preds.forEach(p => {
+      if (p === a.id) err.push(`${a.id} can't be its own predecessor.`);
+      else if (!ids.has(p)) err.push(`${a.id} lists predecessor "${p}", which is not in the table.`);
+    }));
+    if (err.length) return { err };
+    if (!acts.length) return { err: ["Add at least one activity."] };
+    const by = {}; acts.forEach(a => { by[a.id] = a; a.succ = []; });
+    acts.forEach(a => a.preds.forEach(p => by[p].succ.push(a.id)));
+    const indeg = {}; acts.forEach(a => indeg[a.id] = a.preds.length);
+    const q = acts.filter(a => indeg[a.id] === 0).map(a => a.id), order = [];
+    while (q.length) { const id = q.shift(); order.push(id); by[id].succ.forEach(s => { if (--indeg[s] === 0) q.push(s); }); }
+    if (order.length < acts.length) {
+      const left = acts.filter(a => !order.includes(a.id)).map(a => a.id);
+      return { err: [`These activities form a loop, so no schedule is possible: ${left.join(", ")}. Remove one predecessor link to break the loop.`] };
+    }
+    order.forEach(id => { const a = by[id]; a.es = a.preds.length ? Math.max(...a.preds.map(p => by[p].ef)) : 0; a.ef = a.es + a.dur; a.lvl = a.preds.length ? Math.max(...a.preds.map(p => by[p].lvl)) + 1 : 0; });
+    const end = Math.max(...acts.map(a => a.ef));
+    order.slice().reverse().forEach(id => { const a = by[id]; a.lf = a.succ.length ? Math.min(...a.succ.map(s => by[s].ls)) : end; a.ls = a.lf - a.dur; a.fl = a.ls - a.es; a.crit = Math.abs(a.fl) < 1e-9; });
+    const drive = (p, s) => by[p].crit && by[s].crit && Math.abs(by[p].ef - by[s].es) < 1e-9;
+    const starts = acts.filter(a => a.crit && !a.preds.some(p => drive(p, a.id))), paths = [];
+    (function walk(id, path) {
+      if (paths.length > 8) return;
+      const nx = by[id].succ.filter(s => drive(id, s));
+      if (!nx.length) paths.push(path.concat(id)); else nx.forEach(s => walk(s, path.concat(id)));
+    })(starts.length ? starts[0].id : acts[0].id, []);
+    starts.slice(1).forEach(s => (function walk(id, path) {
+      if (paths.length > 8) return;
+      const nx = by[id].succ.filter(x => drive(id, x));
+      if (!nx.length) paths.push(path.concat(id)); else nx.forEach(x => walk(x, path.concat(id)));
+    })(s.id, []));
+    return { acts, by, end, paths, drive };
+  }
+  function cpmWire(root) {
+    const PRESET = [{ id: "A", dur: 3, pred: "" }, { id: "B", dur: 4, pred: "A" }, { id: "C", dur: 2, pred: "A" }, { id: "D", dur: 2, pred: "B" }, { id: "E", dur: 2, pred: "C" }, { id: "F", dur: 3, pred: "D, E" }];
+    let rows = PRESET.map(r => Object.assign({}, r));
+    const rowsEl = root.querySelector("[data-rows]");
+    function draw() {
+      rowsEl.innerHTML = rows.map((r, i) => `<div class="tl-row tl-cpmrow"><div class="tl-rowhead">${fld("cpm", "id", "ID", r.id, { type: "text", r: i, id: "r" + i + "-id", max: 6, cls: "tl-w60" })}${fld("cpm", "dur", "Days", r.dur, { r: i, id: "r" + i + "-dur", cls: "tl-w80" })}${fld("cpm", "pred", "Predecessors", r.pred, { type: "text", r: i, id: "r" + i + "-pred", cls: "tl-grow", max: 40 })}<button type="button" class="tl-del" data-del="${i}" aria-label="Remove activity ${i + 1}">✕</button></div></div>`).join("");
+    }
+    function calc() {
+      const out = cpmCompute(rows), svg = root.querySelector("[data-svg]");
+      if (out.err) {
+        setO(root, "dur", "—"); setO(root, "path", "—");
+        setNotes(root, out.err.map(e => ["bad", e]));
+        svg.innerHTML = ""; svg.removeAttribute("viewBox"); svg.style.display = "none";
+        setHow(root, "<p>Fix the problem above to see the schedule.</p>");
+        return;
+      }
+      svg.style.display = "";
+      const { acts, by, end, paths, drive } = out;
+      const ptxt = paths.length ? paths.map(p => p.join("-")).join("  or  ") : "—";
+      setO(root, "dur", String(end), end); setO(root, "path", ptxt);
+      const notes = [];
+      const fl = acts.filter(a => !a.crit);
+      if (fl.length) notes.push(["info", "Float: " + fl.map(a => `${a.id} has ${a.fl} day${a.fl === 1 ? "" : "s"}`).join(", ") + "."]);
+      else notes.push(["info", "Every activity is critical. Any delay moves the finish date."]);
+      notes.push(["ok", `Critical path ${ptxt} takes ${end} days. A delay on it delays the project day for day.`]);
+      setNotes(root, notes);
+      // layout
+      const w = 92, h = 66, gx = 40, gy = 18, pad = 10;
+      const cols = Math.max(...acts.map(a => a.lvl)) + 1, cnt = new Array(cols).fill(0);
+      acts.forEach(a => { a.idx = cnt[a.lvl]++; });
+      const maxN = Math.max(...cnt), H = maxN * h + (maxN - 1) * gy + pad * 2, W = cols * w + (cols - 1) * gx + pad * 2;
+      acts.forEach(a => { a.x = pad + a.lvl * (w + gx); a.y = pad + (maxN - cnt[a.lvl]) * (h + gy) / 2 + a.idx * (h + gy); });
+      let s = `<defs><marker id="tl-arr-n" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--muted)"/></marker><marker id="tl-arr-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--gold)"/></marker></defs>`;
+      const edge = (p, c, crit) => {
+        const a = by[p], b = by[c], x1 = a.x + w, y1 = a.y + h / 2, x2 = b.x, y2 = b.y + h / 2, dx = (x2 - x1) / 2;
+        return `<path d="M${x1} ${y1} C${x1 + dx} ${y1} ${x2 - dx} ${y2} ${x2 - 1} ${y2}" fill="none" ${crit ? 'stroke="var(--gold)" stroke-width="3" marker-end="url(#tl-arr-g)"' : 'stroke="var(--muted)" stroke-width="1.4" marker-end="url(#tl-arr-n)"'}/>`;
+      };
+      acts.forEach(a => a.preds.forEach(p => { if (!drive(p, a.id)) s += edge(p, a.id, false); }));
+      acts.forEach(a => a.preds.forEach(p => { if (drive(p, a.id)) s += edge(p, a.id, true); }));
+      acts.forEach(a => {
+        s += `<g data-id="${esc(a.id)}" data-float="${a.fl}" data-es="${a.es}" data-ef="${a.ef}" data-ls="${a.ls}" data-lf="${a.lf}" data-crit="${a.crit ? 1 : 0}" transform="translate(${a.x},${a.y})">
+          <rect width="${w}" height="${h}" rx="7" style="fill:${a.crit ? "var(--gold-bg)" : "var(--surface2)"}" stroke="${a.crit ? "var(--gold)" : "var(--border2)"}" stroke-width="${a.crit ? 2.5 : 1.2}"/>
+          <text x="${w / 2}" y="15" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">${esc(a.id)} · ${a.dur}d</text>
+          <text x="6" y="31" font-size="10" fill="currentColor">ES ${a.es}</text><text x="${w - 6}" y="31" text-anchor="end" font-size="10" fill="currentColor">EF ${a.ef}</text>
+          <text x="6" y="44" font-size="10" fill="currentColor">LS ${a.ls}</text><text x="${w - 6}" y="44" text-anchor="end" font-size="10" fill="currentColor">LF ${a.lf}</text>
+          <text x="${w / 2}" y="59" text-anchor="middle" font-size="10.5" font-weight="700" style="fill:${a.crit ? "var(--gold)" : "var(--ok)"}">float ${a.fl}</text></g>`;
+      });
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      svg.style.minWidth = Math.min(W, 460) + "px"; svg.style.width = "100%";
+      svg.innerHTML = s;
+      const ex = acts.slice(0, 2).map(a => `${a.id}: ES ${a.es} + ${a.dur} = EF ${a.ef}; LS ${a.ls}, LF ${a.lf}; float = LS − ES = ${a.fl}`).join(" · ");
+      setHow(root, `<p><b>Forward pass:</b> ES (early start) = the latest EF (early finish) of the predecessors, or 0; EF = ES + duration. <b>Backward pass:</b> LF (late finish) = the earliest LS (late start) of the successors, or the project end; LS = LF − duration. <b>Total float</b> = LS − ES. Activities with float 0 are critical; the longest chain of them is the critical path.</p><p class="tl-ex">With your numbers: ${esc(ex)}. Project end = ${end} days.</p>`);
+    }
+    root.addEventListener("input", e => {
+      const t = e.target;
+      if (t.dataset.r !== undefined) { const r = rows[+t.dataset.r]; if (r) r[t.dataset.k] = t.value; }
+      calc();
+    });
+    root.addEventListener("click", e => {
+      const d = e.target.closest("[data-del]"), a = e.target.closest("[data-add]"), p = e.target.closest("[data-preset]");
+      if (d && rows.length > 1) { rows.splice(+d.dataset.del, 1); draw(); calc(); }
+      if (a) { rows.push({ id: String.fromCharCode(65 + (rows.length % 26)), dur: 1, pred: "" }); draw(); calc(); }
+      if (p) { rows = PRESET.map(r => Object.assign({}, r)); draw(); calc(); }
+    });
+    draw(); calc();
+  }
+
+  /* ======================================================================
+     7. DELIVERY METHOD EXPLORER
+     ====================================================================== */
+  const DM = {
+    dbb: {
+      name: "DBB", full: "Design-bid-build",
+      boxes: [["o", "Owner", 200, 30], ["a", "Architect", 70, 175], ["c", "Contractor", 330, 175]],
+      lines: [["o", "a", "s"], ["o", "c", "s"], ["a", "c", "d"]],
+      t: [["Owner contracts", "2 (one with the architect, one with the contractor)"], ["Price fixed", "At bid, after the contract documents are complete"], ["Cost risk", "Contractor under a fixed price; the owner carries the risk of change orders from incomplete documents"], ["Fast-track possible", "Not in the plain linear sequence. Fast-track needs staged bidding and a CM"], ["Typical use", "The ARE default. Almost always used on public projects, where open bidding and low price matter"]]
+    },
+    cma: {
+      name: "CMa", full: "CM as agent",
+      boxes: [["o", "Owner", 200, 28], ["cm", "CM (agent)", 200, 102], ["a", "Architect", 70, 178], ["c", "Contractor", 330, 178]],
+      lines: [["o", "a", "s"], ["o", "cm", "s"], ["o", "c", "s"], ["cm", "a", "d"], ["cm", "c", "d"], ["a", "c", "d"]],
+      t: [["Owner contracts", "3 as drawn here (architect, CM, contractor). The wiki notes one Amber Book card draws the CM holding the architect and contractor contracts; sources differ"], ["Price fixed", "When the contractor is bid or hired, as in DBB. The CM advises and does not build"], ["Cost risk", "Owner. The CM is an agent and does not guarantee the price"], ["Fast-track possible", "Yes. Fast-track needs a CM and staged bidding"], ["Typical use", "Owner wants an expert advocate to lower owner risk and keep time and budget on track, at a higher cost"]]
+    },
+    cmar: {
+      name: "CMAR", full: "CM at risk (CM as constructor)",
+      boxes: [["o", "Owner", 200, 28], ["a", "Architect", 75, 125], ["cm", "CM at risk", 325, 125], ["t", "Trade contractors", 325, 205]],
+      lines: [["o", "a", "s"], ["o", "cm", "s"], ["cm", "t", "s"], ["a", "cm", "d"]],
+      t: [["Owner contracts", "2 (architect and CM). The CM replaces the general contractor"], ["Price fixed", "A GMP (guaranteed maximum price), typically set by the end of schematic design. Wiki: confirm timing against A133"], ["Cost risk", "CM, above the GMP. The CM also has a built-in conflict: it can raise profit by pushing cost up or quality down"], ["Fast-track possible", "Yes. Fastest schedule for the owner"], ["Typical use", "Time-driven projects where the owner wants the builder on the team early"]]
+    },
+    db: {
+      name: "Design-build", full: "Design-build",
+      boxes: [["o", "Owner", 200, 28], ["a", "Architect", 135, 175], ["c", "Contractor", 275, 175]],
+      groups: [["g", "Design-builder (one entity or JV)", 55, 100, 290, 110, 200, 100]],
+      lines: [["o", "g", "s"], ["a", "c", "s"]],
+      t: [["Owner contracts", "1 (with the design-builder)"], ["Price fixed", "Before the design is complete"], ["Cost risk", "Design-builder. The owner has no independent agent, so quality oversight is reduced"], ["Fast-track possible", "Yes. Design and construction overlap, giving a faster schedule"], ["Typical use", "Owner wants lower cost and risk and a fast schedule, and accepts less independent quality oversight"]]
+    },
+    bridge: {
+      name: "Bridging", full: "Design-build with bridging architect",
+      boxes: [["o", "Owner", 215, 28], ["ba", "Bridging architect", 85, 105], ["pa", "Production architect", 250, 175], ["c", "Contractor", 370, 175]],
+      groups: [["g", "Design-builder", 175, 135, 250, 90, 300, 135]],
+      lines: [["o", "ba", "s"], ["o", "g", "s"], ["ba", "pa", "d"], ["pa", "c", "s"]],
+      vb: "0 0 440 235",
+      t: [["Owner contracts", "2 (the bridging architect and the design-builder)"], ["Price fixed", "At the design-build contract, usually awarded to the lowest responsible bidder on the bridging documents"], ["Cost risk", "Design-builder, once hired"], ["Fast-track possible", "Faster than DBB but slower than plain design-build"], ["Typical use", "Owner wants design-build speed but an independent architect to guard design intent. Hand-off is at about 35% of design or end of SD (sources differ)"]]
+    },
+    ipd: {
+      name: "IPD", full: "Integrated project delivery",
+      boxes: [["o", "Owner", 220, 55], ["a", "Architect", 105, 155], ["c", "Contractor", 335, 155], ["m", "One multi-party agreement", 220, 112]],
+      ring: [220, 110, 200, 88],
+      lines: [["o", "m", "s"], ["a", "m", "s"], ["c", "m", "s"], ["a", "c", "d"]],
+      vb: "0 0 440 235",
+      t: [["Owner contracts", "1 multi-party agreement (owner, architect, contractor)"], ["Price fixed", "No single bid price. Parties share a common pool, with bonuses tied to budget, schedule and performance"], ["Cost risk", "Shared by owner, architect and contractor"], ["Fast-track possible", "Wiki does not say. The team works together from the start"], ["Typical use", "Large, complex projects, usually with BIM. Variants: single purpose entity, project alliance, relational contract"]]
+    }
+  };
+  function dmSvg(m) {
+    const bw = lab => Math.max(88, lab.length * 6.6 + 18), bh = 34;
+    const box = {}; m.boxes.forEach(b => { box[b[0]] = { id: b[0], lab: b[1], x: b[2], y: b[3], w: bw(b[1]), h: bh }; });
+    (m.groups || []).forEach(g => { box[g[0]] = { id: g[0], lab: g[1], x: g[2] + g[4] / 2, y: g[3] + g[5] / 2, w: g[4], h: g[5], ax: g[6], ay: g[7], grp: true, gx: g[2], gy: g[3] }; });
+    const pt = id => { const b = box[id]; return b.grp ? [b.ax, b.ay] : [b.x, b.y]; };
+    let s = `<defs></defs>`;
+    if (m.ring) s += `<ellipse cx="${m.ring[0]}" cy="${m.ring[1]}" rx="${m.ring[2]}" ry="${m.ring[3]}" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-dasharray="7 5"/><text x="${m.ring[0]}" y="${m.ring[1] + m.ring[3] + 16}" text-anchor="middle" font-size="11" style="fill:var(--gold)">shared risk and reward</text>`;
+    Object.values(box).filter(b => b.grp).forEach(b => {
+      s += `<rect x="${b.gx}" y="${b.gy}" width="${b.w}" height="${b.h}" rx="10" style="fill:var(--surface2)" stroke="var(--gold)" stroke-width="2" stroke-dasharray="6 4"/><text x="${b.gx + 10}" y="${b.gy + 16}" font-size="11" fill="currentColor" font-weight="600">${esc(b.lab)}</text>`;
+    });
+    m.lines.forEach(l => {
+      const p = pt(l[0]), q = pt(l[1]);
+      s += `<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" ${l[2] === "s" ? 'stroke="currentColor" stroke-width="2.4"' : 'stroke="var(--muted)" stroke-width="1.8" stroke-dasharray="6 5"'}/>`;
+    });
+    Object.values(box).filter(b => !b.grp).forEach(b => {
+      const mid = b.id === "m";
+      s += `<rect x="${b.x - b.w / 2}" y="${b.y - b.h / 2}" width="${b.w}" height="${b.h}" rx="${mid ? 17 : 7}" style="fill:${mid ? "var(--gold-bg)" : "var(--surface)"}" stroke="${mid ? "var(--gold)" : "currentColor"}" stroke-width="1.6"/><text x="${b.x}" y="${b.y + 4}" text-anchor="middle" font-size="11.5" font-weight="600" fill="currentColor">${esc(b.lab)}</text>`;
+    });
+    return s;
+  }
+  function delCard() {
+    const body = `
+      <div class="tl-seg" role="group" aria-label="Delivery method" data-seg>${Object.keys(DM).map((k, i) => `<button type="button" id="tl-del-btn-${k}" class="tl-segbtn ${i === 0 ? "on" : ""}" data-m="${k}" aria-pressed="${i === 0}" title="${esc(DM[k].full)}">${esc(DM[k].name)}</button>`).join("")}</div>
+      <h4 class="tl-sub" data-title></h4>
+      <svg class="tl-svg" data-svg viewBox="0 0 400 235" role="img" aria-label="Relationship diagram"></svg>
+      <p class="tl-legend"><span class="tl-key tl-keys"></span> solid = contract <span class="tl-key tl-keyd"></span> dashed = communication (no contract)</p>
+      <table class="tl-table"><tbody data-table></tbody></table>`;
+    return card({ id: "del", title: "Delivery method explorer", divs: ["PcM", "PjM", "CE"], exam: "Shows who holds a contract with whom, and how that changes price certainty, risk and speed under each delivery method.", body, wide: true, source: "Wiki: project-delivery-methods (Amber Book PcM cards 64, 81 to 86; PjM cards 72, 81, 103, 104, 125; AIA A132, A133, A195). Some points are marked where sources differ" });
+  }
+  function delWire(root) {
+    let cur = "dbb";
+    function show() {
+      const m = DM[cur];
+      root.querySelector("[data-title]").textContent = m.full + (m.name !== m.full ? " (" + m.name + ")" : "");
+      const svg = root.querySelector("[data-svg]");
+      svg.setAttribute("viewBox", m.vb || "0 0 400 235");
+      svg.innerHTML = dmSvg(m);
+      root.querySelector("[data-table]").innerHTML = m.t.map(r => `<tr><th scope="row">${esc(r[0])}</th><td>${esc(r[1])}</td></tr>`).join("");
+      root.querySelectorAll("[data-m]").forEach(b => { const on = b.dataset.m === cur; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
+      setHow(root, `<p>Each button redraws the relationship diagram and the table. A <b>solid line</b> is a contract; a <b>dashed line</b> is communication with no contract between those two parties. In DBB the architect and contractor have no contract with each other, so disputes travel through the owner. Abbreviations: DBB design-bid-build; CMa construction manager as agent; CMAR construction manager at risk; GMP guaranteed maximum price; IPD integrated project delivery.</p><p class="tl-ex">Now showing: ${esc(m.full)}. Owner contracts: ${esc(m.t[0][1])}.</p>`);
+    }
+    root.addEventListener("click", e => { const b = e.target.closest("[data-m]"); if (b) { cur = b.dataset.m; show(); } });
+    show();
+  }
+
+  /* ======================================================================
+     8. DESIGN EFFORT vs COST OF CHANGE
+     ====================================================================== */
+  const PH = ["Pre-design", "Schematic Design (SD)", "Design Development (DD)", "Construction Documents (CD)", "Bidding", "Construction Administration (CA)", "Occupancy"];
+  const PHS = ["Pre", "SD", "DD", "CD", "Bid", "CA", "Occ"];
+  const infl = t => 100 * Math.exp(-0.5 * t);
+  const costc = t => 100 * (Math.exp(0.6 * t) - 1) / (Math.exp(3.6) - 1);
+  const gauss = (t, m, s) => Math.exp(-((t - m) * (t - m)) / (2 * s * s));
+  let effK = null;
+  function effort(kind, t) {
+    if (!effK) {
+      const area = f => { let a = 0; for (let x = 0; x <= 6; x += 0.05) a += f(x) * 0.05; return a; };
+      const f1 = x => gauss(x, 3, 1.05), f2 = x => gauss(x, 1.8, 0.9);
+      const a1 = area(f1), a2 = area(f2), k2 = a1 / a2, mx = Math.max(1, k2);
+      effK = { trad: 88 / mx, front: 88 * k2 / mx, f1, f2 };
+    }
+    return kind === "trad" ? effK.trad * effK.f1(t) : effK.front * effK.f2(t);
+  }
+  function curveCard() {
+    const body = `
+      <p class="tl-concept">Conceptual diagram (MacLeamy-style concept). Shapes are illustrative, not measured data.</p>
+      <label class="tl-f"><span>Project phase</span><input id="tl-curve-t" data-k="t" type="range" min="0" max="6" step="0.05" value="2"></label>
+      <div class="tl-seg" role="group" aria-label="Design effort curve" data-seg><button type="button" id="tl-curve-trad" class="tl-segbtn on" data-e="trad" aria-pressed="true">Traditional effort</button><button type="button" id="tl-curve-front" class="tl-segbtn" data-e="front" aria-pressed="false">Front-loaded (IPD) effort</button></div>
+      ${res("curve", [["phase", "Phase"], ["infl", "Ability to influence cost and performance"], ["cost", "Cost of a design change (relative)"], ["eff", "Design effort now (relative)"]])}
+      <ul class="tl-notes" data-notes></ul>
+      <svg class="tl-svg" data-svg viewBox="0 0 360 230" role="img" aria-label="Curves of ability to influence cost and cost of change across project phases"></svg>
+      <p class="tl-legend"><span class="tl-key" style="background:var(--pjm)"></span> ability to influence <span class="tl-key" style="background:var(--bad)"></span> cost of changes <span class="tl-key" style="background:var(--gold)"></span> design effort</p>`;
+    return card({ id: "curve", title: "Design effort vs cost of change", divs: ["PcM", "PjM"], exam: "Shows why early decisions matter most: influence over cost falls and the cost of changes climbs as the project moves on.", body, source: "Conceptual MacLeamy-style curve; wiki: project-delivery-methods (IPD front-loads effort; Library concept sketch, INDEX PcM card 157). Not to scale" });
+  }
+  function curveWire(root) {
+    let kind = "trad";
+    const L = 38, R = 346, T = 14, B = 176, X = t => L + (R - L) * t / 6, Y = v => B - (B - T) * v / 100;
+    const path = f => { let d = ""; for (let t = 0; t <= 6.001; t += 0.1) d += (d ? "L" : "M") + X(t).toFixed(1) + " " + Y(f(t)).toFixed(1); return d; };
+    function calc() {
+      const t = Math.min(6, Math.max(0, Number(rdEl(root, "t").value) || 0));
+      const pi = Math.round(t), iv = infl(t), cv = costc(t), ev = effort(kind, t);
+      setO(root, "phase", PH[pi], pi); setO(root, "infl", Math.round(iv) + "%", iv); setO(root, "cost", Math.round(cv) + "% of the occupancy-stage cost", cv); setO(root, "eff", Math.round(ev) + " of 100 (peak)", ev);
+      setNotes(root, [[iv >= 35 ? "ok" : cv > 40 ? "bad" : "warn", iv >= 35 ? "Still early: decisions made now have a large effect on cost and performance, and changes are cheap." : cv > 40 ? "Late: changes are expensive and have little effect on overall cost." : "Getting late: the room to change course is shrinking and each change costs more."]]);
+      const other = kind === "trad" ? "front" : "trad";
+      let s = `<line x1="${L}" y1="${B}" x2="${R}" y2="${B}" stroke="currentColor" stroke-opacity=".5"/><line x1="${L}" y1="${T}" x2="${L}" y2="${B}" stroke="currentColor" stroke-opacity=".5"/>`;
+      PHS.forEach((p, i) => { s += `<line x1="${X(i)}" y1="${B}" x2="${X(i)}" y2="${B + 4}" stroke="currentColor" stroke-opacity=".5"/><text x="${X(i)}" y="${B + 16}" text-anchor="middle" font-size="10" fill="currentColor">${p}</text>`; });
+      s += `<text x="${(L + R) / 2}" y="${B + 34}" text-anchor="middle" font-size="10" style="fill:var(--muted)">project phase (Occ = occupancy)</text><text x="10" y="${(T + B) / 2}" font-size="10" style="fill:var(--muted)" transform="rotate(-90 10 ${(T + B) / 2})" text-anchor="middle">relative level (high to low)</text>`;
+      s += `<path d="${path(t => effort(other, t))}" fill="none" stroke="var(--gold)" stroke-opacity=".3" stroke-width="2" stroke-dasharray="4 4"/>`;
+      s += `<path d="${path(infl)}" fill="none" stroke="var(--pjm)" stroke-width="2.6"/><path d="${path(costc)}" fill="none" stroke="var(--bad)" stroke-width="2.6"/><path d="${path(t => effort(kind, t))}" fill="none" stroke="var(--gold)" stroke-width="2.8"/>`;
+      s += `<line x1="${X(t)}" y1="${T}" x2="${X(t)}" y2="${B}" stroke="currentColor" stroke-opacity=".6" stroke-dasharray="3 3"/>`;
+      [[iv, "var(--pjm)"], [cv, "var(--bad)"], [ev, "var(--gold)"]].forEach(m => { s += `<circle cx="${X(t)}" cy="${Y(m[0])}" r="5" style="fill:${m[1]}" stroke="var(--surface)" stroke-width="1.5"/>`; });
+      root.querySelector("[data-svg]").innerHTML = s;
+      setHow(root, `<p>Drag the slider along the phases. The blue curve is the ability to influence cost and performance (high early, low late). The red curve is the cost of making a design change (low early, high late). The gold curve is design effort: traditional practice puts most effort into construction documents (CD); front-loaded effort, as in IPD, moves it earlier into SD and DD, where changes are cheap. Both effort curves here are drawn with the same total effort. The faint dashed gold curve is the one you have not selected.</p>
+        <p class="tl-ex">At ${esc(PH[pi])}: influence about ${Math.round(iv)}%, cost of a change about ${Math.round(cv)}% of its occupancy-stage cost.</p>`);
+    }
+    root.addEventListener("input", calc);
+    root.addEventListener("click", e => { const b = e.target.closest("[data-e]"); if (!b) return; kind = b.dataset.e; root.querySelectorAll("[data-e]").forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b); }); calc(); });
+    calc();
+  }
+
+  /* ======================================================================
+     STYLES, PANEL, TAB
+     ====================================================================== */
+  const CSS = `
+#tools{--tl-r:12px}
+#tools *{box-sizing:border-box}
+#tools .tl-top{margin:0 0 6px;font-size:13px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
+#tools .tl-intro{margin:0 0 12px;color:var(--muted);font-size:14px;line-height:1.5}
+#tools .tl-chips{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 16px}
+#tools .tl-chip{background:var(--surface);color:var(--muted);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+#tools .tl-chip:hover{color:var(--text);border-color:var(--gold)}
+#tools .tl-chip.on{background:var(--gold);color:#1a1208;border-color:var(--gold);font-weight:700}
+#tools .tl-grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr));gap:16px;align-items:start}
+#tools .tl-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--tl-r);padding:14px 16px 12px;min-width:0;color:var(--text)}
+#tools .tl-card[hidden]{display:none}
+#tools .tl-wide{grid-column:1/-1}
+#tools .tl-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+#tools .tl-card h3{margin:0;font-size:16px;line-height:1.3;color:var(--text-bright,var(--text))}
+#tools .tl-tags{display:flex;gap:5px;flex-wrap:wrap}
+#tools .tl-tag{font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 7px;color:#fff;letter-spacing:.03em}
+#tools .tl-d-pcm{background:var(--pcm)}#tools .tl-d-pjm{background:var(--pjm)}#tools .tl-d-ce{background:var(--ce)}
+#tools .tl-exam{margin:6px 0 12px;font-size:13px;line-height:1.5;color:var(--muted)}
+#tools .tl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 12px}
+#tools .tl-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#tools .tl-grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#tools .tl-f{display:flex;flex-direction:column;gap:3px;min-width:0}
+#tools .tl-f>span{font-size:11.5px;color:var(--muted);line-height:1.25}
+#tools .tl-f input[type=number],#tools .tl-f input[type=text],#tools .tl-f input[type=date]{width:100%;min-width:0;background:var(--inset);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:7px 9px;font-size:14px;font-family:inherit}
+#tools .tl-f input:focus{outline:2px solid var(--gold);outline-offset:1px}
+#tools .tl-f input[readonly]{opacity:.7}
+#tools .tl-badin{border-color:var(--bad)!important}
+#tools .tl-f input[type=range]{width:100%;accent-color:var(--gold)}
+#tools .tl-row{border:1px solid var(--border);background:var(--surface2);border-radius:10px;padding:9px 10px;margin:0 0 8px}
+#tools .tl-rowhead{display:flex;gap:8px;align-items:flex-end;margin-bottom:8px;flex-wrap:wrap}
+#tools .tl-cpmrow .tl-rowhead{margin-bottom:0;flex-wrap:nowrap}
+#tools .tl-grow{flex:1 1 140px}
+#tools .tl-cpmrow .tl-grow{flex:1 1 0}
+#tools .tl-w60{flex:0 0 58px}#tools .tl-w80{flex:0 0 68px}
+#tools .tl-chk{font-size:12px;color:var(--muted);display:flex;gap:4px;align-items:center;padding-bottom:8px;white-space:nowrap}
+#tools .tl-del{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:14px;flex:0 0 auto}
+#tools .tl-del:hover{color:var(--bad);border-color:var(--bad)}
+#tools .tl-rowout{margin:8px 0 0;font-size:12px;color:var(--muted)}
+#tools .tl-rowout b{color:var(--text)}
+#tools .tl-btn{background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit;margin:0 6px 12px 0}
+#tools .tl-btn:hover{border-color:var(--gold)}
+#tools .tl-btnrow{display:flex;flex-wrap:wrap}
+#tools .tl-hint{margin:0 0 10px;font-size:12px;color:var(--muted)}
+#tools .tl-hint code{background:var(--inset);padding:0 4px;border-radius:4px}
+#tools .tl-res{margin:4px 0 10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+#tools .tl-res>div{background:var(--inset);border:1px solid var(--border);border-radius:9px;padding:7px 10px;min-width:0}
+#tools .tl-res dt{font-size:11.5px;color:var(--muted);line-height:1.3}
+#tools .tl-res dd{margin:2px 0 0;font-size:17px;font-weight:700;color:var(--text-bright,var(--text));overflow-wrap:anywhere}
+#tools .tl-res .tl-strong{border-color:var(--gold)}
+#tools .tl-sub{margin:12px 0 6px;font-size:13px;color:var(--text)}
+#tools .tl-faint{font-weight:400;color:var(--muted)}
+#tools .tl-phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:8px}
+#tools .tl-phrow{display:flex;flex-direction:column;gap:2px;background:var(--inset);border:1px solid var(--border);border-radius:9px;padding:7px 9px;min-width:0}
+#tools .tl-phrow .tl-f input{padding:5px 7px}
+#tools .tl-phrow b{font-size:14px}
+#tools .tl-notes{list-style:none;margin:6px 0 8px;padding:0;display:flex;flex-direction:column;gap:5px}
+#tools .tl-note{font-size:13px;line-height:1.45;padding:6px 10px;border-radius:8px;border-left:4px solid var(--border2);background:var(--inset)}
+#tools .tl-note.tl-ok{border-left-color:var(--ok)}
+#tools .tl-note.tl-warn{border-left-color:var(--gold)}
+#tools .tl-note.tl-bad{border-left-color:var(--bad)}
+#tools .tl-note.tl-info{border-left-color:var(--pjm)}
+#tools .tl-svg{width:100%;height:auto;display:block;color:var(--text);margin:6px 0}
+#tools .tl-svgwrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:var(--inset);padding:6px}
+#tools .tl-legend{font-size:12px;color:var(--muted);margin:6px 0 8px;line-height:1.5}
+#tools .tl-key{display:inline-block;width:18px;height:0;border-top:3px solid currentColor;vertical-align:middle;margin:0 3px 0 6px}
+#tools .tl-keyc{border-top-color:var(--gold);border-top-width:4px;margin-left:0}
+#tools .tl-keys{border-top-style:solid;margin-left:0}
+#tools .tl-keyd{border-top-style:dashed;border-top-color:var(--muted)}
+#tools .tl-keyc[style],#tools .tl-key[style]{height:8px;border:0;border-radius:2px;width:14px}
+#tools .tl-seg{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+#tools .tl-segbtn{background:var(--surface2);color:var(--muted);border:1px solid var(--border2);border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit}
+#tools .tl-segbtn:hover{color:var(--text);border-color:var(--gold)}
+#tools .tl-segbtn.on{background:var(--gold);color:#1a1208;border-color:var(--gold);font-weight:700}
+#tools .tl-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+#tools .tl-table th,#tools .tl-table td{text-align:left;vertical-align:top;padding:7px 9px;border-top:1px solid var(--border);line-height:1.4}
+#tools .tl-table th{width:32%;color:var(--muted);font-weight:600;background:transparent;text-transform:none;letter-spacing:0;font-size:13px;white-space:normal}
+#tools .tl-concept{margin:0 0 10px;font-size:12.5px;color:var(--gold);font-weight:600}
+#tools .tl-how{margin:8px 0 4px;border-top:1px solid var(--border);padding-top:8px}
+#tools .tl-how summary{cursor:pointer;font-size:13px;color:var(--strong,var(--text));font-weight:600}
+#tools .tl-howbody{font-size:13px;line-height:1.55;color:var(--text)}
+#tools .tl-howbody p{margin:8px 0}
+#tools .tl-ex{background:var(--inset);border-radius:8px;padding:7px 10px;overflow-wrap:anywhere}
+#tools .tl-src{margin:6px 0 0;font-size:11.5px;color:var(--muted);line-height:1.45}
+@media (max-width:760px){
+  #tools .tl-grid-cards{grid-template-columns:1fr}
+  #tools .tl-grid4{grid-template-columns:1fr 1fr}
+  #tools .tl-f input[type=number],#tools .tl-f input[type=text],#tools .tl-f input[type=date]{font-size:16px}
+  #tools .tl-table th{width:34%}
+}`;
+
+  const TOOLS = [
+    [evmCard, evmWire], [firmCard, firmWire], [feeCard, feeWire], [payCard, payWire],
+    [coCard, coWire], [cpmCard, cpmWire], [delCard, delWire], [curveCard, curveWire]
+  ];
+
+  function buildPanel() {
+    const st = document.createElement("style");
+    st.id = "tl-styles"; st.textContent = CSS; document.head.appendChild(st);
+    const panel = document.createElement("section");
+    panel.className = "panel"; panel.id = PID;
+    panel.innerHTML = `<h2 class="tl-top">Tools</h2>
+      <p class="tl-intro">Exam calculators and live diagrams. Change a number or drag a slider and the answers update. Check each tool's source line before relying on it.</p>
+      <div class="tl-chips" role="group" aria-label="Filter tools by division">${["All", "PcM", "PjM", "CE"].map((d, i) => `<button type="button" class="tl-chip ${i === 0 ? "on" : ""}" data-f="${d}" aria-pressed="${i === 0}">${d}</button>`).join("")}</div>
+      <div class="tl-grid-cards">${TOOLS.map(t => t[0]()).join("")}</div>`;
+    const first = document.querySelector(".panel");
+    (first ? first.parentElement : document.body).appendChild(panel);
+    TOOLS.forEach((t, i) => {
+      const id = ["evm", "firm", "fee", "pay", "co", "cpm", "del", "curve"][i];
+      const root = panel.querySelector(`#tl-card-${id} .tl-body`);
+      try { t[1](root); } catch (err) { root.insertAdjacentHTML("beforeend", `<p class="tl-note tl-bad">This tool failed to load.</p>`); if (window.console) console.warn("tools:", id, err); }
+    });
+    panel.addEventListener("click", e => {
+      const c = e.target.closest("[data-f]");
+      if (!c) return;
+      const f = c.dataset.f;
+      panel.querySelectorAll("[data-f]").forEach(b => { b.classList.toggle("on", b === c); b.setAttribute("aria-pressed", b === c); });
+      panel.querySelectorAll(".tl-card").forEach(cd => { cd.hidden = !(f === "All" || cd.dataset.divs.split(" ").includes(f)); });
+    });
+  }
+
+  function buildTab() {
+    const tabs = document.querySelectorAll(".nav-tab");
+    if (!tabs.length) return false;
+    const btn = document.createElement("button");
+    btn.className = "nav-tab"; btn.id = "tl-nav-tab"; btn.setAttribute("role", "tab");
+    btn.setAttribute("aria-selected", "false"); btn.setAttribute("aria-controls", PID);
+    btn.textContent = "🧮 Tools";
+    btn.addEventListener("click", function () {
+      if (typeof window.switchPanel === "function") window.switchPanel(PID, btn);
+    });
+    let anchor = null;
+    tabs.forEach(t => { if ((t.getAttribute("aria-controls") === "quiz") || /Practice Q/.test(t.textContent)) anchor = t; });
+    if (anchor) anchor.insertAdjacentElement("afterend", btn); else tabs[0].parentElement.appendChild(btn);
+    return true;
+  }
+
+  function init() {
+    if (!buildTab()) { setTimeout(init, 300); return; }
+    buildPanel();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
+
+</script>
+<script id="ui-refresh-js">
+(function () {
+  "use strict";
+  var ICONS = {"flashcards": "<svg class=\"ico\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"2.5\" y=\"4.5\" width=\"9\" height=\"9\"/><path d=\"M5 2.5h8.5V11\"/></svg>", "tables": "<svg class=\"ico\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"2\" y=\"2.5\" width=\"12\" height=\"11\"/><path d=\"M2 6h12M2 9.75h12M6.5 6v7.5\"/></svg>", "summary": "<svg class=\"ico\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M3.5 1.75h6l3 3v9.5h-9z\"/><path d=\"M9.5 1.75v3h3M5.75 8h4.5M5.75 10.5h4.5M5.75 13h2.5\"/></svg>", "quiz": "<svg class=\"ico\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"2.25\" y=\"2.25\" width=\"11.5\" height=\"11.5\"/><path d=\"M5 8.2l2.1 2.1L11 6\"/></svg>", "library": "<svg class=\"ico\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M2.5 13.5V2.5l11 11z\"/><path d=\"M5 11V8.25L7.75 11z\"/></svg>", "tools": "<svg class=\"ico\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"3\" y=\"1.75\" width=\"10\" height=\"12.5\"/><path d=\"M5.5 4.75h5M5.5 8h.5M8 8h.5M10.5 8h0M5.5 11h.5M8 11h.5M10.5 11h0\"/></svg>"};
+  function key(b) {
+    var k = b.getAttribute("aria-controls");
+    if (k) return k;
+    if (b.id === "lib-nav-tab") return "library";
+    if (b.id === "tl-nav-tab") return "tools";
+    return (b.textContent || "").toLowerCase().replace(/[^a-z]/g, "");
+  }
+  function fixTab(b) {
+    if (b.querySelector("svg.ico")) return;
+    var n = b.firstChild;
+    while (n && n.nodeType === 3 && !n.nodeValue.trim()) n = n.nextSibling;
+    if (n && n.nodeType === 3) n.nodeValue = n.nodeValue.replace(/^[^\p{L}\p{N}]+/u, "");
+    var ico = ICONS[key(b)];
+    if (ico) b.insertAdjacentHTML("afterbegin", ico);
+  }
+  function fixTabs() { document.querySelectorAll(".nav-tab").forEach(fixTab); }
+  function chips() {
+    document.querySelectorAll(".fc-filter, .table-btn").forEach(function (el) {
+      if (!el.hasAttribute("tabindex")) { el.setAttribute("tabindex", "0"); el.setAttribute("role", "button"); }
+    });
+  }
+  document.addEventListener("keydown", function (e) {
+    var t = e.target;
+    if (t && t.matches && t.matches(".fc-filter, .table-btn") && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault(); t.click();
+    }
+  });
+  function init() {
+    fixTabs(); chips();
+    var tabs = document.querySelector(".nav-tabs");
+    if (tabs && window.MutationObserver) new MutationObserver(fixTabs).observe(tabs, { childList: true });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
 </script>
 </body>
