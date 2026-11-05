@@ -1114,6 +1114,25 @@
     th { font-size: 10px; }
   }
 </style>
+<style id="ql-style">
+.ql-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}
+.ql-lbl{font:600 10px/1 var(--font-mono,ui-monospace,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.ql{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:2px;padding:4px 8px;font:12px/1.2 var(--font-sans,system-ui,sans-serif);text-decoration:none;cursor:pointer}
+.ql:hover,.ql:focus-visible{border-color:var(--gold);color:var(--text-bright,var(--text))}
+.ql b{font:600 10px var(--font-mono,ui-monospace,monospace);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-ink,var(--gold))}
+.ql-back{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;display:none;border:1px solid var(--gold);background:var(--surface);color:var(--text);border-radius:2px;padding:9px 14px;font:600 12px var(--font-mono,ui-monospace,monospace);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 2px 10px rgba(0,0,0,.18);cursor:pointer}
+.ql-back.show{display:block}
+.ql-flash{outline:2px solid var(--gold);outline-offset:4px;transition:outline-color 1.6s}
+.ql-flash.fade{outline-color:transparent}
+.sum-sources{margin:14px 0 4px;padding-top:12px;border-top:1px solid var(--border)}
+.sum-sources h4{font:600 11px var(--font-mono,ui-monospace,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.sum-sources ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sum-sources li{font-size:13.5px;line-height:1.45;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.sum-sources a{color:var(--text);text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px}
+.sum-sources a:hover{color:var(--gold-ink,var(--gold))}
+.src-org{font:11px var(--font-mono,ui-monospace,monospace);letter-spacing:.06em;color:var(--muted)}
+.src-cov{font-size:12.5px;color:var(--muted);flex-basis:100%}
+</style>
 </head>
 <body>
 <nav class="nav">
@@ -1637,7 +1656,8 @@
         <div class="callout">AIA contracts mutually waive consequential damages (lost rent, lost business, loan penalties). Direct damages are not capped unless a limitation of liability is negotiated. Liquidated damages = per-day delay penalty agreed in advance.</div>
       </div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-b101-sources"><h4>Primary sources</h4><ul><li><a href="https://learn.aiacontracts.com/contract-doc-pages/71171-b-series-ownerarchitect-agreements/" target="_blank" rel="noopener">AIA B-Series: Owner/Architect Agreement Documents (B101-2017)</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">B101 overview: basic, supplemental, additional services; compensation</span></li><li><a href="https://help.aiacontracts.com/hc/en-us/articles/1500010280541-summary-b101-2017-standard-form-of-agreement-between-owner-and-architect" target="_blank" rel="noopener">AIA B101-2017 Summary</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">Five basic-service phases; supplemental services set at signing</span></li><li><a href="https://aiacontracts.com/samples/aia-b101-2017-owner-architect-agreement-sample.pdf" target="_blank" rel="noopener">AIA B101-2017 Sample Agreement (free PDF)</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">Actual B101 text: services, insurance §2.5, articles</span></li><li><a href="https://help.aiacontracts.com/hc/en-us/articles/1500009448521-Summary-G802-2017-Amendment-to-the-Professional-Services-Agreement" target="_blank" rel="noopener">AIA G802-2017 Summary</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">Amending B101 when services or fees change</span></li></ul></div><!--/sum-sources--></div>
   <!-- Standard of Care -->
   <div class="sum-section" id="s-soc">
     <div class="sum-section-header"><span class="sum-section-tag toc-all3">ALL 3 EXAMS</span><h3>Standard of Care</h3></div>
@@ -1646,7 +1666,8 @@
       <div class="callout warn">Never modify standard of care language. "Highest standard of care," guarantees, warranties, and fiduciary-duty language are all nearly uninsurable — refuse each of them.</div>
       <p><strong>Responsible control</strong> allows an architect to stamp work if they possess knowledge of, or supervision over, a drawing set consistent with the standard of care. An architect can stamp plans they did not create — but cannot stamp plans they know little about. Plan-stamping (sealing work without responsible control) is one of the most common disciplinary violations.</p>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-soc-sources"><h4>Primary sources</h4><ul><li><a href="https://aiacontracts.com/samples/aia-b101-2017-owner-architect-agreement-sample.pdf" target="_blank" rel="noopener">AIA B101-2017 Sample Agreement, §2.2 Standard of Care</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">Locality-based skill and care language in §2.2</span></li><li><a href="https://www.ncarb.org/sites/default/files/Rules_of_Conduct.pdf" target="_blank" rel="noopener">NCARB Model Rules of Conduct</a><span class="src-org">NCARB</span><span class="src-cov">Rule 1 competence; Rule 5 sealing under responsible control</span></li><li><a href="https://www.aia.org/code-ethics-professional-conduct" target="_blank" rel="noopener">AIA Code of Ethics &amp; Professional Conduct</a><span class="src-org">AIA</span><span class="src-cov">Professional duties underlying the care expected of architects</span></li></ul></div><!--/sum-sources--></div>
   <!-- Delivery Methods -->
   <div class="sum-section" id="s-delivery">
     <div class="sum-section-header"><span class="sum-section-tag toc-all3">ALL 3 EXAMS</span><h3>Project Delivery Methods<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h3></div>
@@ -1689,7 +1710,8 @@
         <p><strong>Design-assist</strong> is a transitional form rather than a full delivery method. The owner still contracts with the architect in the usual way, but specialty subcontractors — curtain wall, structural steel, complex MEP — join during the design and construction-document phase. The architect guides selection of those subcontractors and incorporates their fabrication knowledge into the documents, which improves constructability and shortens the trade’s lead time. It differs from design-build because the architect keeps the design relationship with the owner: the subcontractor advises, it does not own the design.</p>
       </div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-delivery-sources"><h4>Primary sources</h4><ul><li><a href="https://www.fhwa.dot.gov/innovation/everydaycounts/edc_8/beyond_bid_build.cfm" target="_blank" rel="noopener">FHWA Beyond Bid-Build: Innovative Project Delivery Methods</a><span class="src-org">FHWA</span><span class="src-cov">CM/GC, design-build, progressive D-B versus design-bid-build</span></li><li><a href="https://learn.aiacontracts.com/contract-doc-pages/27166-integrated-project-delivery-ipd-family/" target="_blank" rel="noopener">AIA Integrated Project Delivery (IPD) Family</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">A195, A295, C191, C195 and shared risk/reward in IPD</span></li><li><a href="https://help.aiacontracts.com/hc/en-us/articles/1500010383781-FAQs-Integrated-Project-Delivery-IPD-Family-of-Documents" target="_blank" rel="noopener">AIA IPD Family FAQs</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">Which IPD agreements apply and how they differ</span></li><li><a href="https://learn.aiacontracts.com/contract-doc-pages/71171-b-series-ownerarchitect-agreements/" target="_blank" rel="noopener">AIA B-Series: Owner/Architect Agreement Documents</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">B101 use with standard delivery; B-series variants</span></li></ul></div><!--/sum-sources--></div>
   <!-- Risk Management -->
   <div class="sum-section" id="s-risk">
     <div class="sum-section-header"><span class="sum-section-tag toc-all3">ALL 3 EXAMS</span><h3>Risk Management &amp; Insurance</h3></div>
@@ -1714,7 +1736,8 @@
       <div class="callout gold"><strong>Emerging coverages (supplemental — not yet confirmed NCARB-tested):</strong> Two exposures sit outside the traditional B101 insurance list and appear in current practice-management seminars. <strong>Cyber / data-breach liability</strong> covers the firm against ransomware, breach-response costs, and third-party claims when a vendor is the entry point. <strong>Climate / resilience exposure</strong> is the professional-liability tail created when a design built to a past-climate code later fails under conditions the profession had begun to anticipate. Neither is confirmed against an NCARB primary source — treat as background, not testable fact.</div>
       <div class="callout warn">Highest litigation risk: Condominiums and residential projects. Most important firm risk action: use standard AIA contracts.</div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-risk-sources"><h4>Primary sources</h4><ul><li><a href="https://aiacontracts.com/samples/aia-b101-2017-owner-architect-agreement-sample.pdf" target="_blank" rel="noopener">AIA B101-2017 Sample Agreement, §2.5 Insurance</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">Required architect insurance coverages and certificates</span></li><li><a href="https://www.law.cornell.edu/supremecourt/text/248/132" target="_blank" rel="noopener">United States v. Spearin, 248 U.S. 132 (1918)</a><span class="src-org">Cornell LII</span><span class="src-cov">Spearin doctrine: owner bears risk of defective plans</span></li><li><a href="https://aiacontracts.com/samples/aia-a201-2017-general-conditions-construction-contract-sample.pdf" target="_blank" rel="noopener">AIA A201-2017 Sample General Conditions (free PDF)</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">Contract risk allocation; waiver of subrogation, insurance articles</span></li><li><a href="https://www.aia.org/resource-center/aia-code-ethics-ethical-practice" target="_blank" rel="noopener">AIA Code of Ethics &amp; ethical practice</a><span class="src-org">AIA</span><span class="src-cov">How ethics rules interact with liability and practice</span></li></ul></div><!--/sum-sources--></div>
   <!-- Scope Creep -->
   <div class="sum-section" id="s-scope">
     <div class="sum-section-header"><span class="sum-section-tag toc-all3">ALL 3 EXAMS</span><h3>Scope Creep &amp; Scope Changes</h3></div>
@@ -1722,7 +1745,8 @@
       <p>Scope creep = incremental program additions during design that accumulate into significant budget and schedule impacts.</p>
       <div class="callout">Document every change → get written owner agreement → tie to fee and schedule → use AIA G802 to amend the agreement. Never proceed on verbal instructions.</div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-scope-sources"><h4>Primary sources</h4><ul><li><a href="https://help.aiacontracts.com/hc/en-us/articles/1500009448521-Summary-G802-2017-Amendment-to-the-Professional-Services-Agreement" target="_blank" rel="noopener">AIA G802-2017 Summary: Amendment to the Professional Services Agreement</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">Using G802 to document changes in services and fee</span></li><li><a href="https://help.aiacontracts.com/hc/en-us/articles/1500010280541-summary-b101-2017-standard-form-of-agreement-between-owner-and-architect" target="_blank" rel="noopener">AIA B101-2017 Summary</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">Basic vs supplemental vs additional services boundaries</span></li><li><a href="https://learn.aiacontracts.com/contract-doc-pages/71171-b-series-ownerarchitect-agreements/" target="_blank" rel="noopener">AIA B-Series: Owner/Architect Agreement Documents</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">Service categories and compensation options for changes</span></li></ul></div><!--/sum-sources--></div>
   <!-- QC -->
   <div class="sum-section" id="s-qc">
     <div class="sum-section-header"><span class="sum-section-tag toc-all3">ALL 3 EXAMS</span><h3>Quality Control</h3></div>
@@ -1735,7 +1759,8 @@
         <ul><li><strong>Prevention</strong> — checklists, training before projects</li><li><strong>Appraisal</strong> — measuring quality during production</li><li><strong>Internal failure</strong> — fixing before delivery</li><li><strong>External failure</strong> — fixing after delivery (high RFI volume = high external failure costs)</li></ul>
       </div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-qc-sources"><h4>Primary sources</h4><ul><li><a href="https://asq.org/quality-resources/cost-of-quality" target="_blank" rel="noopener">ASQ Cost of Quality (COQ)</a><span class="src-org">ASQ</span><span class="src-cov">Prevention, appraisal, internal and external failure costs</span></li><li><a href="https://www.gsa.gov/system/files/DE_Policies_and_Procedures_issued_17Nov2022.pdf" target="_blank" rel="noopener">GSA Design and Construction Excellence Policies and Procedures</a><span class="src-org">GSA</span><span class="src-cov">Independent peer review and integrated design reviews as QA</span></li><li><a href="https://www.ncarb.org/sites/default/files/Rules_of_Conduct.pdf" target="_blank" rel="noopener">NCARB Model Rules of Conduct</a><span class="src-org">NCARB</span><span class="src-cov">Rule 1 competence and standard of care behind QC goals</span></li></ul></div><!--/sum-sources--></div>
   <!-- Ethics -->
   <div class="sum-section" id="s-ethics">
     <div class="sum-section-header"><span class="sum-section-tag toc-all3">ALL 3 EXAMS</span><h3>Ethics — NCARB Model Rules of Conduct</h3></div>
@@ -1745,7 +1770,8 @@
       <div class="sum-subsection"><h4>Rule 3 — Full Disclosure</h4><p>No misleading statements (3.1). Must report known violations of licensing laws (3.6–3.9).</p></div>
       <div class="sum-subsection"><h4>Rule 5 — Signing and Sealing</h4><p><strong>Seal only work under your responsible control (5.1). Plan-stamping is one of the most common disciplinary violations.</strong> Prototype designs are permitted to be sealed by the architect of record for each jurisdiction (Rule 5.3).</p></div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-ethics-sources"><h4>Primary sources</h4><ul><li><a href="https://www.ncarb.org/sites/default/files/Rules_of_Conduct.pdf" target="_blank" rel="noopener">NCARB Model Rules of Conduct</a><span class="src-org">NCARB</span><span class="src-cov">Rules 1, 2, 3, 5: competence, conflicts, disclosure, sealing</span></li><li><a href="https://www.aia.org/code-ethics-professional-conduct" target="_blank" rel="noopener">AIA Code of Ethics &amp; Professional Conduct</a><span class="src-org">AIA</span><span class="src-cov">Parallel AIA ethics canons and rules</span></li><li><a href="https://www.aia.org/resource-center/aia-code-ethics-ethical-practice" target="_blank" rel="noopener">AIA Code of Ethics &amp; ethical practice</a><span class="src-org">AIA</span><span class="src-cov">Structure and enforcement of the AIA ethics code</span></li></ul></div><!--/sum-sources--></div>
   <!-- CE Exam Strategy -->
   <div class="sum-section" id="s-ce-strategy">
     <div class="sum-section-header"><span class="sum-section-tag toc-ce">CE</span><h3>CE Exam Strategy &amp; Content Split <span class="new-badge">NEW</span></h3></div>
@@ -1764,7 +1790,8 @@
         <p>Study <strong>all three divisions together</strong> rather than separately. Content overlap between divisions is a defining feature of ARE 5.0: professional practice content cannot be cleanly separated into PcM/PjM/CE boxes. Study it as a unified body, then sit for all three in close succession.</p>
       </div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-ce-strategy-sources"><h4>Primary sources</h4><ul><li><a href="https://www.ncarb.org/pass-the-are/prepare/construction-evaluation" target="_blank" rel="noopener">NCARB ARE: Construction &amp; Evaluation</a><span class="src-org">NCARB</span><span class="src-cov">CE content areas and percentage weights</span></li><li><a href="https://www.ncarb.org/sites/default/files/ARE5-Guidelines.pdf" target="_blank" rel="noopener">NCARB ARE 5.0 Guidelines</a><span class="src-org">NCARB</span><span class="src-cov">Division item counts, timing, and content outlines</span></li><li><a href="https://www.ncarb.org/get-licensed/are" target="_blank" rel="noopener">NCARB ARE Overview</a><span class="src-org">NCARB</span><span class="src-cov">Division structure and how PcM, PjM, CE fit together</span></li></ul></div><!--/sum-sources--></div>
   <!-- Construction Administration (NEW) -->
   <div class="sum-section" id="s-ca">
     <div class="sum-section-header"><span class="sum-section-tag toc-ce">CE / CA</span><h3>Construction Administration <span class="new-badge">NEW</span></h3></div>
@@ -1827,7 +1854,8 @@
         <p><strong>Mechanics lien:</strong> Subcontractors (and architects) can file a lien against the owner's property if unpaid. If the debt stays unpaid, the lienholder can sue to foreclose, and a court may order the property sold.</p>
       </div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-ca-sources"><h4>Primary sources</h4><ul><li><a href="https://aiacontracts.com/samples/aia-a201-2017-general-conditions-construction-contract-sample.pdf" target="_blank" rel="noopener">AIA A201-2017 Sample General Conditions (free PDF)</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">Contract framework for architect&#x27;s administration and submittals</span></li><li><a href="https://learn.aiacontracts.com/contract-doc-pages/71176-g-series-contract-administration-and-project-management-forms/" target="_blank" rel="noopener">AIA G-Series: Contract Administration and Project Management Forms</a><span class="src-org">AIA Contract Documents</span><span class="src-cov">G701, G702, G704, G710, G711, G714 forms</span></li><li><a href="https://www.ncarb.org/pass-the-are/prepare/construction-evaluation" target="_blank" rel="noopener">NCARB ARE: Construction &amp; Evaluation</a><span class="src-org">NCARB</span><span class="src-cov">CE scope: observation, administrative procedures, closeout</span></li></ul></div><!--/sum-sources--></div>
   <!-- Commissioning and POE -->
   <div class="sum-section" id="s-commissioning">
     <div class="sum-section-header"><span class="sum-section-tag toc-ce">CE</span><h3>Building Commissioning &amp; POE <span class="new-badge">NEW</span></h3></div>
@@ -1854,7 +1882,8 @@
         <p>A POE confirms whether the building delivers on its original program: correct adjacencies, adequate room sizes, functioning envelope, systems performing as designed, occupant satisfaction. It is also a business development tool — it maintains client contact and often leads to repeat work.</p>
       </div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-commissioning-sources"><h4>Primary sources</h4><ul><li><a href="https://legacy.wbdg.org/building-commissioning" target="_blank" rel="noopener">WBDG Building Commissioning: The Process</a><span class="src-org">WBDG</span><span class="src-cov">OPR, BOD, and phased commissioning process</span></li><li><a href="https://legacy.wbdg.org/building-commissioning/commissioning-documents" target="_blank" rel="noopener">WBDG Commissioning Documents: Process, Contents, and Acceptance</a><span class="src-org">WBDG</span><span class="src-cov">Definitions and contents of OPR and BOD</span></li><li><a href="https://legacy.wbdg.org/building-commissioning/roles-and-responsibilities-commissioning-process" target="_blank" rel="noopener">WBDG Roles and Responsibilities in the Commissioning Process</a><span class="src-org">WBDG</span><span class="src-cov">Independent commissioning provider role</span></li><li><a href="https://www.gsa.gov/real-estate/design-and-construction/commissioning" target="_blank" rel="noopener">GSA Commissioning</a><span class="src-org">GSA</span><span class="src-cov">Federal total building commissioning and guide</span></li><li><a href="https://legacy.wbdg.org/resources/post-occupancy-evaluations" target="_blank" rel="noopener">WBDG Post Occupancy Evaluations</a><span class="src-org">WBDG</span><span class="src-cov">POE purpose and method</span></li></ul></div><!--/sum-sources--></div>
   <!-- AIA Documents Detail (NEW/EXPANDED) -->
   <div class="sum-section" id="s-aia">
     <div class="sum-section-header"><span class="sum-section-tag toc-pjm">PjM</span><h3>AIA Contract Documents — Detail <span class="new-badge">NEW</span></h3></div>
@@ -1878,7 +1907,8 @@
         <p>Instruments of service → Bidding documents (contract drawings + project manual) → Project manual contains: bidding requirements, contract forms, general and supplementary conditions, and specifications (MasterFormat Div. 01–49) → Contract documents = subset of project manual + drawings + addenda + contract modifications.</p>
       </div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-aia-sources"><h4>Primary sources</h4><ul><li><a href="https://www.aiacontracts.com/documents/b101-2017" target="_blank" rel="noopener">AIA B101-2017 Owner-Architect Agreement</a><span class="src-org">AIA</span><span class="src-cov">Architect services, budget limits, instruments of service ownership</span></li><li><a href="https://www.aiacontracts.com/documents/a201-2017" target="_blank" rel="noopener">AIA A201-2017 General Conditions of the Contract</a><span class="src-org">AIA</span><span class="src-cov">Contract vocabulary, subrogation waiver, architect&#x27;s role in administration</span></li><li><a href="https://www.aiacontracts.com/documents/c401-2017" target="_blank" rel="noopener">AIA C401-2017 Architect-Consultant Agreement</a><span class="src-org">AIA</span><span class="src-cov">Consultant ownership, insurance, and subconsultant rules</span></li><li><a href="https://www.csiresources.org/standards/masterformat" target="_blank" rel="noopener">MasterFormat</a><span class="src-org">CSI</span><span class="src-cov">Division 01-49 specification organization</span></li><li><a href="https://learn.aiacontracts.com/?p=4832" target="_blank" rel="noopener">AIA B-Series: Owner/Architect Agreements Guide</a><span class="src-org">AIA</span><span class="src-cov">Overview of B-series owner-architect forms</span></li></ul></div><!--/sum-sources--></div>
   <!-- PcM Finances -->
   <div class="sum-section" id="s-pcm-fin">
     <div class="sum-section-header"><span class="sum-section-tag toc-pcm">PcM — Section 2</span><h3>Finances, Risk &amp; Development (29–35% — LARGEST)<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h3></div>
@@ -1927,7 +1957,8 @@
         <p><strong>Construction contingency:</strong> Set aside by the owner (not the architect) for unforeseen construction costs. NOT included in the Cost of the Work for fee calculation. Do not raid contingency to cover design-phase budget overruns.</p>
       </div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-pcm-fin-sources"><h4>Primary sources</h4><ul><li><a href="https://www.irs.gov/publications/p538" target="_blank" rel="noopener">IRS Publication 538: Accounting Periods and Methods</a><span class="src-org">IRS</span><span class="src-cov">Cash vs. accrual accounting methods</span></li><li><a href="https://www.ncarb.org/sites/default/files/ARE5-Guidelines.pdf" target="_blank" rel="noopener">NCARB ARE 5.0 Guidelines</a><span class="src-org">NCARB</span><span class="src-cov">Official PcM/PjM objectives and exam content</span></li><li><a href="https://www.irs.gov/businesses/small-businesses-self-employed/business-structures" target="_blank" rel="noopener">IRS: Business Structures</a><span class="src-org">IRS</span><span class="src-cov">Entity types and tax treatment</span></li></ul></div><!--/sum-sources--></div>
   <!-- PcM Business Ops -->
   <div class="sum-section" id="s-pcm-ops">
     <div class="sum-section-header"><span class="sum-section-tag toc-pcm">PcM — Section 1</span><h3>Business Operations &amp; Agency<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h3></div>
@@ -1952,7 +1983,8 @@
         <p>ADA, EEOC, OSHA, Fair Labor Standards Act (FLSA), workers' comp. Document performance evaluations and termination decisions to limit employment-related liability.</p>
       </div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-pcm-ops-sources"><h4>Primary sources</h4><ul><li><a href="https://www.acquisition.gov/far/subpart-36.6" target="_blank" rel="noopener">FAR Subpart 36.6 Architect-Engineer Services</a><span class="src-org">GSA/DoD/NASA</span><span class="src-cov">Federal QBS selection and fee negotiation</span></li><li><a href="https://www.law.cornell.edu/uscode/text/40/1102" target="_blank" rel="noopener">40 U.S.C. 1102 (Brooks Act definitions)</a><span class="src-org">Cornell LII</span><span class="src-cov">Brooks Act A/E services definition</span></li><li><a href="https://www.acquisition.gov/far/36.602-1" target="_blank" rel="noopener">FAR 36.602-1 Selection criteria</a><span class="src-org">GSA/DoD/NASA</span><span class="src-cov">Qualifications-based evaluation of A-E firms</span></li><li><a href="https://www.dol.gov/agencies/whd/flsa" target="_blank" rel="noopener">Wages and the Fair Labor Standards Act</a><span class="src-org">U.S. DOL</span><span class="src-cov">FLSA minimum wage, overtime, recordkeeping</span></li><li><a href="https://www.eeoc.gov/employers" target="_blank" rel="noopener">EEOC: Employers</a><span class="src-org">EEOC</span><span class="src-cov">Federal employment discrimination law for employers</span></li></ul></div><!--/sum-sources--></div>
   <!-- PcM Methodologies -->
   <div class="sum-section" id="s-pcm-meth">
     <div class="sum-section-header"><span class="sum-section-tag toc-pcm">PcM — Section 4</span><h3>Practice Methodologies (17–23%)<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h3></div>
@@ -1984,7 +2016,8 @@
         <p><strong>Design-led:</strong> Prioritizes design quality; may accept lower profit margins. <strong>Management-led:</strong> Prioritizes efficiency, predictability, and financial performance. Both appear on the exam — neither is "wrong."</p>
       </div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-pcm-meth-sources"><h4>Primary sources</h4><ul><li><a href="https://www.irs.gov/businesses/small-businesses-self-employed/business-structures" target="_blank" rel="noopener">IRS: Business Structures</a><span class="src-org">IRS</span><span class="src-cov">Entity types and tax treatment</span></li><li><a href="https://www.irs.gov/businesses/small-businesses-self-employed/limited-liability-company-llc" target="_blank" rel="noopener">IRS: Limited Liability Company (LLC)</a><span class="src-org">IRS</span><span class="src-cov">LLC default tax classification and elections</span></li><li><a href="https://www.irs.gov/businesses/small-businesses-self-employed/s-corporations" target="_blank" rel="noopener">IRS: S Corporations</a><span class="src-org">IRS</span><span class="src-cov">S-Corp election and pass-through taxation</span></li><li><a href="https://www.ncarb.org/pass-the-are/are-guidelines" target="_blank" rel="noopener">NCARB ARE Overview and Guidelines</a><span class="src-org">NCARB</span><span class="src-cov">Official ARE 5.0 division overview</span></li></ul></div><!--/sum-sources--></div>
   <!-- PjM Work Planning -->
   <div class="sum-section" id="s-pjm-plan">
     <div class="sum-section-header"><span class="sum-section-tag toc-pjm">PjM — Section 2</span><h3>Project Work Planning (17–23%)</h3></div>
@@ -2007,7 +2040,8 @@
         <div class="callout warn">Designing during programming is not the proper order per AIA/NCARB — the exam tests the AIA position.</div>
       </div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-pjm-plan-sources"><h4>Primary sources</h4><ul><li><a href="https://www.ncarb.org/sites/default/files/ARE5-Guidelines.pdf" target="_blank" rel="noopener">NCARB ARE 5.0 Guidelines</a><span class="src-org">NCARB</span><span class="src-cov">Official PcM/PjM objectives and exam content</span></li><li><a href="https://www.aiacontracts.com/documents/a201-2017" target="_blank" rel="noopener">AIA A201-2017 General Conditions of the Contract</a><span class="src-org">AIA</span><span class="src-cov">Contract vocabulary, subrogation waiver, architect&#x27;s role in administration</span></li><li><a href="https://www.aiacontracts.com/documents/b101-2017" target="_blank" rel="noopener">AIA B101-2017 Owner-Architect Agreement</a><span class="src-org">AIA</span><span class="src-cov">Architect services, budget limits, instruments of service ownership</span></li></ul></div><!--/sum-sources--></div>
   <!-- PjM Contracts -->
   <div class="sum-section" id="s-pjm-contracts">
     <div class="sum-section-header"><span class="sum-section-tag toc-pjm">PjM — Section 3</span><h3>Contracts (25–31% — LARGEST)<span class="rev" title="Updated" role="img" aria-label="updated"><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 1.6l4.6 8.4H1.4z"/></svg></span></h3></div>
@@ -2022,7 +2056,8 @@
         <p>ASI (no cost/schedule) → Change Order (all agree, cost known) → CCD (cost disputed, must keep moving). Key: CCD is signed by owner + architect, NOT contractor.</p>
       </div>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-pjm-contracts-sources"><h4>Primary sources</h4><ul><li><a href="https://www.aiacontracts.com/documents/a101-2017" target="_blank" rel="noopener">AIA A101-2017 Owner-Contractor Agreement (Stipulated Sum)</a><span class="src-org">AIA</span><span class="src-cov">Owner-contractor stipulated sum agreement; architect not a party</span></li><li><a href="https://www.aiacontracts.com/documents/a201-2017" target="_blank" rel="noopener">AIA A201-2017 General Conditions of the Contract</a><span class="src-org">AIA</span><span class="src-cov">Contract vocabulary, subrogation waiver, architect&#x27;s role in administration</span></li><li><a href="https://www.aiacontracts.com/documents/c401-2017" target="_blank" rel="noopener">AIA C401-2017 Architect-Consultant Agreement</a><span class="src-org">AIA</span><span class="src-cov">Consultant ownership, insurance, and subconsultant rules</span></li><li><a href="https://www.aiacontracts.com/documents/g701-2017" target="_blank" rel="noopener">AIA G701 Change Order</a><span class="src-org">AIA</span><span class="src-cov">Change Order form: agreed cost and time</span></li><li><a href="https://www.aiacontracts.com/documents/g714-2017" target="_blank" rel="noopener">AIA G714 Construction Change Directive</a><span class="src-org">AIA</span><span class="src-cov">CCD used when cost is disputed</span></li></ul></div><!--/sum-sources--></div>
   <!-- PjM Execution -->
   <div class="sum-section" id="s-pjm-exec">
     <div class="sum-section-header"><span class="sum-section-tag toc-pjm">PjM — Section 4</span><h3>Project Execution (17–23%)</h3></div>
@@ -2031,7 +2066,8 @@
       <p><strong>AHJ approvals:</strong> Identify all authorities early — zoning, building department, fire marshal, historic commission, accessibility agencies. Missing an AHJ submission late in design is costly.</p>
       <p><strong>Documentation by delivery:</strong> DBB requires complete, coordinated CDs. CMc may use bridging documents. Design-build may use performance specifications.</p>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-pjm-exec-sources"><h4>Primary sources</h4><ul><li><a href="https://www.aiacontracts.com/documents/b101-2017" target="_blank" rel="noopener">AIA B101-2017 Owner-Architect Agreement</a><span class="src-org">AIA</span><span class="src-cov">Architect services, budget limits, instruments of service ownership</span></li><li><a href="https://www.aiacontracts.com/documents/a133-2019" target="_blank" rel="noopener">AIA A133 Owner-CMc Agreement (Cost Plus Fee with GMP)</a><span class="src-org">AIA</span><span class="src-cov">CMc and GMP delivery</span></li><li><a href="https://www.aiacontracts.com/documents/b133-2019" target="_blank" rel="noopener">AIA B133 Owner-Architect Agreement, CMc Edition</a><span class="src-org">AIA</span><span class="src-cov">Architect role under CMc delivery</span></li><li><a href="https://www.aiacontracts.com/documents/a141-2014" target="_blank" rel="noopener">AIA A141 Owner-Design-Builder Agreement</a><span class="src-org">AIA</span><span class="src-cov">Design-build agreement structure</span></li><li><a href="https://www.aiacontracts.com/documents/g710-2017" target="_blank" rel="noopener">AIA G710 Architect&#x27;s Supplemental Instructions</a><span class="src-org">AIA</span><span class="src-cov">ASI with no cost or schedule change</span></li></ul></div><!--/sum-sources--></div>
   <!-- PjM QC -->
   <div class="sum-section" id="s-pjm-qc">
     <div class="sum-section-header"><span class="sum-section-tag toc-pjm">PjM — Section 5</span><h3>Project Quality Control (19–25%)</h3></div>
@@ -2040,7 +2076,8 @@
       <p><strong>QC checkpoints:</strong> Inspect for coordination (do drawings agree across disciplines?) and constructability (can this actually be built as drawn?).</p>
       <p><strong>Design integrity:</strong> Document intent of key SD decisions so they aren't value-engineered away in DD/CDs. Avoid <strong>project perfection syndrome</strong> — over-detailing beyond what the phase or budget requires. <strong>Corporate memory</strong> = institutional accumulated knowledge (reliable subcontractors, building department contacts, past project details) — organizing it is a QC function.</p>
     </div>
-  </div>
+  
+<div class="sum-sources" id="s-pjm-qc-sources"><h4>Primary sources</h4><ul><li><a href="https://codes.iccsafe.org/content/IBC2021P2/chapter-1-scope-and-administration" target="_blank" rel="noopener">IBC 2021 Chapter 1 — Scope and Administration</a><span class="src-org">ICC</span><span class="src-cov">Plan review, permits, and code compliance process</span></li><li><a href="https://www.ada.gov/law-and-regs/design-standards/2010-stds/" target="_blank" rel="noopener">2010 ADA Standards for Accessible Design</a><span class="src-org">ADA.gov</span><span class="src-cov">Accessibility standards in the code analysis</span></li><li><a href="https://www.aiacontracts.com/documents/a201-2017" target="_blank" rel="noopener">AIA A201-2017 General Conditions of the Contract</a><span class="src-org">AIA</span><span class="src-cov">Contract vocabulary, subrogation waiver, architect&#x27;s role in administration</span></li><li><a href="https://www.ncarb.org/sites/default/files/ARE5-Guidelines.pdf" target="_blank" rel="noopener">NCARB ARE 5.0 Guidelines</a><span class="src-org">NCARB</span><span class="src-cov">Official PcM/PjM objectives and exam content</span></li></ul></div><!--/sum-sources--></div>
   <!-- Abbreviations Legend -->
   <div class="sum-section" id="s-legend" style="border-top:2px solid var(--border);padding-top:24px">
     <div class="sum-section-header"><span class="sum-section-tag" style="background:var(--hover);color:var(--muted);">REF</span><h3>Abbreviations Legend</h3></div>
@@ -2656,7 +2693,7 @@ function renderCard(){
   document.getElementById('btnKnow').disabled=true;
   document.getElementById('btnReview').disabled=true;
   document.getElementById('cardQ').textContent=card.q;
-  document.getElementById('cardA').textContent=card.a;if(card.src){const _s=document.createElement('div');_s.className='card-src';_s.textContent='Source: '+card.src;document.getElementById('cardA').appendChild(_s);}
+  document.getElementById('cardA').textContent=card.a;if(card.src){const _s=document.createElement('div');_s.className='card-src';_s.textContent='Source: '+card.src;document.getElementById('cardA').appendChild(_s);}if(window.qlLinks){const _q=qlLinks(card.section);if(_q)document.getElementById('cardA').insertAdjacentHTML('beforeend',_q);}
   document.getElementById('cardSection').textContent=card.section;
   const badge=document.getElementById('cardBadge');
   if(card.div==='all3'){badge.className='card-division-badge badge-all3';badge.textContent='ALL 3';}
@@ -2969,7 +3006,7 @@ function renderQuestion(){
   html+=`</div>`;
   const showExp=prevAnswer!==undefined?' show':'';
   const verdict=prevAnswer==='correct'?'<span class="qz-verdict v-correct">Correct</span>':(prevAnswer==='wrong'?'<span class="qz-verdict v-wrong">Not quite</span>':'');
-  html+=`<div class="qz-explain${showExp}" id="qzExplain">${verdict}${item.exp}${item.src?`<div class="qz-src">Source: ${item.src}</div>`:''}</div>`;
+  html+=`<div class="qz-explain${showExp}" id="qzExplain">${verdict}${item.exp}${item.src?`<div class="qz-src">Source: ${item.src}</div>`:''}${window.qlLinks?qlLinks(item.section):''}</div>`;
   html+=`</div>`;
   area.innerHTML=html;
   document.getElementById('qzCounter').textContent=`${qzIndex+1} / ${qzDeck.length}`;
@@ -4336,6 +4373,44 @@ document.addEventListener('keydown', e=>{
     if (tabs && window.MutationObserver) new MutationObserver(fixTabs).observe(tabs, { childList: true });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
+</script>
+<script id="ql-script">
+(function(){
+  const MAP = {"NCARB Rules": {"s": ["s-ethics"], "t": ["t-rules"]}, "CA: Roles": {"s": ["s-ca"], "t": ["t-ca"]}, "PcM S2: Firm Metrics": {"s": ["s-pcm-fin"], "t": ["t-financial"]}, "PjM: Consultants": {"s": ["s-pjm-contracts"], "t": ["t-aia"]}, "PcM S3: Delivery": {"s": ["s-pcm-fin", "s-b101"], "t": []}, "PcM: Business Ops": {"s": ["s-pcm-ops"], "t": ["t-pcm"]}, "Risk": {"s": ["s-risk"], "t": []}, "CA: Site Observation": {"s": ["s-ca"], "t": ["t-ca"]}, "B101 Termination": {"s": ["s-b101"], "t": []}, "CA: Closeout": {"s": ["s-ca"], "t": ["t-gforms"]}, "PcM S4: Methodology": {"s": ["s-pcm-meth"], "t": []}, "Agency": {"s": ["s-pcm-ops"], "t": []}, "CA: Schedule": {"s": ["s-ca"], "t": []}, "B101 Copyright": {"s": ["s-b101"], "t": []}, "CA: RFIs": {"s": ["s-ca"], "t": ["t-gforms"]}, "CA: Surety Bonds": {"s": ["s-ca"], "t": ["t-ca"]}, "A201 / CA": {"s": ["s-ca"], "t": ["t-ca"]}, "PjM S4: Execution": {"s": ["s-pjm-exec"], "t": []}, "Scope Creep": {"s": ["s-scope"], "t": []}, "Earned Value": {"s": ["s-pjm-plan", "s-pjm-exec"], "t": []}, "Delivery Methods": {"s": ["s-delivery"], "t": ["t-delivery"]}, "Risk: Standard of Care": {"s": ["s-soc", "s-risk"], "t": []}, "CA: Preconstruction": {"s": ["s-ca"], "t": ["t-gforms"]}, "CA: Pay Applications": {"s": ["s-ca"], "t": ["t-gforms"]}, "CA: Submittals": {"s": ["s-ca"], "t": ["t-gforms"]}, "CA: Liens": {"s": ["s-ca"], "t": []}, "PjM S2: Work Planning": {"s": ["s-pjm-plan"], "t": ["t-pjm"]}, "PcM S2: Marketing": {"s": ["s-pcm-ops"], "t": ["t-pcm"]}, "CA: Substantial Completion": {"s": ["s-ca"], "t": ["t-gforms"]}, "PjM S2: Scheduling": {"s": ["s-pjm-plan"], "t": []}, "PjM: Contracts": {"s": ["s-pjm-contracts"], "t": ["t-aia"]}, "PjM S3: Consultant Agreements": {"s": ["s-pjm-contracts", "s-aia"], "t": ["t-aia"]}, "AIA Contracts": {"s": ["s-aia"], "t": ["t-aia"]}, "CE: Commissioning": {"s": ["s-commissioning"], "t": ["t-ce"]}, "PcM: Entity Types": {"s": ["s-pcm-meth"], "t": []}, "PjM S3: Contracts": {"s": ["s-pjm-contracts"], "t": ["t-aia"]}, "CA: Contracts": {"s": ["s-ca"], "t": []}, "Delivery: Design-Assist": {"s": ["s-delivery"], "t": ["t-delivery"]}, "CE: POE": {"s": ["s-commissioning"], "t": ["t-gforms"]}, "PcM S1: Ops": {"s": ["s-pcm-ops"], "t": ["t-pcm"]}, "PjM: Scheduling": {"s": ["s-pjm-plan"], "t": []}, "Dispute Resolution": {"s": ["s-b101"], "t": ["t-dispute"]}, "PjM S5: QC": {"s": ["s-pjm-qc", "s-qc"], "t": []}, "B101 Cost": {"s": ["s-b101"], "t": []}, "PcM S1: Ethics": {"s": ["s-ethics"], "t": ["t-rules"]}, "CA: Nonconforming Work": {"s": ["s-ca"], "t": []}, "B101 Basics": {"s": ["s-b101"], "t": ["t-aia"]}, "PjM S5: Risk": {"s": ["s-risk", "s-pjm-qc"], "t": []}, "Risk Management": {"s": ["s-risk"], "t": []}, "CA: Claims & Disputes": {"s": ["s-ca", "s-b101"], "t": ["t-dispute"]}, "PcM S3: Fees": {"s": ["s-pcm-fin"], "t": ["t-revenue"]}, "PjM: QC": {"s": ["s-pjm-qc", "s-qc"], "t": []}, "PjM S2: Documentation": {"s": ["s-pjm-plan", "s-aia"], "t": []}, "PcM S1: HR & Employment Law": {"s": ["s-pcm-ops"], "t": ["t-pcm"]}, "PcM: Fees": {"s": ["s-pcm-fin"], "t": ["t-revenue"]}, "PcM S2: Finances": {"s": ["s-pcm-fin"], "t": ["t-financial", "t-revenue"]}, "PjM: Delivery Methods": {"s": ["s-delivery"], "t": ["t-delivery"]}, "PjM S1: Team Selection": {"s": ["s-pjm-contracts", "s-delivery"], "t": []}, "CE: Exam Strategy": {"s": ["s-ce-strategy"], "t": ["t-ce"]}, "PjM S4: AHJ": {"s": ["s-pjm-exec"], "t": []}, "PjM: Work Planning": {"s": ["s-pjm-plan"], "t": ["t-pjm"]}, "PcM: Methodology": {"s": ["s-pcm-meth"], "t": []}, "PjM: AHJ": {"s": ["s-pjm-exec"], "t": []}, "B101 Claims": {"s": ["s-b101"], "t": ["t-dispute"]}, "Risk & Insurance": {"s": ["s-risk"], "t": []}, "CA: Change Instruments": {"s": ["s-ca"], "t": ["t-ca", "t-gforms"]}, "PcM S4: Contracts": {"s": ["s-aia"], "t": ["t-aia"]}, "Standard of Care": {"s": ["s-soc", "s-risk"], "t": []}, "CA: Testing & Inspection": {"s": ["s-ca"], "t": []}, "CE: Field Problems": {"s": ["s-ca", "s-ce-strategy"], "t": ["t-ce"]}, "B101 Owner's Duties": {"s": ["s-b101"], "t": []}, "PjM S4: Design Integration": {"s": ["s-pjm-exec"], "t": []}, "PcM S4: Insurance": {"s": ["s-risk"], "t": []}, "PjM S2: Budget": {"s": ["s-pjm-plan", "s-pjm-exec"], "t": []}, "PjM S1: Resource Management": {"s": ["s-pcm-fin", "s-pjm-plan"], "t": ["t-pjm"]}, "PcM: Finances": {"s": ["s-pcm-fin"], "t": ["t-financial", "t-revenue"]}, "PcM S1: Copyright": {"s": ["s-b101", "s-aia"], "t": []}, "PcM S4: Entity Types": {"s": ["s-pcm-meth"], "t": []}}, SUM = {"s-b101": "B101 Owner-Architect Agreement", "s-soc": "Standard of Care", "s-delivery": "Project Delivery Methods", "s-risk": "Risk Management & Insurance", "s-scope": "Scope Creep & Scope Changes", "s-qc": "Quality Control", "s-ethics": "Ethics — NCARB Model Rules", "s-ce-strategy": "CE Exam Strategy & Content Split", "s-ca": "Construction Administration", "s-commissioning": "Building Commissioning & POE", "s-aia": "AIA Contract Documents — Detail", "s-pcm-fin": "Finances, Risk & Development (Section 2)", "s-pcm-ops": "Business Operations & Agency", "s-pcm-meth": "Practice Methodologies (Section 4)", "s-pjm-plan": "Project Work Planning (Section 2)", "s-pjm-contracts": "Contracts (Section 3)", "s-pjm-exec": "Project Execution (Section 4)", "s-pjm-qc": "Project Quality Control (Section 5)", "s-legend": "Abbreviations Legend"}, TAB = {"t-snapshot": "Division Snapshot", "t-overlap": "Overlapping Topics", "t-aia": "AIA Documents", "t-gforms": "G-Series Forms", "t-ca": "CA Change Instruments", "t-delivery": "Delivery Methods", "t-financial": "Financial Metrics", "t-revenue": "Revenue Flow", "t-dispute": "Dispute Resolution", "t-rules": "NCARB Rules", "t-pcm": "PcM Exclusive", "t-pjm": "PjM Exclusive", "t-ce": "CE Exclusive"};
+  let back = null;
+  const esc = x => String(x).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  window.qlLinks = function(label){
+    const m = MAP[label]; if (!m) return "";
+    const a = m.s.map(id => `<a href="#${id}" class="ql" data-ql="summary:${id}"><b>Summary</b>${esc(SUM[id])}</a>`)
+      .concat(m.t.map(id => `<a href="#${id}" class="ql" data-ql="tables:${id}"><b>Table</b>${esc(TAB[id])}</a>`));
+    return a.length ? `<div class="ql-row"><span class="ql-lbl">Go to</span>${a.join("")}</div>` : "";
+  };
+  const tab = id => document.querySelector(`.nav-tab[aria-controls="${id}"]`);
+  const activePanel = () => (document.querySelector(".panel.active") || {}).id;
+  function flash(el){ el.classList.add("ql-flash"); setTimeout(()=>el.classList.add("fade"),900); setTimeout(()=>el.classList.remove("ql-flash","fade"),2600); }
+  function go(spec){
+    const [panel, id] = spec.split(":"); const from = activePanel();
+    if (from && from !== panel) back = { panel: from, y: window.scrollY };
+    switchPanel(panel, tab(panel));
+    let target = document.getElementById(id);
+    if (panel === "tables") {
+      const btn = document.querySelector(`.table-btn[onclick*="'${id}'"]`);
+      if (btn) showTable(id, btn);
+      target = document.getElementById(id);
+    }
+    if (target) { target.scrollIntoView({ behavior: "smooth", block: "start" }); flash(target); }
+    if (back) { btnBack.textContent = "← Back to " + (tab(back.panel) ? tab(back.panel).textContent.trim() : "previous"); btnBack.classList.add("show"); }
+  }
+  const btnBack = document.createElement("button");
+  btnBack.className = "ql-back"; btnBack.type = "button";
+  btnBack.onclick = () => { if (!back) return; switchPanel(back.panel, tab(back.panel)); window.scrollTo(0, back.y); back = null; btnBack.classList.remove("show"); };
+  document.body.appendChild(btnBack);
+  document.addEventListener("click", e => {
+    const a = e.target.closest("[data-ql]");
+    if (a) { e.preventDefault(); e.stopPropagation(); go(a.dataset.ql); return; }
+    if (e.target.closest(".nav-tab")) { back = null; btnBack.classList.remove("show"); }
+  }, true);
 })();
 </script>
 </body>
