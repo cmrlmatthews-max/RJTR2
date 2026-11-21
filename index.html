@@ -3602,7 +3602,6 @@ document.addEventListener('keydown', e=>{
 })();
 </script>
 <script id="tools-script">
-/* ===== TOOLS TAB (calculators + live diagrams) ===== */
 /* ===== TOOLS TAB (calculators + live diagrams) — Site 2: PcM / PjM / CE ===== */
 (function () {
   "use strict";
@@ -3612,16 +3611,25 @@ document.addEventListener('keydown', e=>{
   /* ---------- helpers ---------- */
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fin = x => typeof x === "number" && isFinite(x);
-  const money = x => !fin(x) ? "—" : (x < -0.004 ? "−" : "") + "$" + Math.abs(x).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  const money = x => {
+    if (!fin(x)) return "—";
+    const a = Math.abs(x), frac = Math.abs(a - Math.round(a)) > 0.004;
+    return (x < -0.004 ? "−" : "") + "$" + a.toLocaleString("en-US", { minimumFractionDigits: frac ? 2 : 0, maximumFractionDigits: 2 });
+  };
   const r2 = x => fin(x) ? x.toFixed(2) : "—";
   const r3 = x => fin(x) ? x.toFixed(3) : "—";
   const pc = (x, d) => fin(x) ? (x * 100).toFixed(d === undefined ? 1 : d) + "%" : "—";
   const short = v => { const a = Math.abs(v); return a >= 1e6 ? (v / 1e6).toFixed(2) + "M" : a >= 1e3 ? (v / 1e3).toFixed(a >= 1e5 ? 0 : 1) + "k" : String(Math.round(v)); };
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const rint = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const rnd = (v, s) => Math.round(v / s) * s;
+  const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = b[i]; b[i] = b[j]; b[j] = t; } return b; };
+  const NA = "Not enough information yet. Check the givens in step 1.";
 
   function fld(tool, k, label, val, o) {
     o = o || {};
     const type = o.type || "number";
-    return `<label class="tl-f ${o.cls || ""}"><span>${label}</span><input id="tl-${tool}-${o.id || k}" data-k="${k}" ${o.r !== undefined ? `data-r="${o.r}"` : ""} type="${type}"` +
+    return `<label class="tl-f ${o.cls || ""}"><span>${label}</span>${o.help ? `<em class="tl-help">${o.help}</em>` : ""}<input id="tl-${tool}-${o.id || k}" data-k="${k}" ${o.r !== undefined ? `data-r="${o.r}"` : ""} type="${type}"` +
       `${type === "number" ? ' inputmode="decimal" step="any"' : ""} ${o.max ? `maxlength="${o.max}"` : ""} value="${val === "" || val == null ? "" : esc(val)}" ${o.ph ? `placeholder="${esc(o.ph)}"` : ""}></label>`;
   }
   /* parse a numeric field; push a problem into bads and return 0 when invalid */
@@ -3633,8 +3641,9 @@ document.addEventListener('keydown', e=>{
     if (v < 0 && !neg) { bads.push(`${label} can't be negative, so it is treated as 0.`); return 0; }
     return v;
   }
+  /* result boxes: value (data-o) plus a plain one-sentence meaning (data-mean) */
   function res(tool, items) {
-    return `<dl class="tl-res">${items.map(i => `<div class="${i[3] || ""}"><dt>${i[1]}</dt><dd id="tl-${tool}-o-${i[0]}" data-o="${i[0]}">—</dd></div>`).join("")}</dl>`;
+    return `<dl class="tl-res">${items.map(i => `<div class="${i[2] || ""}"><dt>${i[1]}</dt><dd id="tl-${tool}-o-${i[0]}" data-o="${i[0]}">—</dd><dd class="tl-mean" data-mean="${i[0]}"></dd></div>`).join("")}</dl>`;
   }
   function setO(root, k, txt, raw) {
     const e = root.querySelector(`[data-o="${k}"]`);
@@ -3642,28 +3651,56 @@ document.addEventListener('keydown', e=>{
     e.textContent = txt;
     e.dataset.v = fin(raw) ? String(raw) : "";
   }
+  function setM(root, k, txt) {
+    const e = root.querySelector(`[data-mean="${k}"]`);
+    if (e) e.textContent = txt;
+  }
+  const ov = (root, k) => { const e = root.querySelector(`[data-o="${k}"]`); const s = e ? e.dataset.v : ""; return s === "" || s === undefined ? NaN : Number(s); };
   function setNotes(root, arr) {
     const ul = root.querySelector("[data-notes]");
     if (!ul) return;
     ul.innerHTML = arr.map(n => `<li class="tl-note tl-${n[0]}">${esc(n[1])}</li>`).join("");
   }
   const rdEl = (root, k) => root.querySelector(`[data-k="${k}"]:not([data-r])`);
+  function setFields(root, m) { Object.keys(m).forEach(k => { const el = rdEl(root, k); if (el) el.value = m[k] == null ? "" : String(m[k]); }); }
   function rd(root, k, bads, neg) {
     const el = rdEl(root, k);
-    const lab = el && el.previousElementSibling ? el.previousElementSibling.textContent.replace(/\s*\(.*$/, "") : k;
+    const lb = el && el.closest("label") ? el.closest("label").querySelector("span") : null;
+    const lab = lb ? lb.textContent.replace(/\s*\(.*$/, "").replace(/,\s*\$$/, "") : k;
     const n0 = bads.length;
     const v = num(el ? el.value : "", lab, bads, neg);
     if (el) el.classList.toggle("tl-badin", bads.length > n0);
     return v;
   }
 
+  /* ---------- card shell: title, Start here, practice box, then the three steps ---------- */
   function card(o) {
-    return `<article class="tl-card ${o.wide ? "tl-wide" : ""}" data-divs="${o.divs.join(" ")}" id="tl-card-${o.id}">
+    const sp = SPEC[o.id];
+    return `<article class="tl-card" data-divs="${o.divs.join(" ")}" data-id="${o.id}" id="tl-card-${o.id}">
       <header class="tl-head"><h3>${o.title}</h3><div class="tl-tags">${o.divs.map(d => `<span class="tl-tag tl-d-${d.toLowerCase()}">${d}</span>`).join("")}</div></header>
       <p class="tl-exam">${o.exam}</p>
-      <div class="tl-body" data-tool="${o.id}">${o.body}</div>
-      <details class="tl-how"><summary>How it works</summary><div class="tl-howbody" data-how></div></details>
-      <p class="tl-src">Source: ${o.source}</p>
+      <div class="tl-start" data-start>
+        <span class="tl-k">Start here</span>
+        <p class="tl-prob" data-prob>${sp.prob}</p>
+        <div class="tl-acts">
+          <button type="button" class="tl-btn tl-pri" data-load>Load this example</button>
+          <button type="button" class="tl-btn" data-try>Try one</button>
+          <button type="button" class="tl-btn" data-open aria-expanded="false">Open tool</button>
+        </div>
+        <p class="tl-ans" data-ans hidden></p>
+      </div>
+      <div class="tl-prac" data-prac hidden></div>
+      <div class="tl-full" data-full hidden>
+        <div class="tl-body" data-tool="${o.id}">
+          <section data-s1><h4 class="tl-step"><b>1</b> Enter the givens</h4>${o.givens}</section>
+          <section data-s2><h4 class="tl-step"><b>2</b> Read the result</h4>${o.result}</section>
+          <section data-s3><h4 class="tl-step"><b>3</b> Check the rule</h4>${o.check || ""}
+            <ul class="tl-notes" data-notes></ul>
+            <details class="tl-how"><summary>How it works</summary><div class="tl-howbody" data-how></div></details>
+            <p class="tl-src">Source: ${o.source}</p>
+          </section>
+        </div>
+      </div>
     </article>`;
   }
   const setHow = (root, html) => { const h = root.closest(".tl-card").querySelector("[data-how]"); if (h) h.innerHTML = html; };
@@ -3672,18 +3709,18 @@ document.addEventListener('keydown', e=>{
      1. EARNED VALUE
      ====================================================================== */
   function evmCard() {
-    const body = `
+    const givens = `
       <div class="tl-grid">
-        ${fld("evm", "bac", "Budget at completion, BAC ($)", 100000)}
-        ${fld("evm", "pv", "Planned value, PV ($)", 45000)}
-        ${fld("evm", "ev", "Earned value, EV ($)", 40000)}
-        ${fld("evm", "pct", "or % complete (fills EV)", "", { ph: "blank" })}
-        ${fld("evm", "ac", "Actual cost, AC ($)", 50000)}
-      </div>
-      ${res("evm", [["sv", "Schedule variance SV = EV − PV"], ["cv", "Cost variance CV = EV − AC"], ["spi", "SPI = EV ÷ PV"], ["cpi", "CPI = EV ÷ AC"], ["eac", "Estimate at completion EAC"], ["etc", "Estimate to complete ETC"], ["vac", "Variance at completion VAC"], ["tcpi", "TCPI (to hit BAC)"]])}
-      <ul class="tl-notes" data-notes></ul>
+        ${fld("evm", "bac", "Budget at completion (BAC), $", 100000, { help: "The total approved budget for the whole project." })}
+        ${fld("evm", "pv", "Planned value (PV), $", 45000, { help: "Budgeted cost of the work scheduled up to today." })}
+        ${fld("evm", "ev", "Earned value (EV), $", 40000, { help: "Budgeted cost of the work actually done so far." })}
+        ${fld("evm", "pct", "Percent complete (optional)", "", { ph: "blank", help: "Give this instead of EV. It sets EV = BAC × percent." })}
+        ${fld("evm", "ac", "Actual cost (AC), $", 50000, { help: "What has really been spent so far." })}
+      </div>`;
+    const result = `
+      ${res("evm", [["sv", "Schedule variance (SV) = EV − PV"], ["cv", "Cost variance (CV) = EV − AC"], ["spi", "Schedule performance index (SPI) = EV ÷ PV"], ["cpi", "Cost performance index (CPI) = EV ÷ AC"], ["eac", "Estimate at completion (EAC)"], ["etc", "Estimate to complete (ETC)"], ["vac", "Variance at completion (VAC)"], ["tcpi", "To-complete performance index (TCPI)"]])}
       <svg class="tl-svg" data-svg viewBox="0 0 320 150" role="img" aria-label="Bar chart of planned value, earned value and actual cost against budget at completion"></svg>`;
-    return card({ id: "evm", title: "Earned value", divs: ["PjM"], exam: "Tells you if a project is ahead or behind schedule and over or under budget, using one set of dollar figures.", body, source: "AHPP 15th ed. Ch. 9.4 (SPI, CPI); PMI PMBOK earned value formulas (EAC = BAC ÷ CPI, TCPI). Wiki: firm-financials-metrics", how: 1 });
+    return card({ id: "evm", title: "Earned value", divs: ["PjM"], exam: "Tells you if a project is ahead or behind schedule and over or under budget, using one set of dollar figures.", givens, result, source: "AHPP (Architect's Handbook of Professional Practice) 15th ed. Ch. 9.4 (SPI, CPI); PMI PMBOK earned value formulas (EAC = BAC ÷ CPI, TCPI). Wiki: firm-financials-metrics" });
   }
   function evmWire(root) {
     function calc() {
@@ -3705,6 +3742,14 @@ document.addEventListener('keydown', e=>{
       setO(root, "sv", money(sv), sv); setO(root, "cv", money(cv), cv);
       setO(root, "spi", r3(spi), spi); setO(root, "cpi", r3(cpi), cpi);
       setO(root, "eac", money(eac), eac); setO(root, "etc", money(etc), etc); setO(root, "vac", money(vac), vac); setO(root, "tcpi", r3(tcpi), tcpi);
+      setM(root, "sv", Math.abs(sv) < 0.005 ? "SV $0 — you are exactly on plan." : `SV ${money(sv)} — you are ${money(Math.abs(sv))} of work ${sv < 0 ? "behind" : "ahead of"} plan.`);
+      setM(root, "cv", Math.abs(cv) < 0.005 ? "CV $0 — the work done is worth exactly what you spent." : `CV ${money(cv)} — the work done is worth ${money(Math.abs(cv))} ${cv < 0 ? "less" : "more"} than you spent.`);
+      setM(root, "spi", fin(spi) ? `SPI ${r3(spi)} — you have done $${r2(spi)} of work for each $1 the plan called for.` : NA);
+      setM(root, "cpi", fin(cpi) ? `CPI ${r3(cpi)} — you get $${r2(cpi)} of work for each $1 spent.` : NA);
+      setM(root, "eac", fin(eac) ? `EAC ${money(eac)} — if costs keep running this way, the whole project will cost ${money(eac)}.` : NA);
+      setM(root, "etc", fin(etc) ? `ETC ${money(etc)} — about ${money(etc)} more must be spent to finish.` : NA);
+      setM(root, "vac", fin(vac) ? `VAC ${money(vac)} — you expect to finish ${money(Math.abs(vac))} ${vac < 0 ? "over" : "under"} budget.` : NA);
+      setM(root, "tcpi", fin(tcpi) ? `TCPI ${r3(tcpi)} — each $1 still to be spent must earn $${r2(tcpi)} of work to hit the budget.` : NA);
       const n = bads.map(b => ["warn", b]);
       if (ev > bac && bac > 0) n.push(["warn", "EV is more than BAC. Check your numbers."]);
       if (fin(spi)) n.push([spi < 0.995 ? "bad" : spi > 1.005 ? "ok" : "ok", spi < 0.995 ? `Behind schedule: SPI is ${r3(spi)}, below 1.0. Less work is done than planned.` : spi > 1.005 ? `Ahead of schedule: SPI is ${r3(spi)}.` : "On schedule: SPI is 1.0."]);
@@ -3726,13 +3771,14 @@ document.addEventListener('keydown', e=>{
       let s = `<line x1="20" y1="${B}" x2="300" y2="${B}" stroke="currentColor" stroke-opacity=".4"/>`;
       bars.forEach((b, i) => {
         const x = 50 + i * 80, h = sc(b[1]);
-        s += `<rect x="${x}" y="${B - h}" width="50" height="${h}" rx="3" fill="${b[2]}" fill-opacity=".85"/><text x="${x + 25}" y="${B - h - 4}" text-anchor="middle" font-size="10" fill="currentColor">${short(b[1])}</text><text x="${x + 25}" y="${B + 14}" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">${b[0]}</text>`;
+        s += `<rect x="${x}" y="${B - h}" width="50" height="${h}" rx="2" fill="${b[2]}" fill-opacity=".85"/><text x="${x + 25}" y="${B - h - 4}" text-anchor="middle" font-size="10" fill="currentColor">${short(b[1])}</text><text x="${x + 25}" y="${B + 14}" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">${b[0]}</text>`;
       });
       const yb = B - sc(bac);
-      s += `<line x1="20" y1="${yb}" x2="300" y2="${yb}" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="300" y="${yb - 3}" text-anchor="end" font-size="10" fill="var(--gold)">BAC ${short(bac)}</text>`;
+      s += `<line x1="20" y1="${yb}" x2="300" y2="${yb}" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="300" y="${yb - 3}" text-anchor="end" font-size="10" fill="var(--gold-ink,var(--gold))">BAC ${short(bac)}</text>`;
       svg.innerHTML = s;
     }
     root.addEventListener("input", calc);
+    root.tlSet = m => { setFields(root, m); calc(); };
     calc();
   }
 
@@ -3740,17 +3786,16 @@ document.addEventListener('keydown', e=>{
      2. FIRM FINANCIAL METRICS
      ====================================================================== */
   function firmCard() {
-    const body = `
+    const givens = `
       <div class="tl-grid">
-        ${fld("firm", "dse", "Direct salary expense, DSE ($)", 1000000)}
-        ${fld("firm", "tse", "Total salary expense ($)", 1600000)}
-        ${fld("firm", "oh", "Overhead = indirect expense ($)", 1500000)}
-        ${fld("firm", "nr", "Net revenue ($)", 3200000)}
-        ${fld("firm", "profit", "Profit ($)", 700000)}
-      </div>
-      ${res("firm", [["util", "Utilization rate = DSE ÷ total salary"], ["ohr", "Overhead rate = indirect ÷ DSE"], ["be", "Break-even multiplier = 1 + overhead rate"], ["nm", "Net multiplier = net revenue ÷ DSE"], ["pp", "Profit % of net revenue"]])}
-      <ul class="tl-notes" data-notes></ul>`;
-    return card({ id: "firm", title: "Firm financial metrics", divs: ["PcM"], exam: "Finds utilization, overhead rate, break-even and net multipliers, and profit from a firm's P&amp;L (profit and loss statement) numbers.", body, source: "AHPP 15th ed. (Student Ed.) Ch. 4.1 p. 188 and Ch. 4.3 p. 213, as recorded in wiki: firm-financials-metrics, firm-financial-statements" });
+        ${fld("firm", "dse", "Direct salary expense (DSE), $", 1000000, { help: "Pay for staff time charged to projects." })}
+        ${fld("firm", "tse", "Total salary expense, $", 1600000, { help: "All staff pay, billable or not. Direct plus indirect." })}
+        ${fld("firm", "oh", "Overhead (indirect expense), $", 1500000, { help: "Rent, admin pay, insurance and other costs not charged to a project." })}
+        ${fld("firm", "nr", "Net revenue, $", 3200000, { help: "Fees earned after paying consultants and reimbursables." })}
+        ${fld("firm", "profit", "Profit, $", 700000, { help: "What is left after all expenses. Can be negative." })}
+      </div>`;
+    const result = res("firm", [["util", "Utilization rate = DSE ÷ total salary"], ["ohr", "Overhead rate = indirect ÷ DSE"], ["be", "Break-even multiplier = 1 + overhead rate"], ["nm", "Net multiplier = net revenue ÷ DSE"], ["pp", "Profit % of net revenue"]]);
+    return card({ id: "firm", title: "Firm financial metrics", divs: ["PcM"], exam: "Finds utilization, overhead rate, break-even and net multipliers, and profit from a firm's P&amp;L (profit and loss statement) numbers.", givens, result, source: "AHPP (Architect's Handbook of Professional Practice) 15th ed. (Student Ed.) Ch. 4.1 p. 188 and Ch. 4.3 p. 213, as recorded in wiki: firm-financials-metrics, firm-financial-statements" });
   }
   function firmWire(root) {
     function calc() {
@@ -3759,6 +3804,11 @@ document.addEventListener('keydown', e=>{
       const util = tse > 0 ? dse / tse : NaN, ohr = dse > 0 ? oh / dse : NaN, be = fin(ohr) ? 1 + ohr : NaN, nm = dse > 0 ? nr / dse : NaN, pp = nr > 0 ? pr / nr : NaN;
       setO(root, "util", r3(util), util); setO(root, "ohr", r3(ohr) + (fin(ohr) ? " (" + pc(ohr, 0) + ")" : ""), ohr);
       setO(root, "be", r3(be), be); setO(root, "nm", r3(nm), nm); setO(root, "pp", pc(pp), pp);
+      setM(root, "util", fin(util) ? `Utilization ${r3(util)} — ${pc(util, 1)} of salary dollars go to billable project work.` : NA);
+      setM(root, "ohr", fin(ohr) ? `Overhead rate ${r3(ohr)} — the firm spends $${r2(ohr)} on overhead for each $1 of direct salary.` : NA);
+      setM(root, "be", fin(be) ? `Break-even ${r3(be)} — bill at least $${r2(be)} for each $1 of direct salary just to cover costs.` : NA);
+      setM(root, "nm", fin(nm) ? `Net multiplier ${r3(nm)} — each $1 of direct salary brings in $${r2(nm)} of net revenue.` : NA);
+      setM(root, "pp", fin(pp) ? `Profit ${pc(pp)} — the firm ${pp < 0 ? "loses" : "keeps"} ${pc(Math.abs(pp))} of its net revenue.` : NA);
       const n = bads.map(b => ["warn", b]);
       if (dse > tse && tse > 0) n.push(["warn", "DSE can't be more than total salary. Check the two salary numbers."]);
       if (fin(util) && dse <= tse) n.push([util >= 0.6 && util <= 0.65 ? "ok" : "info", util >= 0.6 && util <= 0.65 ? "Utilization is inside the AHPP range where most profitable firms operate (0.60 to 0.65)." : util < 0.6 ? "Utilization is below 0.60, the AHPP range for most profitable firms (0.60 to 0.65)." : "Utilization is above 0.65. AHPP says most profitable firms run 0.60 to 0.65; some study aids quote higher, and AHPP governs."]);
@@ -3774,6 +3824,7 @@ document.addEventListener('keydown', e=>{
         <p class="tl-ex">With your numbers: ${money(dse)} ÷ ${money(tse)} = ${r3(util)}; ${money(oh)} ÷ ${money(dse)} = ${r3(ohr)}; break-even = 1 + ${r3(ohr)} = ${r3(be)}; net multiplier = ${money(nr)} ÷ ${money(dse)} = ${r3(nm)}.</p>`);
     }
     root.addEventListener("input", calc);
+    root.tlSet = m => { setFields(root, m); calc(); };
     calc();
   }
 
@@ -3781,19 +3832,20 @@ document.addEventListener('keydown', e=>{
      3. FEE BUILDER
      ====================================================================== */
   function feeCard() {
-    const body = `
+    const givens = `
       <div data-rows></div>
       <button type="button" class="tl-btn" data-add>+ Add staff row</button>
       <div class="tl-grid">
-        ${fld("fee", "mult", "Multiplier (× direct salary)", 3)}
-        ${fld("fee", "reimb", "Reimbursables ($)", 5000)}
-        ${fld("fee", "cont", "Contingency (% of fee)", 5)}
+        ${fld("fee", "mult", "Multiplier (× direct salary)", 3, { help: "Turns pay into fee. Covers overhead and profit." })}
+        ${fld("fee", "reimb", "Reimbursables ($)", 5000, { help: "Costs billed at cost, such as printing and travel." })}
+        ${fld("fee", "cont", "Contingency (% of fee)", 5, { help: "Extra percent added for risk. Applied to the fee only." })}
       </div>
-      ${res("fee", [["hours", "Total hours"], ["labor", "Labor cost (direct salary)"], ["fee", "Fee at multiplier"], ["contd", "Contingency"], ["reimbd", "Reimbursables"], ["total", "Total", "tl-strong"]])}
       <h4 class="tl-sub">Phase split of the fee <span class="tl-faint">(typical, edit to suit)</span></h4>
-      <div class="tl-phases" data-phases></div>
-      <ul class="tl-notes" data-notes></ul>`;
-    return card({ id: "fee", title: "Fee builder", divs: ["PcM", "PjM"], exam: "Builds a fee from staff hours and a multiplier, the bottom-up method the exam compares with top-down and percentage fees.", body, source: "AHPP 15th ed. and Amber Book PjM cards 14, 67 as recorded in wiki: fee-structures-and-budgeting, firm-financials-metrics; B101 Art. 11 phases (SD, DD, CD, Bidding, CA)" });
+      <div class="tl-phases" data-phases></div>`;
+    const result = `
+      ${res("fee", [["hours", "Total hours"], ["labor", "Labor cost (direct salary)"], ["fee", "Fee at multiplier"], ["contd", "Contingency"], ["reimbd", "Reimbursables"], ["total", "Total", "tl-strong"]])}
+      <p class="tl-hint">Each phase box above shows the dollars billed in that phase: its percent × the fee at multiplier. The percents should add to 100.</p>`;
+    return card({ id: "fee", title: "Fee builder", divs: ["PcM", "PjM"], exam: "Builds a fee from staff hours and a multiplier, the bottom-up method the exam compares with top-down and percentage fees.", givens, result, source: "AHPP (Architect's Handbook of Professional Practice) 15th ed. and Amber Book PjM cards 14, 67 as recorded in wiki: fee-structures-and-budgeting, firm-financials-metrics; AIA B101 Art. 11 phases (SD, DD, CD, Bidding, CA)" });
   }
   function feeWire(root) {
     const rows = [{ role: "Principal", h: 10, rate: 75 }, { role: "Project architect", h: 80, rate: 45 }, { role: "Designer", h: 200, rate: 32 }];
@@ -3801,9 +3853,8 @@ document.addEventListener('keydown', e=>{
     const ph = phases.map(p => String(p[2]));
     const rowsEl = root.querySelector("[data-rows]");
     function draw() {
-      rowsEl.innerHTML = rows.map((r, i) => `<div class="tl-row"><div class="tl-rowhead">${fld("fee", "role", "Role", r.role, { type: "text", r: i, id: "r" + i + "-role", cls: "tl-grow", max: 40 })}<button type="button" class="tl-del" data-del="${i}" aria-label="Remove row ${i + 1}">✕</button></div>
-        <div class="tl-grid2">${fld("fee", "h", "Hours", r.h, { r: i, id: "r" + i + "-h" })}${fld("fee", "rate", "Direct salary rate ($/hr)", r.rate, { r: i, id: "r" + i + "-rate" })}</div></div>`).join("");
-      root.querySelector("[data-phases]").innerHTML = phases.map((p, i) => `<div class="tl-phrow"><label class="tl-f"><span>${p[0]} (${p[1]}) %</span><input id="tl-fee-ph${i}" data-ph="${i}" type="number" inputmode="decimal" step="any" value="${esc(ph[i])}"></label><b id="tl-fee-o-ph${i}" data-o="ph${i}">—</b></div>`).join("") + `<div class="tl-phrow tl-phtot"><span>Total</span><span><b id="tl-fee-o-phsum" data-o="phsum">—</b></span></div>`;
+      rowsEl.innerHTML = rows.map((r, i) => `<div class="tl-row"><div class="tl-rowhead">${fld("fee", "role", "Role", r.role, { type: "text", r: i, id: "r" + i + "-role", cls: "tl-grow", max: 40, help: "Who does the work." })}${fld("fee", "h", "Hours", r.h, { r: i, id: "r" + i + "-h", cls: "tl-wh", help: "Time on this job." })}${fld("fee", "rate", "Direct salary rate ($/hr)", r.rate, { r: i, id: "r" + i + "-rate", cls: "tl-wr", help: "Hourly pay, before overhead and profit." })}<button type="button" class="tl-del" data-del="${i}" aria-label="Remove row ${i + 1}">✕</button></div></div>`).join("");
+      root.querySelector("[data-phases]").innerHTML = phases.map((p, i) => `<div class="tl-phrow"><label class="tl-f"><span>${p[0]} (${p[1]}) %</span><em class="tl-help">Percent of the fee billed in this phase.</em><input id="tl-fee-ph${i}" data-ph="${i}" type="number" inputmode="decimal" step="any" value="${esc(ph[i])}"></label><b id="tl-fee-o-ph${i}" data-o="ph${i}">—</b></div>`).join("") + `<div class="tl-phrow tl-phtot"><span>Total of the percents</span><span><b id="tl-fee-o-phsum" data-o="phsum">—</b></span></div>`;
     }
     function calc() {
       const bads = [];
@@ -3813,6 +3864,12 @@ document.addEventListener('keydown', e=>{
       const fee = labor * mult, contd = fee * cont / 100, total = fee + contd + reimb;
       setO(root, "hours", hours.toLocaleString("en-US"), hours); setO(root, "labor", money(labor), labor); setO(root, "fee", money(fee), fee);
       setO(root, "contd", money(contd), contd); setO(root, "reimbd", money(reimb), reimb); setO(root, "total", money(total), total);
+      setM(root, "hours", `${hours.toLocaleString("en-US")} hours — all staff time added together.`);
+      setM(root, "labor", `${money(labor)} — what the staff are paid for these hours, before overhead and profit.`);
+      setM(root, "fee", `${money(fee)} — labor cost × ${mult}, which covers overhead and profit.`);
+      setM(root, "contd", `${money(contd)} — ${cont}% of the fee, held back for risk.`);
+      setM(root, "reimbd", `${money(reimb)} — billed at cost and not multiplied.`);
+      setM(root, "total", `${money(total)} — what the client pays: fee + contingency + reimbursables.`);
       let sum = 0;
       ph.forEach((s, i) => { const p = num(s, `${phases[i][0]} percent`, bads); sum += p; setO(root, "ph" + i, money(fee * p / 100), fee * p / 100); });
       setO(root, "phsum", sum.toFixed(1).replace(/\.0$/, "") + "%", sum);
@@ -3822,7 +3879,7 @@ document.addEventListener('keydown', e=>{
       else if (mult > 0) n.push(["info", "Study aids call a net (DSE) multiplier of 3.0 to 4.0 typical. One Amber Book card uses 3.5."]);
       n.push(["info", "Phase percentages are placeholders. The wiki gives no standard B101 split, so edit them to suit the project."]);
       setNotes(root, n);
-      setHow(root, `<p><b>Labor cost</b> = Σ (hours × direct salary rate). <b>Fee at multiplier</b> = labor cost × multiplier. <b>Contingency</b> = contingency % × fee. <b>Total</b> = fee + contingency + reimbursables (reimbursables are billed at cost, not multiplied). Each phase amount = phase % × fee at multiplier. B101 Art. 11 lets the parties pay a stipulated sum by phase milestone (SD, DD, CD, Bidding, CA).</p>
+      setHow(root, `<p><b>Labor cost</b> = Σ (hours × direct salary rate). <b>Fee at multiplier</b> = labor cost × multiplier. <b>Contingency</b> = contingency % × fee. <b>Total</b> = fee + contingency + reimbursables (reimbursables are billed at cost, not multiplied). Each phase amount = phase % × fee at multiplier. AIA B101 Art. 11 lets the parties pay a stipulated sum by phase milestone (SD schematic design, DD design development, CD construction documents, Bidding, CA construction administration).</p>
         <p class="tl-ex">With your numbers: labor ${money(labor)} × ${mult} = ${money(fee)}; + contingency ${money(contd)} + reimbursables ${money(reimb)} = ${money(total)}.</p>`);
     }
     root.addEventListener("input", e => {
@@ -3836,6 +3893,12 @@ document.addEventListener('keydown', e=>{
       if (d && rows.length > 1) { rows.splice(+d.dataset.del, 1); draw(); calc(); }
       if (a) { rows.push({ role: "Staff", h: 0, rate: 0 }); draw(); calc(); }
     });
+    root.tlSet = s => {
+      rows.length = 0; s.rows.forEach(r => rows.push(Object.assign({}, r)));
+      phases.forEach((p, i) => { ph[i] = String(p[2]); });
+      setFields(root, { mult: s.mult, reimb: s.reimb, cont: s.cont });
+      draw(); calc();
+    };
     draw(); calc();
   }
 
@@ -3843,18 +3906,18 @@ document.addEventListener('keydown', e=>{
      4. PAY APPLICATION
      ====================================================================== */
   function payCard() {
-    const body = `
+    const givens = `
       <div data-rows></div>
       <button type="button" class="tl-btn" data-add>+ Add schedule-of-values row</button>
       <div class="tl-grid">
-        ${fld("pay", "r1", "Retainage on completed work (%)", 10)}
-        ${fld("pay", "r2", "Retainage on stored materials (%)", 5)}
-        ${fld("pay", "prevcert", "Less previous certificates ($)", "", { ph: "blank = estimate" })}
-      </div>
-      <h4 class="tl-sub">G702 summary</h4>
-      ${res("pay", [["l1", "1. Original contract sum"], ["l2", "2. Net change by change orders"], ["l3", "3. Contract sum to date"], ["l4", "4. Total completed and stored to date"], ["l5a", "5a. Retainage on completed work"], ["l5b", "5b. Retainage on stored material"], ["l5", "5. Total retainage"], ["l6", "6. Total earned less retainage"], ["l7", "7. Less previous certificates"], ["l8", "8. Current payment due", "tl-strong"], ["l9", "9. Balance to finish, including retainage"]])}
-      <ul class="tl-notes" data-notes></ul>`;
-    return card({ id: "pay", title: "Pay application (G702 / G703)", divs: ["CE"], exam: "Fills in a G703 schedule of values and the G702 summary so you can check retainage and the amount the architect certifies.", body, wide: true, source: "AIA G702-1992 / G703-1992 line layout; retainage rates 10% work in place, 5% stored (wiki: construction-administration, from Pro_Practice_Notes_Part2; Amber Book PjM cards 132, 144 give 5% to 10%)" });
+        ${fld("pay", "r1", "Retainage on completed work (%)", 10, { help: "Percent held back from work in place. Set by the contract." })}
+        ${fld("pay", "r2", "Retainage on stored materials (%)", 5, { help: "Percent held back from stored materials. Often lower." })}
+        ${fld("pay", "prevcert", "Less previous certificates ($)", "", { ph: "blank = estimate", help: "Line 7: total certified on earlier applications. Blank estimates it." })}
+      </div>`;
+    const result = `
+      <h4 class="tl-sub">Summary of the AIA G702 form (Application and Certificate for Payment)</h4>
+      ${res("pay", [["l1", "1. Original contract sum"], ["l2", "2. Net change by change orders"], ["l3", "3. Contract sum to date"], ["l4", "4. Total completed and stored to date"], ["l5a", "5a. Retainage on completed work"], ["l5b", "5b. Retainage on stored material"], ["l5", "5. Total retainage"], ["l6", "6. Total earned less retainage"], ["l7", "7. Less previous certificates"], ["l8", "8. Current payment due", "tl-strong"], ["l9", "9. Balance to finish, including retainage"]])}`;
+    return card({ id: "pay", title: "Pay application (G702 / G703)", divs: ["CE"], exam: "Fills in a G703 schedule of values (the AIA continuation sheet) and the G702 summary so you can check retainage and the amount the architect certifies.", givens, result, source: "AIA G702-1992 / G703-1992 line layout; retainage rates 10% work in place, 5% stored (wiki: construction-administration, from Pro_Practice_Notes_Part2; Amber Book PjM cards 132, 144 give 5% to 10%)" });
   }
   function payWire(root) {
     const rows = [
@@ -3864,11 +3927,10 @@ document.addEventListener('keydown', e=>{
       { d: "Change order 1: added scope", c: 10000, p: 0, t: 4000, s: 0, co: true }
     ];
     const rowsEl = root.querySelector("[data-rows]");
-    let rowOut = [];
     function draw() {
-      rowsEl.innerHTML = rows.map((r, i) => `<div class="tl-row"><div class="tl-rowhead">${fld("pay", "d", "Description", r.d, { type: "text", r: i, id: "r" + i + "-d", cls: "tl-grow", max: 50 })}
-        <label class="tl-chk"><input type="checkbox" id="tl-pay-r${i}-co" data-k="co" data-r="${i}" ${r.co ? "checked" : ""}> CO row</label><button type="button" class="tl-del" data-del="${i}" aria-label="Remove row ${i + 1}">✕</button></div>
-        <div class="tl-grid4">${fld("pay", "c", "C. Scheduled value", r.c, { r: i, id: "r" + i + "-c" })}${fld("pay", "p", "D. Previous work", r.p, { r: i, id: "r" + i + "-p" })}${fld("pay", "t", "E. This period", r.t, { r: i, id: "r" + i + "-t" })}${fld("pay", "s", "F. Stored materials", r.s, { r: i, id: "r" + i + "-s" })}</div>
+      rowsEl.innerHTML = rows.map((r, i) => `<div class="tl-row"><div class="tl-rowhead">${fld("pay", "d", "Description", r.d, { type: "text", r: i, id: "r" + i + "-d", cls: "tl-grow", max: 50, help: "Line name from the schedule of values." })}
+        <label class="tl-chk"><span><input type="checkbox" id="tl-pay-r${i}-co" data-k="co" data-r="${i}" ${r.co ? "checked" : ""}>CO row (change order)</span><em class="tl-help">Tick for approved change orders.</em></label><button type="button" class="tl-del" data-del="${i}" aria-label="Remove row ${i + 1}">✕</button></div>
+        <div class="tl-grid4">${fld("pay", "c", "C. Scheduled value", r.c, { r: i, id: "r" + i + "-c", help: "Contract amount for this line." })}${fld("pay", "p", "D. Previous work", r.p, { r: i, id: "r" + i + "-p", help: "Work billed on earlier applications." })}${fld("pay", "t", "E. This period", r.t, { r: i, id: "r" + i + "-t", help: "Work done since the last application." })}${fld("pay", "s", "F. Stored materials", r.s, { r: i, id: "r" + i + "-s", help: "Bought and stored, not yet installed." })}</div>
         <p class="tl-rowout" data-ro="${i}"></p></div>`).join("");
     }
     function calc() {
@@ -3889,6 +3951,17 @@ document.addEventListener('keydown', e=>{
       setO(root, "l1", money(orig), orig); setO(root, "l2", money(co), co); setO(root, "l3", money(l3), l3); setO(root, "l4", money(l4), l4);
       setO(root, "l5a", money(l5a), l5a); setO(root, "l5b", money(l5b), l5b); setO(root, "l5", money(l5), l5); setO(root, "l6", money(l6), l6);
       setO(root, "l7", money(l7) + (est ? " (est.)" : ""), l7); setO(root, "l8", money(l8), l8); setO(root, "l9", money(l9), l9);
+      setM(root, "l1", "The contract price before any change orders.");
+      setM(root, "l2", `Approved change orders ${co < 0 ? "take off" : "add"} ${money(Math.abs(co))} to the price.`);
+      setM(root, "l3", "The current contract price: line 1 plus line 2.");
+      setM(root, "l4", "All work done plus materials stored, up to today.");
+      setM(root, "l5a", `The owner holds back ${r1}% of the completed work.`);
+      setM(root, "l5b", `The owner holds back ${r2}% of the stored materials.`);
+      setM(root, "l5", "Total money held back until the work is finished.");
+      setM(root, "l6", "What the contractor has earned to date, after retainage.");
+      setM(root, "l7", est ? "Already paid on earlier applications. This is an estimate." : "Already certified on earlier payment applications.");
+      setM(root, "l8", "The amount the architect certifies for payment this time.");
+      setM(root, "l9", "What is still to be paid to finish the job, retainage included.");
       const n = bads.map(b => ["warn", b]);
       rw.forEach((r, i) => {
         const el = rowsEl.querySelector(`[data-ro="${i}"]`);
@@ -3912,6 +3985,11 @@ document.addEventListener('keydown', e=>{
       if (d && rows.length > 1) { rows.splice(+d.dataset.del, 1); draw(); calc(); }
       if (a) { rows.push({ d: "New item", c: 0, p: 0, t: 0, s: 0, co: false }); draw(); calc(); }
     });
+    root.tlSet = s => {
+      rows.length = 0; s.rows.forEach(r => rows.push(Object.assign({}, r)));
+      setFields(root, { r1: s.r1, r2: s.r2, prevcert: s.prevcert });
+      draw(); calc();
+    };
     draw(); calc();
   }
 
@@ -3919,24 +3997,22 @@ document.addEventListener('keydown', e=>{
      5. CHANGE ORDER TRACKER
      ====================================================================== */
   function coCard() {
-    const body = `
+    const givens = `
       <div class="tl-grid">
-        ${fld("co", "orig", "Original contract sum ($)", 1000000)}
-        ${fld("co", "days", "Original contract time (days)", 300)}
-        ${fld("co", "start", "Start date", "2027-01-04", { type: "date" })}
+        ${fld("co", "orig", "Original contract sum ($)", 1000000, { help: "The signed contract price before any changes." })}
+        ${fld("co", "days", "Original contract time (days)", 300, { help: "Calendar days the contract allows to finish." })}
+        ${fld("co", "start", "Start date", "2027-01-04", { type: "date", help: "Day the contract time begins, often the notice to proceed." })}
       </div>
       <div data-rows></div>
-      <button type="button" class="tl-btn" data-add>+ Add change order</button>
-      ${res("co", [["net", "Net change in sum"], ["sum", "Contract sum to date", "tl-strong"], ["pct", "Change from original"], ["dnet", "Net change in time (days)"], ["time", "Contract time to date (days)"], ["end0", "Original completion date"], ["end", "New completion date", "tl-strong"]])}
-      <ul class="tl-notes" data-notes></ul>`;
-    return card({ id: "co", title: "Change order tracker", divs: ["CE"], exam: "Adds up change orders to get the new contract sum and the new completion date.", body, source: "AIA A201-2017 §7.2 (a change order states the change in the work, the adjustment to the Contract Sum and to the Contract Time) and §8.1.1; wiki: construction-administration" });
+      <button type="button" class="tl-btn" data-add>+ Add change order</button>`;
+    const result = res("co", [["net", "Net change in sum"], ["sum", "Contract sum to date", "tl-strong"], ["pct", "Change from original"], ["dnet", "Net change in time (days)"], ["time", "Contract time to date (days)"], ["end0", "Original completion date"], ["end", "New completion date", "tl-strong"]]);
+    return card({ id: "co", title: "Change order tracker", divs: ["CE"], exam: "Adds up change orders to get the new contract sum and the new completion date.", givens, result, source: "AIA A201-2017 §7.2 (a change order states the change in the work, the adjustment to the Contract Sum and to the Contract Time) and §8.1.1; wiki: construction-administration" });
   }
   function coWire(root) {
     const rows = [{ d: "CO 1: added storefront", a: 25000, t: 5 }, { d: "CO 2: deleted landscape", a: -8000, t: 0 }, { d: "CO 3: owner-requested upgrade", a: 40000, t: 10 }];
     const rowsEl = root.querySelector("[data-rows]");
     function draw() {
-      rowsEl.innerHTML = rows.map((r, i) => `<div class="tl-row"><div class="tl-rowhead">${fld("co", "d", "Change order", r.d, { type: "text", r: i, id: "r" + i + "-d", cls: "tl-grow", max: 50 })}<button type="button" class="tl-del" data-del="${i}" aria-label="Remove change order ${i + 1}">✕</button></div>
-        <div class="tl-grid2">${fld("co", "a", "Amount (+ or −, $)", r.a, { r: i, id: "r" + i + "-a" })}${fld("co", "t", "Days (+ or −)", r.t, { r: i, id: "r" + i + "-t" })}</div></div>`).join("");
+      rowsEl.innerHTML = rows.map((r, i) => `<div class="tl-row"><div class="tl-rowhead">${fld("co", "d", "Change order", r.d, { type: "text", r: i, id: "r" + i + "-d", cls: "tl-grow", max: 50, help: "Short name or number for this change." })}${fld("co", "a", "Amount (+ or −, $)", r.a, { r: i, id: "r" + i + "-a", cls: "tl-wr", help: "Added cost is positive. Credits are negative." })}${fld("co", "t", "Days (+ or −)", r.t, { r: i, id: "r" + i + "-t", cls: "tl-wh", help: "Days added or taken off." })}<button type="button" class="tl-del" data-del="${i}" aria-label="Remove change order ${i + 1}">✕</button></div></div>`).join("");
     }
     const fmtDate = ms => new Date(ms).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
     function calc() {
@@ -3952,6 +4028,13 @@ document.addEventListener('keydown', e=>{
       setO(root, "net", money(net), net); setO(root, "sum", money(sum), sum); setO(root, "pct", fin(pct) ? (pct >= 0 ? "+" : "−") + pc(Math.abs(pct), 2) : "—", pct);
       setO(root, "dnet", (dn > 0 ? "+" : dn < 0 ? "−" : "") + Math.abs(dn), dn); setO(root, "time", String(tdays), tdays);
       setO(root, "end0", fin(e0) ? fmtDate(e0) : "—", e0); setO(root, "end", fin(e1) ? fmtDate(e1) : "—", e1);
+      setM(root, "net", `The change orders together ${net < 0 ? "take off" : "add"} ${money(Math.abs(net))}.`);
+      setM(root, "sum", `The contract price is now ${money(sum)}.`);
+      setM(root, "pct", fin(pct) ? `The changes moved the price by ${pc(Math.abs(pct), 2)} of the original sum.` : NA);
+      setM(root, "dnet", `The change orders ${dn < 0 ? "take off" : "add"} ${Math.abs(dn)} day${Math.abs(dn) === 1 ? "" : "s"}.`);
+      setM(root, "time", `The contractor now has ${tdays} days to finish.`);
+      setM(root, "end0", fin(e0) ? `With no changes the job would finish on ${fmtDate(e0)}.` : "Pick a start date to see this.");
+      setM(root, "end", fin(e1) ? `With the change orders the job now finishes on ${fmtDate(e1)}.` : "Pick a start date to see this.");
       const n = bads.map(b => ["warn", b]);
       if (!fin(ms0)) n.push(["info", "Pick a start date to see completion dates."]);
       if (tdays < 0) n.push(["bad", "Contract time to date is negative. Check the day changes."]);
@@ -3971,6 +4054,11 @@ document.addEventListener('keydown', e=>{
       if (d && rows.length > 1) { rows.splice(+d.dataset.del, 1); draw(); calc(); }
       if (a) { rows.push({ d: "New change order", a: 0, t: 0 }); draw(); calc(); }
     });
+    root.tlSet = s => {
+      rows.length = 0; s.rows.forEach(r => rows.push(Object.assign({}, r)));
+      setFields(root, { orig: s.orig, days: s.days, start: s.start });
+      draw(); calc();
+    };
     draw(); calc();
   }
 
@@ -3978,15 +4066,15 @@ document.addEventListener('keydown', e=>{
      6. CPM NETWORK
      ====================================================================== */
   function cpmCard() {
-    const body = `
-      <div class="tl-btnrow"><button type="button" class="tl-btn" data-preset>Load example</button><button type="button" class="tl-btn" data-add>+ Add activity</button></div>
-      <p class="tl-hint">Predecessors: type activity IDs separated by commas, for example <code>B, C</code>. Leave blank for a starting activity.</p>
-      <div data-rows></div>
+    const givens = `
+      <div class="tl-btnrow"><button type="button" class="tl-btn" data-preset>Reset to the example</button><button type="button" class="tl-btn" data-add>+ Add activity</button></div>
+      <p class="tl-hint">Predecessors are the activities that must finish first. Type their IDs separated by commas, for example <code>B, C</code>. Leave blank for a starting activity.</p>
+      <div data-rows></div>`;
+    const result = `
       ${res("cpm", [["dur", "Project duration (days)", "tl-strong"], ["path", "Critical path"]])}
-      <ul class="tl-notes" data-notes></ul>
       <div class="tl-svgwrap"><svg class="tl-svg" data-svg role="img" aria-label="Activity-on-node network diagram with the critical path in gold"></svg></div>
       <p class="tl-legend"><span class="tl-key tl-keyc"></span> critical path (gold, float 0) · each box: ID and duration, ES/EF (early start/finish), LS/LF (late start/finish), and total float (days an activity can slip without delaying the finish)</p>`;
-    return card({ id: "cpm", title: "CPM network", divs: ["PjM"], exam: "Runs the forward and backward pass of the critical path method (CPM) and shows which activities have float.", body, wide: true, source: "Critical path method as described in wiki: project-scheduling-and-management (critical path, total float); forward/backward pass is the standard CPM algorithm (PMI PMBOK)" });
+    return card({ id: "cpm", title: "CPM network", divs: ["PjM"], exam: "Runs the forward and backward pass of the critical path method (CPM) and shows which activities have float.", givens, result, source: "Critical path method as described in wiki: project-scheduling-and-management (critical path, total float); forward/backward pass is the standard CPM algorithm (PMI PMBOK)" });
   }
   function cpmCompute(rows) {
     const err = [], acts = [], ids = new Set();
@@ -4031,17 +4119,19 @@ document.addEventListener('keydown', e=>{
     })(s.id, []));
     return { acts, by, end, paths, drive };
   }
+  const CPM_PRESET = [{ id: "A", dur: 3, pred: "" }, { id: "B", dur: 4, pred: "A" }, { id: "C", dur: 2, pred: "A" }, { id: "D", dur: 2, pred: "B" }, { id: "E", dur: 2, pred: "C" }, { id: "F", dur: 3, pred: "D, E" }];
   function cpmWire(root) {
-    const PRESET = [{ id: "A", dur: 3, pred: "" }, { id: "B", dur: 4, pred: "A" }, { id: "C", dur: 2, pred: "A" }, { id: "D", dur: 2, pred: "B" }, { id: "E", dur: 2, pred: "C" }, { id: "F", dur: 3, pred: "D, E" }];
-    let rows = PRESET.map(r => Object.assign({}, r));
+    let rows = CPM_PRESET.map(r => Object.assign({}, r));
     const rowsEl = root.querySelector("[data-rows]");
     function draw() {
-      rowsEl.innerHTML = rows.map((r, i) => `<div class="tl-row tl-cpmrow"><div class="tl-rowhead">${fld("cpm", "id", "ID", r.id, { type: "text", r: i, id: "r" + i + "-id", max: 6, cls: "tl-w60" })}${fld("cpm", "dur", "Days", r.dur, { r: i, id: "r" + i + "-dur", cls: "tl-w80" })}${fld("cpm", "pred", "Predecessors", r.pred, { type: "text", r: i, id: "r" + i + "-pred", cls: "tl-grow", max: 40 })}<button type="button" class="tl-del" data-del="${i}" aria-label="Remove activity ${i + 1}">✕</button></div></div>`).join("");
+      rowsEl.innerHTML = rows.map((r, i) => `<div class="tl-row tl-cpmrow"><div class="tl-rowhead">${fld("cpm", "id", "ID", r.id, { type: "text", r: i, id: "r" + i + "-id", max: 6, cls: "tl-w60", help: "Activity name." })}${fld("cpm", "dur", "Days", r.dur, { r: i, id: "r" + i + "-dur", cls: "tl-w80", help: "How long it takes." })}${fld("cpm", "pred", "Predecessors", r.pred, { type: "text", r: i, id: "r" + i + "-pred", cls: "tl-grow", max: 40, help: "Must finish first. Use commas." })}<button type="button" class="tl-del" data-del="${i}" aria-label="Remove activity ${i + 1}">✕</button></div></div>`).join("");
     }
     function calc() {
       const out = cpmCompute(rows), svg = root.querySelector("[data-svg]");
+      root._last = out;
       if (out.err) {
         setO(root, "dur", "—"); setO(root, "path", "—");
+        setM(root, "dur", NA); setM(root, "path", NA);
         setNotes(root, out.err.map(e => ["bad", e]));
         svg.innerHTML = ""; svg.removeAttribute("viewBox"); svg.style.display = "none";
         setHow(root, "<p>Fix the problem above to see the schedule.</p>");
@@ -4051,6 +4141,8 @@ document.addEventListener('keydown', e=>{
       const { acts, by, end, paths, drive } = out;
       const ptxt = paths.length ? paths.map(p => p.join("-")).join("  or  ") : "—";
       setO(root, "dur", String(end), end); setO(root, "path", ptxt);
+      setM(root, "dur", `The project needs at least ${end} days, even if every activity goes as planned.`);
+      setM(root, "path", "A delay on any activity along this path delays the whole project, day for day.");
       const notes = [];
       const fl = acts.filter(a => !a.crit);
       if (fl.length) notes.push(["info", "Float: " + fl.map(a => `${a.id} has ${a.fl} day${a.fl === 1 ? "" : "s"}`).join(", ") + "."]);
@@ -4072,11 +4164,11 @@ document.addEventListener('keydown', e=>{
       acts.forEach(a => a.preds.forEach(p => { if (drive(p, a.id)) s += edge(p, a.id, true); }));
       acts.forEach(a => {
         s += `<g data-id="${esc(a.id)}" data-float="${a.fl}" data-es="${a.es}" data-ef="${a.ef}" data-ls="${a.ls}" data-lf="${a.lf}" data-crit="${a.crit ? 1 : 0}" transform="translate(${a.x},${a.y})">
-          <rect width="${w}" height="${h}" rx="7" style="fill:${a.crit ? "var(--gold-bg)" : "var(--surface2)"}" stroke="${a.crit ? "var(--gold)" : "var(--border2)"}" stroke-width="${a.crit ? 2.5 : 1.2}"/>
+          <rect width="${w}" height="${h}" rx="2" style="fill:${a.crit ? "var(--gold-bg)" : "var(--surface2)"}" stroke="${a.crit ? "var(--gold)" : "var(--border2)"}" stroke-width="${a.crit ? 2.5 : 1.2}"/>
           <text x="${w / 2}" y="15" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">${esc(a.id)} · ${a.dur}d</text>
           <text x="6" y="31" font-size="10" fill="currentColor">ES ${a.es}</text><text x="${w - 6}" y="31" text-anchor="end" font-size="10" fill="currentColor">EF ${a.ef}</text>
           <text x="6" y="44" font-size="10" fill="currentColor">LS ${a.ls}</text><text x="${w - 6}" y="44" text-anchor="end" font-size="10" fill="currentColor">LF ${a.lf}</text>
-          <text x="${w / 2}" y="59" text-anchor="middle" font-size="10.5" font-weight="700" style="fill:${a.crit ? "var(--gold)" : "var(--ok)"}">float ${a.fl}</text></g>`;
+          <text x="${w / 2}" y="59" text-anchor="middle" font-size="10.5" font-weight="700" style="fill:${a.crit ? "var(--gold-ink,var(--gold))" : "var(--ok)"}">float ${a.fl}</text></g>`;
       });
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
       svg.style.minWidth = Math.min(W, 460) + "px"; svg.style.width = "100%";
@@ -4093,8 +4185,9 @@ document.addEventListener('keydown', e=>{
       const d = e.target.closest("[data-del]"), a = e.target.closest("[data-add]"), p = e.target.closest("[data-preset]");
       if (d && rows.length > 1) { rows.splice(+d.dataset.del, 1); draw(); calc(); }
       if (a) { rows.push({ id: String.fromCharCode(65 + (rows.length % 26)), dur: 1, pred: "" }); draw(); calc(); }
-      if (p) { rows = PRESET.map(r => Object.assign({}, r)); draw(); calc(); }
+      if (p) { rows = CPM_PRESET.map(r => Object.assign({}, r)); draw(); calc(); }
     });
+    root.tlSet = s => { rows = s.rows.map(r => ({ id: r.id, dur: r.dur, pred: r.pred })); draw(); calc(); };
     draw(); calc();
   }
 
@@ -4103,56 +4196,59 @@ document.addEventListener('keydown', e=>{
      ====================================================================== */
   const DM = {
     dbb: {
-      name: "DBB", full: "Design-bid-build",
+      name: "DBB", full: "Design-bid-build", risk: "Contractor, under a fixed price", fast: "No, not in the plain sequence",
       boxes: [["o", "Owner", 200, 30], ["a", "Architect", 70, 175], ["c", "Contractor", 330, 175]],
       lines: [["o", "a", "s"], ["o", "c", "s"], ["a", "c", "d"]],
-      t: [["Owner contracts", "2 (one with the architect, one with the contractor)"], ["Price fixed", "At bid, after the contract documents are complete"], ["Cost risk", "Contractor under a fixed price; the owner carries the risk of change orders from incomplete documents"], ["Fast-track possible", "Not in the plain linear sequence. Fast-track needs staged bidding and a CM"], ["Typical use", "The ARE default. Almost always used on public projects, where open bidding and low price matter"]]
+      t: [["Owner contracts", "2 (one with the architect, one with the contractor)"], ["Price fixed", "At bid, after the contract documents are complete"], ["Cost risk", "Contractor under a fixed price; the owner carries the risk of change orders from incomplete documents"], ["Fast-track possible", "Not in the plain linear sequence. Fast-track needs staged bidding and a CM (construction manager)"], ["Typical use", "The ARE default. Almost always used on public projects, where open bidding and low price matter"]]
     },
     cma: {
-      name: "CMa", full: "CM as agent",
+      name: "CMa", full: "Construction manager (CM) as agent", risk: "Owner; the CM is an agent", fast: "Yes",
       boxes: [["o", "Owner", 200, 28], ["cm", "CM (agent)", 200, 102], ["a", "Architect", 70, 178], ["c", "Contractor", 330, 178]],
       lines: [["o", "a", "s"], ["o", "cm", "s"], ["o", "c", "s"], ["cm", "a", "d"], ["cm", "c", "d"], ["a", "c", "d"]],
       t: [["Owner contracts", "3 as drawn here (architect, CM, contractor). The wiki notes one Amber Book card draws the CM holding the architect and contractor contracts; sources differ"], ["Price fixed", "When the contractor is bid or hired, as in DBB. The CM advises and does not build"], ["Cost risk", "Owner. The CM is an agent and does not guarantee the price"], ["Fast-track possible", "Yes. Fast-track needs a CM and staged bidding"], ["Typical use", "Owner wants an expert advocate to lower owner risk and keep time and budget on track, at a higher cost"]]
     },
     cmar: {
-      name: "CMAR", full: "CM at risk (CM as constructor)",
+      name: "CMAR", full: "CM at risk (CM as constructor)", risk: "CM, above the guaranteed maximum price", fast: "Yes, the fastest for the owner",
       boxes: [["o", "Owner", 200, 28], ["a", "Architect", 75, 125], ["cm", "CM at risk", 325, 125], ["t", "Trade contractors", 325, 205]],
       lines: [["o", "a", "s"], ["o", "cm", "s"], ["cm", "t", "s"], ["a", "cm", "d"]],
       t: [["Owner contracts", "2 (architect and CM). The CM replaces the general contractor"], ["Price fixed", "A GMP (guaranteed maximum price), typically set by the end of schematic design. Wiki: confirm timing against A133"], ["Cost risk", "CM, above the GMP. The CM also has a built-in conflict: it can raise profit by pushing cost up or quality down"], ["Fast-track possible", "Yes. Fastest schedule for the owner"], ["Typical use", "Time-driven projects where the owner wants the builder on the team early"]]
     },
     db: {
-      name: "Design-build", full: "Design-build",
+      name: "Design-build", full: "Design-build", risk: "Design-builder", fast: "Yes",
       boxes: [["o", "Owner", 200, 28], ["a", "Architect", 135, 175], ["c", "Contractor", 275, 175]],
-      groups: [["g", "Design-builder (one entity or JV)", 55, 100, 290, 110, 200, 100]],
+      groups: [["g", "Design-builder (one entity or joint venture)", 55, 100, 290, 110, 200, 100]],
       lines: [["o", "g", "s"], ["a", "c", "s"]],
       t: [["Owner contracts", "1 (with the design-builder)"], ["Price fixed", "Before the design is complete"], ["Cost risk", "Design-builder. The owner has no independent agent, so quality oversight is reduced"], ["Fast-track possible", "Yes. Design and construction overlap, giving a faster schedule"], ["Typical use", "Owner wants lower cost and risk and a fast schedule, and accepts less independent quality oversight"]]
     },
     bridge: {
-      name: "Bridging", full: "Design-build with bridging architect",
+      name: "Bridging", full: "Design-build with bridging architect", risk: "Design-builder, once hired", fast: "Faster than DBB, slower than plain design-build",
       boxes: [["o", "Owner", 215, 28], ["ba", "Bridging architect", 85, 105], ["pa", "Production architect", 250, 175], ["c", "Contractor", 370, 175]],
       groups: [["g", "Design-builder", 175, 135, 250, 90, 300, 135]],
       lines: [["o", "ba", "s"], ["o", "g", "s"], ["ba", "pa", "d"], ["pa", "c", "s"]],
       vb: "0 0 440 235",
-      t: [["Owner contracts", "2 (the bridging architect and the design-builder)"], ["Price fixed", "At the design-build contract, usually awarded to the lowest responsible bidder on the bridging documents"], ["Cost risk", "Design-builder, once hired"], ["Fast-track possible", "Faster than DBB but slower than plain design-build"], ["Typical use", "Owner wants design-build speed but an independent architect to guard design intent. Hand-off is at about 35% of design or end of SD (sources differ)"]]
+      t: [["Owner contracts", "2 (the bridging architect and the design-builder)"], ["Price fixed", "At the design-build contract, usually awarded to the lowest responsible bidder on the bridging documents"], ["Cost risk", "Design-builder, once hired"], ["Fast-track possible", "Faster than DBB but slower than plain design-build"], ["Typical use", "Owner wants design-build speed but an independent architect to guard design intent. Hand-off is at about 35% of design or end of schematic design (sources differ)"]]
     },
     ipd: {
-      name: "IPD", full: "Integrated project delivery",
+      name: "IPD", full: "Integrated project delivery", risk: "Shared by owner, architect and contractor", fast: "Not stated in the wiki",
       boxes: [["o", "Owner", 220, 55], ["a", "Architect", 105, 155], ["c", "Contractor", 335, 155], ["m", "One multi-party agreement", 220, 112]],
       ring: [220, 110, 200, 88],
       lines: [["o", "m", "s"], ["a", "m", "s"], ["c", "m", "s"], ["a", "c", "d"]],
       vb: "0 0 440 235",
-      t: [["Owner contracts", "1 multi-party agreement (owner, architect, contractor)"], ["Price fixed", "No single bid price. Parties share a common pool, with bonuses tied to budget, schedule and performance"], ["Cost risk", "Shared by owner, architect and contractor"], ["Fast-track possible", "Wiki does not say. The team works together from the start"], ["Typical use", "Large, complex projects, usually with BIM. Variants: single purpose entity, project alliance, relational contract"]]
+      t: [["Owner contracts", "1 multi-party agreement (owner, architect, contractor)"], ["Price fixed", "No single bid price. Parties share a common pool, with bonuses tied to budget, schedule and performance"], ["Cost risk", "Shared by owner, architect and contractor"], ["Fast-track possible", "Wiki does not say. The team works together from the start"], ["Typical use", "Large, complex projects, usually with BIM (building information modeling). Variants: single purpose entity, project alliance, relational contract"]]
     }
   };
+  const dmOwn = k => parseInt(DM[k].t[0][1], 10);
+  const dmCount = (k, kind) => DM[k].lines.filter(l => l[2] === kind).length;
+  const dot = s => /[.!?]$/.test(s) ? s : s + ".";
   function dmSvg(m) {
     const bw = lab => Math.max(88, lab.length * 6.6 + 18), bh = 34;
     const box = {}; m.boxes.forEach(b => { box[b[0]] = { id: b[0], lab: b[1], x: b[2], y: b[3], w: bw(b[1]), h: bh }; });
     (m.groups || []).forEach(g => { box[g[0]] = { id: g[0], lab: g[1], x: g[2] + g[4] / 2, y: g[3] + g[5] / 2, w: g[4], h: g[5], ax: g[6], ay: g[7], grp: true, gx: g[2], gy: g[3] }; });
     const pt = id => { const b = box[id]; return b.grp ? [b.ax, b.ay] : [b.x, b.y]; };
     let s = `<defs></defs>`;
-    if (m.ring) s += `<ellipse cx="${m.ring[0]}" cy="${m.ring[1]}" rx="${m.ring[2]}" ry="${m.ring[3]}" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-dasharray="7 5"/><text x="${m.ring[0]}" y="${m.ring[1] + m.ring[3] + 16}" text-anchor="middle" font-size="11" style="fill:var(--gold)">shared risk and reward</text>`;
+    if (m.ring) s += `<ellipse cx="${m.ring[0]}" cy="${m.ring[1]}" rx="${m.ring[2]}" ry="${m.ring[3]}" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-dasharray="7 5"/><text x="${m.ring[0]}" y="${m.ring[1] + m.ring[3] + 16}" text-anchor="middle" font-size="11" style="fill:var(--gold-ink,var(--gold))">shared risk and reward</text>`;
     Object.values(box).filter(b => b.grp).forEach(b => {
-      s += `<rect x="${b.gx}" y="${b.gy}" width="${b.w}" height="${b.h}" rx="10" style="fill:var(--surface2)" stroke="var(--gold)" stroke-width="2" stroke-dasharray="6 4"/><text x="${b.gx + 10}" y="${b.gy + 16}" font-size="11" fill="currentColor" font-weight="600">${esc(b.lab)}</text>`;
+      s += `<rect x="${b.gx}" y="${b.gy}" width="${b.w}" height="${b.h}" rx="2" style="fill:var(--surface2)" stroke="var(--gold)" stroke-width="2" stroke-dasharray="6 4"/><text x="${b.gx + 10}" y="${b.gy + 16}" font-size="11" fill="currentColor" font-weight="600">${esc(b.lab)}</text>`;
     });
     m.lines.forEach(l => {
       const p = pt(l[0]), q = pt(l[1]);
@@ -4160,18 +4256,20 @@ document.addEventListener('keydown', e=>{
     });
     Object.values(box).filter(b => !b.grp).forEach(b => {
       const mid = b.id === "m";
-      s += `<rect x="${b.x - b.w / 2}" y="${b.y - b.h / 2}" width="${b.w}" height="${b.h}" rx="${mid ? 17 : 7}" style="fill:${mid ? "var(--gold-bg)" : "var(--surface)"}" stroke="${mid ? "var(--gold)" : "currentColor"}" stroke-width="1.6"/><text x="${b.x}" y="${b.y + 4}" text-anchor="middle" font-size="11.5" font-weight="600" fill="currentColor">${esc(b.lab)}</text>`;
+      s += `<rect x="${b.x - b.w / 2}" y="${b.y - b.h / 2}" width="${b.w}" height="${b.h}" rx="${mid ? 10 : 2}" style="fill:${mid ? "var(--gold-bg)" : "var(--surface)"}" stroke="${mid ? "var(--gold)" : "currentColor"}" stroke-width="1.6"/><text x="${b.x}" y="${b.y + 4}" text-anchor="middle" font-size="11.5" font-weight="600" fill="currentColor">${esc(b.lab)}</text>`;
     });
     return s;
   }
   function delCard() {
-    const body = `
-      <div class="tl-seg" role="group" aria-label="Delivery method" data-seg>${Object.keys(DM).map((k, i) => `<button type="button" id="tl-del-btn-${k}" class="tl-segbtn ${i === 0 ? "on" : ""}" data-m="${k}" aria-pressed="${i === 0}" title="${esc(DM[k].full)}">${esc(DM[k].name)}</button>`).join("")}</div>
+    const givens = `
+      <p class="tl-hint">Pick a delivery method. Its full name shows below the buttons.</p>
+      <div class="tl-seg" role="group" aria-label="Delivery method" data-seg>${Object.keys(DM).map((k, i) => `<button type="button" id="tl-del-btn-${k}" class="tl-segbtn ${i === 0 ? "on" : ""}" data-m="${k}" aria-pressed="${i === 0}" title="${esc(DM[k].full)}">${esc(DM[k].name)}</button>`).join("")}</div>`;
+    const result = `
       <h4 class="tl-sub" data-title></h4>
+      ${res("del", [["own", "Contracts the owner signs"], ["risk", "Who carries the cost risk"], ["fast", "Can the schedule be fast-tracked?"]])}
       <svg class="tl-svg" data-svg viewBox="0 0 400 235" role="img" aria-label="Relationship diagram"></svg>
-      <p class="tl-legend"><span class="tl-key tl-keys"></span> solid = contract <span class="tl-key tl-keyd"></span> dashed = communication (no contract)</p>
-      <table class="tl-table"><tbody data-table></tbody></table>`;
-    return card({ id: "del", title: "Delivery method explorer", divs: ["PcM", "PjM", "CE"], exam: "Shows who holds a contract with whom, and how that changes price certainty, risk and speed under each delivery method.", body, wide: true, source: "Wiki: project-delivery-methods (Amber Book PcM cards 64, 81 to 86; PjM cards 72, 81, 103, 104, 125; AIA A132, A133, A195). Some points are marked where sources differ" });
+      <p class="tl-legend"><span class="tl-key tl-keys"></span> solid = contract <span class="tl-key tl-keyd"></span> dashed = communication (no contract)</p>`;
+    return card({ id: "del", title: "Delivery method explorer", divs: ["PcM", "PjM", "CE"], exam: "Shows who holds a contract with whom, and how that changes price certainty, risk and speed under each delivery method.", givens, result, check: `<table class="tl-table"><tbody data-table></tbody></table>`, source: "Wiki: project-delivery-methods (Amber Book PcM cards 64, 81 to 86; PjM cards 72, 81, 103, 104, 125; AIA A132, A133, A195). Some points are marked where sources differ" });
   }
   function delWire(root) {
     let cur = "dbb";
@@ -4183,9 +4281,15 @@ document.addEventListener('keydown', e=>{
       svg.innerHTML = dmSvg(m);
       root.querySelector("[data-table]").innerHTML = m.t.map(r => `<tr><th scope="row">${esc(r[0])}</th><td>${esc(r[1])}</td></tr>`).join("");
       root.querySelectorAll("[data-m]").forEach(b => { const on = b.dataset.m === cur; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
-      setHow(root, `<p>Each button redraws the relationship diagram and the table. A <b>solid line</b> is a contract; a <b>dashed line</b> is communication with no contract between those two parties. In DBB the architect and contractor have no contract with each other, so disputes travel through the owner. Abbreviations: DBB design-bid-build; CMa construction manager as agent; CMAR construction manager at risk; GMP guaranteed maximum price; IPD integrated project delivery.</p><p class="tl-ex">Now showing: ${esc(m.full)}. Owner contracts: ${esc(m.t[0][1])}.</p>`);
+      const own = dmOwn(cur);
+      setO(root, "own", String(own), own); setO(root, "risk", m.risk); setO(root, "fast", m.fast);
+      setM(root, "own", `The owner signs ${m.t[0][1]}.`);
+      setM(root, "risk", dot(m.t[2][1]));
+      setM(root, "fast", dot(m.t[3][1]));
+      setHow(root, `<p>Each button redraws the relationship diagram and the table. A <b>solid line</b> is a contract; a <b>dashed line</b> is communication with no contract between those two parties. In DBB the architect and contractor have no contract with each other, so disputes travel through the owner. Abbreviations: DBB design-bid-build; CMa construction manager as agent; CMAR construction manager at risk; GMP guaranteed maximum price; IPD integrated project delivery; BIM building information modeling.</p><p class="tl-ex">Now showing: ${esc(m.full)}. Owner contracts: ${esc(m.t[0][1])}.</p>`);
     }
     root.addEventListener("click", e => { const b = e.target.closest("[data-m]"); if (b) { cur = b.dataset.m; show(); } });
+    root.tlSet = s => { cur = s.m; show(); };
     show();
   }
 
@@ -4208,24 +4312,30 @@ document.addEventListener('keydown', e=>{
     return kind === "trad" ? effK.trad * effK.f1(t) : effK.front * effK.f2(t);
   }
   function curveCard() {
-    const body = `
+    const givens = `
       <p class="tl-concept">Conceptual diagram (MacLeamy-style concept). Shapes are illustrative, not measured data.</p>
-      <label class="tl-f"><span>Project phase</span><input id="tl-curve-t" data-k="t" type="range" min="0" max="6" step="0.05" value="2"></label>
-      <div class="tl-seg" role="group" aria-label="Design effort curve" data-seg><button type="button" id="tl-curve-trad" class="tl-segbtn on" data-e="trad" aria-pressed="true">Traditional effort</button><button type="button" id="tl-curve-front" class="tl-segbtn" data-e="front" aria-pressed="false">Front-loaded (IPD) effort</button></div>
+      <label class="tl-f"><span>Project phase</span><em class="tl-help">Drag from Pre-design (left) to Occupancy (right).</em><input id="tl-curve-t" data-k="t" type="range" min="0" max="6" step="0.05" value="2"></label>
+      <p class="tl-hint">Choose which design effort curve to draw in gold.</p>
+      <div class="tl-seg" role="group" aria-label="Design effort curve" data-seg><button type="button" id="tl-curve-trad" class="tl-segbtn on" data-e="trad" aria-pressed="true">Traditional effort</button><button type="button" id="tl-curve-front" class="tl-segbtn" data-e="front" aria-pressed="false">Front-loaded (IPD) effort</button></div>`;
+    const result = `
       ${res("curve", [["phase", "Phase"], ["infl", "Ability to influence cost and performance"], ["cost", "Cost of a design change (relative)"], ["eff", "Design effort now (relative)"]])}
-      <ul class="tl-notes" data-notes></ul>
       <svg class="tl-svg" data-svg viewBox="0 0 360 230" role="img" aria-label="Curves of ability to influence cost and cost of change across project phases"></svg>
       <p class="tl-legend"><span class="tl-key" style="background:var(--pjm)"></span> ability to influence <span class="tl-key" style="background:var(--bad)"></span> cost of changes <span class="tl-key" style="background:var(--gold)"></span> design effort</p>`;
-    return card({ id: "curve", title: "Design effort vs cost of change", divs: ["PcM", "PjM"], exam: "Shows why early decisions matter most: influence over cost falls and the cost of changes climbs as the project moves on.", body, source: "Conceptual MacLeamy-style curve; wiki: project-delivery-methods (IPD front-loads effort; Library concept sketch, INDEX PcM card 157). Not to scale" });
+    return card({ id: "curve", title: "Design effort vs cost of change", divs: ["PcM", "PjM"], exam: "Shows why early decisions matter most: influence over cost falls and the cost of changes climbs as the project moves on.", givens, result, source: "Conceptual MacLeamy-style curve; wiki: project-delivery-methods (IPD integrated project delivery front-loads effort; Library concept sketch, INDEX PcM card 157). Not to scale" });
   }
   function curveWire(root) {
     let kind = "trad";
     const L = 38, R = 346, T = 14, B = 176, X = t => L + (R - L) * t / 6, Y = v => B - (B - T) * v / 100;
     const path = f => { let d = ""; for (let t = 0; t <= 6.001; t += 0.1) d += (d ? "L" : "M") + X(t).toFixed(1) + " " + Y(f(t)).toFixed(1); return d; };
+    function setKind(k) { kind = k; root.querySelectorAll("[data-e]").forEach(x => { const on = x.dataset.e === k; x.classList.toggle("on", on); x.setAttribute("aria-pressed", on); }); }
     function calc() {
       const t = Math.min(6, Math.max(0, Number(rdEl(root, "t").value) || 0));
       const pi = Math.round(t), iv = infl(t), cv = costc(t), ev = effort(kind, t);
       setO(root, "phase", PH[pi], pi); setO(root, "infl", Math.round(iv) + "%", iv); setO(root, "cost", Math.round(cv) + "% of the occupancy-stage cost", cv); setO(root, "eff", Math.round(ev) + " of 100 (peak)", ev);
+      setM(root, "phase", `This is phase ${pi + 1} of 7 on the project timeline. Earlier phases leave more room to change course.`);
+      setM(root, "infl", `You still control about ${Math.round(iv)}% of how the design can affect cost and performance.`);
+      setM(root, "cost", `A change made now costs about ${Math.round(cv)}% of what the same change would cost at occupancy.`);
+      setM(root, "eff", `The design team's effort is about ${Math.round(ev)} on a scale where the busiest possible phase is 100.`);
       setNotes(root, [[iv >= 35 ? "ok" : cv > 40 ? "bad" : "warn", iv >= 35 ? "Still early: decisions made now have a large effect on cost and performance, and changes are cheap." : cv > 40 ? "Late: changes are expensive and have little effect on overall cost." : "Getting late: the room to change course is shrinking and each change costs more."]]);
       const other = kind === "trad" ? "front" : "trad";
       let s = `<line x1="${L}" y1="${B}" x2="${R}" y2="${B}" stroke="currentColor" stroke-opacity=".5"/><line x1="${L}" y1="${T}" x2="${L}" y2="${B}" stroke="currentColor" stroke-opacity=".5"/>`;
@@ -4236,112 +4346,478 @@ document.addEventListener('keydown', e=>{
       s += `<line x1="${X(t)}" y1="${T}" x2="${X(t)}" y2="${B}" stroke="currentColor" stroke-opacity=".6" stroke-dasharray="3 3"/>`;
       [[iv, "var(--pjm)"], [cv, "var(--bad)"], [ev, "var(--gold)"]].forEach(m => { s += `<circle cx="${X(t)}" cy="${Y(m[0])}" r="5" style="fill:${m[1]}" stroke="var(--surface)" stroke-width="1.5"/>`; });
       root.querySelector("[data-svg]").innerHTML = s;
-      setHow(root, `<p>Drag the slider along the phases. The blue curve is the ability to influence cost and performance (high early, low late). The red curve is the cost of making a design change (low early, high late). The gold curve is design effort: traditional practice puts most effort into construction documents (CD); front-loaded effort, as in IPD, moves it earlier into SD and DD, where changes are cheap. Both effort curves here are drawn with the same total effort. The faint dashed gold curve is the one you have not selected.</p>
+      setHow(root, `<p>Drag the slider along the phases. The blue curve is the ability to influence cost and performance (high early, low late). The red curve is the cost of making a design change (low early, high late). The gold curve is design effort: traditional practice puts most effort into construction documents (CD); front-loaded effort, as in IPD (integrated project delivery), moves it earlier into SD (schematic design) and DD (design development), where changes are cheap. Both effort curves here are drawn with the same total effort. The faint dashed gold curve is the one you have not selected.</p>
         <p class="tl-ex">At ${esc(PH[pi])}: influence about ${Math.round(iv)}%, cost of a change about ${Math.round(cv)}% of its occupancy-stage cost.</p>`);
     }
     root.addEventListener("input", calc);
-    root.addEventListener("click", e => { const b = e.target.closest("[data-e]"); if (!b) return; kind = b.dataset.e; root.querySelectorAll("[data-e]").forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b); }); calc(); });
+    root.addEventListener("click", e => { const b = e.target.closest("[data-e]"); if (!b) return; setKind(b.dataset.e); calc(); });
+    root.tlSet = s => { if (s.kind) setKind(s.kind); if (s.t !== undefined) setFields(root, { t: s.t }); calc(); };
     calc();
   }
+
+  /* ======================================================================
+     START HERE EXAMPLES AND TRY ONE PROBLEMS
+     Each spec: prob (Start here text), load(root), answer(root) -> {v, text},
+     gen() -> numeric {prob, apply, ask:{key,label,unit,fmt,abs,scale}} or choice {prob, apply, options, correct}
+     ====================================================================== */
+  const cmp = (x, lo, hi, a, b, c) => x < lo ? a : x > hi ? c : b;
+  const SPEC = {};
+
+  /* --- earned value --- */
+  SPEC.evm = {
+    prob: "A project has a budget of $100,000. The plan called for $45,000 of work by today, $40,000 of work is done, and $50,000 has been spent. Find the cost performance index (CPI), the schedule performance index (SPI) and the estimate at completion (EAC).",
+    load: root => root.tlSet({ bac: 100000, pv: 45000, ev: 40000, pct: "", ac: 50000 }),
+    answer: root => {
+      const cpi = ov(root, "cpi"), spi = ov(root, "spi"), eac = ov(root, "eac");
+      return { v: cpi, text: `Answer: CPI is ${r3(cpi)}, so the project is ${cmp(cpi, 0.995, 1.005, "over", "on", "under")} budget. SPI is ${r3(spi)}, so it is ${cmp(spi, 0.995, 1.005, "behind", "on", "ahead of")} schedule. EAC is ${money(eac)}.` };
+    },
+    gen: () => {
+      const bac = pick([100000, 200000, 250000, 400000, 500000, 1000000]);
+      const pv = rnd(bac * pick([0.3, 0.4, 0.5, 0.6]), 5000);
+      const ev = rnd(pv * pick([0.8, 0.9, 1.1, 1.2]), 1000);
+      const ac = rnd(ev * pick([0.8, 0.9, 1.1, 1.25]), 1000);
+      const A = {
+        cpi: { key: "cpi", label: "What is the cost performance index (CPI)?", unit: "a ratio such as 0.85, no dollar sign", fmt: r3, abs: 0.005 },
+        spi: { key: "spi", label: "What is the schedule performance index (SPI)?", unit: "a ratio such as 0.85, no dollar sign", fmt: r3, abs: 0.005 },
+        cv: { key: "cv", label: "What is the cost variance (CV)?", unit: "dollars (use a minus sign if negative)", fmt: money, abs: 1 },
+        sv: { key: "sv", label: "What is the schedule variance (SV)?", unit: "dollars (use a minus sign if negative)", fmt: money, abs: 1 },
+        eac: { key: "eac", label: "What is the estimate at completion (EAC)?", unit: "dollars", fmt: money, abs: 1 }
+      };
+      return { prob: `A project has a budget of ${money(bac)}. Planned value is ${money(pv)}, earned value is ${money(ev)} and actual cost is ${money(ac)}.`, apply: root => root.tlSet({ bac, pv, ev, pct: "", ac }), ask: A[pick(Object.keys(A))] };
+    }
+  };
+
+  /* --- firm financial metrics --- */
+  SPEC.firm = {
+    prob: "A firm has direct salary expense (DSE) of $1,000,000 and total salary expense of $1,600,000. Its overhead is $1,500,000, net revenue is $3,200,000 and profit is $700,000. Find the utilization rate, the overhead rate and the net multiplier.",
+    load: root => root.tlSet({ dse: 1000000, tse: 1600000, oh: 1500000, nr: 3200000, profit: 700000 }),
+    answer: root => {
+      const util = ov(root, "util"), ohr = ov(root, "ohr"), be = ov(root, "be"), nm = ov(root, "nm");
+      return { v: util, text: `Answer: Utilization is ${r3(util)}. The overhead rate is ${r3(ohr)} (${pc(ohr, 0)}), so break-even is ${r3(be)}. The net multiplier is ${r3(nm)}, which is ${nm >= be ? "above" : "below"} break-even.` };
+    },
+    gen: () => {
+      const tse = pick([1000000, 1200000, 1600000, 2000000]);
+      const dse = rnd(tse * pick([0.5, 0.6, 0.65, 0.75]), 1000);
+      const ohr = pick([1, 1.5, 2]);
+      const oh = rnd(dse * ohr, 1000);
+      const nr = rnd(dse * (1 + ohr + pick([0.5, 1])), 1000);
+      const profit = nr - dse - oh;
+      const A = {
+        util: { key: "util", label: "What is the utilization rate?", unit: "a ratio such as 0.62, no dollar sign", fmt: r3, abs: 0.005 },
+        ohr: { key: "ohr", label: "What is the overhead rate?", unit: "a ratio such as 1.5, no dollar sign", fmt: r3, abs: 0.005 },
+        be: { key: "be", label: "What is the break-even multiplier?", unit: "a ratio such as 2.5, no dollar sign", fmt: r3, abs: 0.005 },
+        nm: { key: "nm", label: "What is the net multiplier?", unit: "a ratio such as 3.2, no dollar sign", fmt: r3, abs: 0.005 },
+        pp: { key: "pp", label: "What is the profit as a percent of net revenue?", unit: "percent, such as 12.5", fmt: x => x.toFixed(1) + "%", abs: 0.1, scale: 100 }
+      };
+      return { prob: `A firm has direct salary expense (DSE) of ${money(dse)} and total salary expense of ${money(tse)}. Overhead is ${money(oh)}, net revenue is ${money(nr)} and profit is ${money(profit)}.`, apply: root => root.tlSet({ dse, tse, oh, nr, profit }), ask: A[pick(Object.keys(A))] };
+    }
+  };
+
+  /* --- fee builder --- */
+  SPEC.fee = {
+    prob: "Staff time is 10 hours of a principal at $75 an hour, 80 hours of a project architect at $45, and 200 hours of a designer at $32. The multiplier is 3.0, reimbursables are $5,000 and contingency is 5% of the fee. What total does the client pay?",
+    load: root => root.tlSet({ rows: [{ role: "Principal", h: 10, rate: 75 }, { role: "Project architect", h: 80, rate: 45 }, { role: "Designer", h: 200, rate: 32 }], mult: 3, reimb: 5000, cont: 5 }),
+    answer: root => {
+      const labor = ov(root, "labor"), fee = ov(root, "fee"), contd = ov(root, "contd"), reimb = ov(root, "reimbd"), total = ov(root, "total");
+      const mult = Number(rdEl(root, "mult").value);
+      return { v: total, text: `Answer: Labor cost is ${money(labor)}. The fee at ${mult} times is ${money(fee)}. Adding contingency of ${money(contd)} and reimbursables of ${money(reimb)} gives a total of ${money(total)}.` };
+    },
+    gen: () => {
+      const rows = [
+        { role: "Principal", h: pick([5, 10, 15, 20]), rate: pick([70, 75, 80, 90]) },
+        { role: "Project architect", h: pick([40, 60, 80, 100]), rate: pick([40, 45, 50, 55]) },
+        { role: "Designer", h: pick([100, 150, 200, 250]), rate: pick([28, 30, 32, 35]) }
+      ];
+      const mult = pick([2.5, 3, 3.5]), reimb = pick([0, 2000, 5000, 10000]), cont = pick([0, 5, 10]);
+      const A = {
+        labor: { key: "labor", label: "What is the labor cost (direct salary)?", unit: "dollars", fmt: money, abs: 1 },
+        fee: { key: "fee", label: "What is the fee at the multiplier?", unit: "dollars", fmt: money, abs: 1 },
+        total: { key: "total", label: "What is the total (fee + contingency + reimbursables)?", unit: "dollars", fmt: money, abs: 1 }
+      };
+      return {
+        prob: `Staff: ${rows.map(r => `${r.role} ${r.h} hours at ${money(r.rate)} an hour`).join("; ")}. The multiplier is ${mult}, reimbursables are ${money(reimb)} and contingency is ${cont}% of the fee.`,
+        apply: root => root.tlSet({ rows, mult, reimb, cont }), ask: A[pick(Object.keys(A))]
+      };
+    }
+  };
+
+  /* --- pay application --- */
+  const PAY_EX = { rows: [
+    { d: "General conditions", c: 50000, p: 20000, t: 5000, s: 0, co: false },
+    { d: "Concrete", c: 120000, p: 60000, t: 30000, s: 0, co: false },
+    { d: "Structural steel", c: 200000, p: 80000, t: 40000, s: 25000, co: false },
+    { d: "Change order 1: added scope", c: 10000, p: 0, t: 4000, s: 0, co: true }
+  ], r1: 10, r2: 5, prevcert: 144000 };
+  SPEC.pay = {
+    prob: "The contract has three scheduled items worth $370,000 and one approved $10,000 change order. To date $239,000 of work is done and $25,000 of materials are stored. Retainage is 10% on work and 5% on stored materials, and earlier certificates total $144,000. What payment is due now?",
+    load: root => root.tlSet(PAY_EX),
+    answer: root => {
+      const l4 = ov(root, "l4"), l5 = ov(root, "l5"), l6 = ov(root, "l6"), l7 = ov(root, "l7"), l8 = ov(root, "l8");
+      return { v: l8, text: `Answer: Line 8, the payment due now, is ${money(l8)}. Work and stored materials to date are ${money(l4)}. Less retainage of ${money(l5)}, that leaves ${money(l6)}, and ${money(l7)} was already certified.` };
+    },
+    gen: () => {
+      const names = ["Site work", "Structure", "Finishes"];
+      const rows = names.map(d => {
+        const c = pick([100000, 150000, 200000, 250000, 300000]);
+        return { d, c, p: rnd(c * pick([0.2, 0.3, 0.4]), 1000), t: rnd(c * pick([0.1, 0.2]), 1000), s: rnd(c * pick([0, 0, 0.05, 0.1]), 1000), co: false };
+      });
+      if (Math.random() < 0.5) rows.push({ d: "Change order 1", c: pick([10000, 20000, 30000]), p: 0, t: pick([5000, 10000]), s: 0, co: true });
+      const r1 = pick([5, 10]), r2 = pick([5, 10]);
+      const prevWork = rows.reduce((a, r) => a + r.p, 0);
+      const prevcert = Math.round(prevWork * (1 - r1 / 100));
+      const A = {
+        l4: { key: "l4", label: "What is line 4, the total completed and stored to date?", unit: "dollars", fmt: money, abs: 1 },
+        l5: { key: "l5", label: "What is line 5, the total retainage?", unit: "dollars", fmt: money, abs: 1 },
+        l8: { key: "l8", label: "What is line 8, the current payment due?", unit: "dollars", fmt: money, abs: 1 }
+      };
+      return {
+        prob: `${rows.map(r => `${r.d}: scheduled ${money(r.c)}, previous ${money(r.p)}, this period ${money(r.t)}, stored ${money(r.s)}`).join(". ")}. Retainage is ${r1}% on work and ${r2}% on stored materials. Earlier certificates total ${money(prevcert)}.`,
+        apply: root => root.tlSet({ rows, r1, r2, prevcert }), ask: A[pick(Object.keys(A))]
+      };
+    }
+  };
+
+  /* --- change order tracker --- */
+  SPEC.co = {
+    prob: "A contract is $1,000,000 for 300 days and starts January 4, 2027. Three change orders add $25,000 and 5 days, take off $8,000 and 0 days, and add $40,000 and 10 days. What are the new contract sum and the new completion date?",
+    load: root => root.tlSet({ orig: 1000000, days: 300, start: "2027-01-04", rows: [{ d: "CO 1: added storefront", a: 25000, t: 5 }, { d: "CO 2: deleted landscape", a: -8000, t: 0 }, { d: "CO 3: owner-requested upgrade", a: 40000, t: 10 }] }),
+    answer: root => {
+      const sum = ov(root, "sum"), pct = ov(root, "pct"), tm = ov(root, "time");
+      const txt = id => root.querySelector(`[data-o="${id}"]`).textContent;
+      return { v: sum, text: `Answer: The new contract sum is ${money(sum)} (${pct >= 0 ? "+" : "−"}${pc(Math.abs(pct), 2)}) and the contract time is ${tm} days. Completion moves from ${txt("end0")} to ${txt("end")}.` };
+    },
+    gen: () => {
+      const orig = pick([500000, 1000000, 2000000, 2500000]), days = pick([180, 240, 300, 360]);
+      const start = pick(["2027-02-01", "2027-03-15", "2027-05-03", "2027-09-01"]);
+      const n = pick([2, 3]);
+      const rows = [];
+      for (let i = 0; i < n; i++) rows.push({ d: "CO " + (i + 1), a: pick([-15000, -10000, 10000, 20000, 25000, 30000, 50000]), t: pick([-5, 0, 5, 7, 10, 14]) });
+      if (rows.every(r => r.a < 0)) rows[0].a = 20000;
+      if (rows.every(r => r.t === 0)) rows[0].t = 7;
+      const mon = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const sd = start.split("-"), sdTxt = `${mon[+sd[1] - 1]} ${+sd[2]}, ${sd[0]}`;
+      const A = {
+        sum: { key: "sum", label: "What is the contract sum to date?", unit: "dollars", fmt: money, abs: 1 },
+        net: { key: "net", label: "What is the net change in the contract sum?", unit: "dollars (use a minus sign if negative)", fmt: money, abs: 1 },
+        time: { key: "time", label: "What is the contract time to date?", unit: "days", fmt: x => x + " days", abs: 0.5 }
+      };
+      return {
+        prob: `A contract is ${money(orig)} for ${days} days and starts ${sdTxt}. Change orders: ${rows.map(r => `${r.a < 0 ? "take off" : "add"} ${money(Math.abs(r.a))} and ${r.t < 0 ? "take off" : "add"} ${Math.abs(r.t)} days`).join("; ")}.`,
+        apply: root => root.tlSet({ orig, days, start, rows }), ask: A[pick(Object.keys(A))]
+      };
+    }
+  };
+
+  /* --- CPM network --- */
+  const CPM_T = [
+    [["A", ""], ["B", "A"], ["C", "A"], ["D", "B, C"]],
+    [["A", ""], ["B", "A"], ["C", "A"], ["D", "B"], ["E", "C"], ["F", "D, E"]],
+    [["A", ""], ["B", ""], ["C", "A, B"], ["D", "C"], ["E", "C"]],
+    [["A", ""], ["B", "A"], ["C", "A"], ["D", "B, C"], ["E", "D"]],
+    [["A", ""], ["B", "A"], ["C", "B"], ["D", "A"], ["E", "C, D"]]
+  ];
+  SPEC.cpm = {
+    prob: "Activity A takes 3 days and starts the job. B (4 days) and C (2 days) follow A. D (2 days) follows B, E (2 days) follows C, and F (3 days) follows both D and E. How many days does the project take, and which chain of activities sets it (the critical path)?",
+    load: root => root.tlSet({ rows: CPM_PRESET }),
+    answer: root => {
+      const o = root._last, dur = ov(root, "dur");
+      if (!o || o.err) return { v: NaN, text: "Answer: fix the activity table first." };
+      const fl = o.acts.filter(a => !a.crit).map(a => `${a.id} has ${a.fl} day${a.fl === 1 ? "" : "s"} of float`);
+      return { v: dur, text: `Answer: The project takes ${dur} days. The critical path is ${o.paths.map(p => p.join("-")).join(" or ")}.${fl.length ? " " + fl.join(", ") + "." : " Every activity is critical."}` };
+    },
+    gen: () => {
+      const t = pick(CPM_T);
+      const rows = t.map(a => ({ id: a[0], dur: rint(1, 8), pred: a[1] }));
+      const txt = rows.map(r => `${r.id} takes ${r.dur} day${r.dur === 1 ? "" : "s"} and ${r.pred ? "follows " + r.pred.replace(", ", " and ") : "starts the job"}`).join(". ");
+      return { prob: txt + ".", apply: root => root.tlSet({ rows }), ask: { key: "dur", label: "How many days does the project take?", unit: "days", fmt: x => x + " days", abs: 0.5 } };
+    }
+  };
+
+  /* --- delivery method explorer (multiple choice) --- */
+  SPEC.del = {
+    prob: "An owner signs one contract with one entity that both designs and builds, and fixes the price before the design is complete. Which delivery method is this, and who carries the cost risk?",
+    load: root => root.tlSet({ m: "db" }),
+    answer: root => {
+      const k = Object.keys(DM).find(x => root.querySelector("#tl-del-btn-" + x).classList.contains("on")), m = DM[k];
+      return { v: dmOwn(k), text: `Answer: ${m.full}. Owner contracts: ${m.t[0][1]}. Cost risk: ${m.risk}.` };
+    },
+    gen: () => {
+      const keys = Object.keys(DM), k = pick(keys), m = DM[k];
+      const type = pick(["own", "use", "dash", "solid"]);
+      if (type === "own") {
+        const c = dmOwn(k);
+        return { prob: `Under ${m.full}, how many contracts does the owner sign?`, apply: root => root.tlSet({ m: k }), options: ["1", "2", "3"], correct: String(c) };
+      }
+      if (type === "dash") {
+        const c = dmCount(k, "d");
+        return { prob: `How many dashed lines (communication with no contract) does the ${m.full} diagram show?`, apply: root => root.tlSet({ m: k }), options: ["0", "1", "2", "3"], correct: String(c) };
+      }
+      if (type === "solid") {
+        const c = dmCount(k, "s");
+        return { prob: `How many solid lines (contracts) does the ${m.full} diagram show?`, apply: root => root.tlSet({ m: k }), options: ["1", "2", "3", "4"], correct: String(c) };
+      }
+      const others = shuffle(keys.filter(x => x !== k)).slice(0, 3);
+      return { prob: `Which delivery method fits this description? "${dot(m.t[4][1])}"`, apply: root => root.tlSet({ m: k }), options: shuffle([k].concat(others)).map(x => DM[x].full), correct: m.full };
+    }
+  };
+
+  /* --- design effort vs cost of change (multiple choice) --- */
+  SPEC.curve = {
+    prob: "A design team wants to change the building shape during Schematic Design (SD). How much ability to influence cost and performance is still left, and how does a change now compare with the same change at occupancy?",
+    load: root => root.tlSet({ t: 1, kind: "trad" }),
+    answer: root => {
+      const iv = ov(root, "infl"), cv = ov(root, "cost"), pi = ov(root, "phase");
+      return { v: iv, text: `Answer: In ${PH[pi]} you keep about ${Math.round(iv)}% of your ability to influence cost and performance. A change now costs about ${Math.round(cv)}% of what the same change would cost at occupancy.` };
+    },
+    gen: () => {
+      const type = pick(["which", "infl", "peak"]);
+      if (type === "which") {
+        const i = rint(0, 6);
+        const hi = infl(i) > costc(i);
+        return { prob: `At ${PH[i]}, which is higher on the diagram: your ability to influence cost, or the cost of a design change?`, apply: root => root.tlSet({ t: i }), options: ["Ability to influence cost", "Cost of a design change"], correct: hi ? "Ability to influence cost" : "Cost of a design change" };
+      }
+      if (type === "infl") {
+        const i = rint(0, 6), c = Math.round(infl(i));
+        const opts = [c]; [10, 20, 30, 40].forEach(d => { [c + d, c - d].forEach(x => { if (x >= 0 && x <= 100 && opts.length < 4 && Math.abs(x - c) >= 8 && opts.every(y => Math.abs(y - x) >= 8)) opts.push(x); }); });
+        return { prob: `At ${PH[i]}, about how much ability to influence cost and performance is left?`, apply: root => root.tlSet({ t: i }), options: shuffle(opts).map(x => x + "%"), correct: c + "%" };
+      }
+      const kd = pick(["trad", "front"]);
+      let bi = 0; for (let i = 1; i <= 6; i++) if (effort(kd, i) > effort(kd, bi)) bi = i;
+      const pool = shuffle([0, 1, 2, 3, 4, 5, 6].filter(i => i !== bi)).slice(0, 3);
+      return { prob: `On the ${kd === "trad" ? "traditional" : "front-loaded (IPD)"} design effort curve, which phase has the most effort?`, apply: root => root.tlSet({ t: bi, kind: kd }), options: shuffle([bi].concat(pool)).map(i => PH[i]), correct: PH[bi] };
+    }
+  };
 
   /* ======================================================================
      STYLES, PANEL, TAB
      ====================================================================== */
   const CSS = `
-#tools{--tl-r:12px}
+#tools{--tl-r:2px}
 #tools *{box-sizing:border-box}
-#tools .tl-top{margin:0 0 6px;font-size:13px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
-#tools .tl-intro{margin:0 0 12px;color:var(--muted);font-size:14px;line-height:1.5}
-#tools .tl-chips{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 16px}
-#tools .tl-chip{background:var(--surface);color:var(--muted);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
-#tools .tl-chip:hover{color:var(--text);border-color:var(--gold)}
-#tools .tl-chip.on{background:var(--gold);color:#1a1208;border-color:var(--gold);font-weight:700}
-#tools .tl-grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr));gap:16px;align-items:start}
-#tools .tl-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--tl-r);padding:14px 16px 12px;min-width:0;color:var(--text)}
-#tools .tl-card[hidden]{display:none}
-#tools .tl-wide{grid-column:1/-1}
-#tools .tl-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
-#tools .tl-card h3{margin:0;font-size:16px;line-height:1.3;color:var(--text-bright,var(--text))}
-#tools .tl-tags{display:flex;gap:5px;flex-wrap:wrap}
-#tools .tl-tag{font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 7px;color:#fff;letter-spacing:.03em}
-#tools .tl-d-pcm{background:var(--pcm)}#tools .tl-d-pjm{background:var(--pjm)}#tools .tl-d-ce{background:var(--ce)}
-#tools .tl-exam{margin:6px 0 12px;font-size:13px;line-height:1.5;color:var(--muted)}
-#tools .tl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 12px}
-#tools .tl-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-#tools .tl-grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-#tools .tl-f{display:flex;flex-direction:column;gap:3px;min-width:0}
-#tools .tl-f>span{font-size:11.5px;color:var(--muted);line-height:1.25}
-#tools .tl-f input[type=number],#tools .tl-f input[type=text],#tools .tl-f input[type=date]{width:100%;min-width:0;background:var(--inset);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:7px 9px;font-size:14px;font-family:inherit}
-#tools .tl-f input:focus{outline:2px solid var(--gold);outline-offset:1px}
-#tools .tl-f input[readonly]{opacity:.7}
-#tools .tl-badin{border-color:var(--bad)!important}
-#tools .tl-f input[type=range]{width:100%;accent-color:var(--gold)}
-#tools .tl-row{border:1px solid var(--border);background:var(--surface2);border-radius:10px;padding:9px 10px;margin:0 0 8px}
-#tools .tl-rowhead{display:flex;gap:8px;align-items:flex-end;margin-bottom:8px;flex-wrap:wrap}
-#tools .tl-cpmrow .tl-rowhead{margin-bottom:0;flex-wrap:nowrap}
-#tools .tl-grow{flex:1 1 140px}
-#tools .tl-cpmrow .tl-grow{flex:1 1 0}
-#tools .tl-w60{flex:0 0 58px}#tools .tl-w80{flex:0 0 68px}
-#tools .tl-chk{font-size:12px;color:var(--muted);display:flex;gap:4px;align-items:center;padding-bottom:8px;white-space:nowrap}
-#tools .tl-del{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:14px;flex:0 0 auto}
-#tools .tl-del:hover{color:var(--bad);border-color:var(--bad)}
-#tools .tl-rowout{margin:8px 0 0;font-size:12px;color:var(--muted)}
-#tools .tl-rowout b{color:var(--text)}
-#tools .tl-btn{background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit;margin:0 6px 12px 0}
-#tools .tl-btn:hover{border-color:var(--gold)}
-#tools .tl-btnrow{display:flex;flex-wrap:wrap}
-#tools .tl-hint{margin:0 0 10px;font-size:12px;color:var(--muted)}
-#tools .tl-hint code{background:var(--inset);padding:0 4px;border-radius:4px}
-#tools .tl-res{margin:4px 0 10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
-#tools .tl-res>div{background:var(--inset);border:1px solid var(--border);border-radius:9px;padding:7px 10px;min-width:0}
-#tools .tl-res dt{font-size:11.5px;color:var(--muted);line-height:1.3}
-#tools .tl-res dd{margin:2px 0 0;font-size:17px;font-weight:700;color:var(--text-bright,var(--text));overflow-wrap:anywhere}
-#tools .tl-res .tl-strong{border-color:var(--gold)}
-#tools .tl-sub{margin:12px 0 6px;font-size:13px;color:var(--text)}
-#tools .tl-faint{font-weight:400;color:var(--muted)}
-#tools .tl-phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:8px}
-#tools .tl-phrow{display:flex;flex-direction:column;gap:2px;background:var(--inset);border:1px solid var(--border);border-radius:9px;padding:7px 9px;min-width:0}
-#tools .tl-phrow .tl-f input{padding:5px 7px}
-#tools .tl-phrow b{font-size:14px}
-#tools .tl-notes{list-style:none;margin:6px 0 8px;padding:0;display:flex;flex-direction:column;gap:5px}
-#tools .tl-note{font-size:13px;line-height:1.45;padding:6px 10px;border-radius:8px;border-left:4px solid var(--border2);background:var(--inset)}
-#tools .tl-note.tl-ok{border-left-color:var(--ok)}
-#tools .tl-note.tl-warn{border-left-color:var(--gold)}
-#tools .tl-note.tl-bad{border-left-color:var(--bad)}
-#tools .tl-note.tl-info{border-left-color:var(--pjm)}
-#tools .tl-svg{width:100%;height:auto;display:block;color:var(--text);margin:6px 0}
-#tools .tl-svgwrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:var(--inset);padding:6px}
-#tools .tl-legend{font-size:12px;color:var(--muted);margin:6px 0 8px;line-height:1.5}
-#tools .tl-key{display:inline-block;width:18px;height:0;border-top:3px solid currentColor;vertical-align:middle;margin:0 3px 0 6px}
-#tools .tl-keyc{border-top-color:var(--gold);border-top-width:4px;margin-left:0}
-#tools .tl-keys{border-top-style:solid;margin-left:0}
-#tools .tl-keyd{border-top-style:dashed;border-top-color:var(--muted)}
-#tools .tl-keyc[style],#tools .tl-key[style]{height:8px;border:0;border-radius:2px;width:14px}
-#tools .tl-seg{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
-#tools .tl-segbtn{background:var(--surface2);color:var(--muted);border:1px solid var(--border2);border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit}
-#tools .tl-segbtn:hover{color:var(--text);border-color:var(--gold)}
-#tools .tl-segbtn.on{background:var(--gold);color:#1a1208;border-color:var(--gold);font-weight:700}
-#tools .tl-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
-#tools .tl-table th,#tools .tl-table td{text-align:left;vertical-align:top;padding:7px 9px;border-top:1px solid var(--border);line-height:1.4}
-#tools .tl-table th{width:32%;color:var(--muted);font-weight:600;background:transparent;text-transform:none;letter-spacing:0;font-size:13px;white-space:normal}
-#tools .tl-concept{margin:0 0 10px;font-size:12.5px;color:var(--gold);font-weight:600}
-#tools .tl-how{margin:8px 0 4px;border-top:1px solid var(--border);padding-top:8px}
-#tools .tl-how summary{cursor:pointer;font-size:13px;color:var(--strong,var(--text));font-weight:600}
-#tools .tl-howbody{font-size:13px;line-height:1.55;color:var(--text)}
-#tools .tl-howbody p{margin:8px 0}
-#tools .tl-ex{background:var(--inset);border-radius:8px;padding:7px 10px;overflow-wrap:anywhere}
-#tools .tl-src{margin:6px 0 0;font-size:11.5px;color:var(--muted);line-height:1.45}
+body #tools [hidden]{display:none!important}
+body #tools .tl-guide{border:1px solid var(--border2);background:var(--surface);padding:12px 14px;margin:0 0 14px;font-size:13.5px;line-height:1.55;color:var(--text)}
+body #tools .tl-guide p{margin:0 0 6px;max-width:75ch}
+body #tools .tl-guide p:last-child{margin:0}
+body #tools .tl-k{display:block;font:600 10px/1.2 var(--font-mono,ui-monospace,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+body #tools .tl-start .tl-k,body #tools .tl-prac .tl-k{color:var(--gold-ink,var(--gold))}
+body #tools .tl-link{background:none;border:0;border-bottom:1px solid var(--gold);padding:0;margin:0;color:var(--text-bright,var(--text));font:inherit;font-weight:600;cursor:pointer}
+body #tools .tl-link:hover{color:var(--gold-ink,var(--gold))}
+body #tools .tl-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 16px;margin:0 0 16px}
+body #tools .tl-chips{display:flex;gap:7px;flex-wrap:wrap;margin:0}
+body #tools .tl-allbtns{display:flex;gap:6px;flex-wrap:wrap}
+body #tools .tl-card{background:var(--surface);color:var(--text);padding:16px 18px 14px;margin:0 0 14px;min-width:0}
+body #tools .tl-card[hidden]{display:none}
+body #tools .tl-head{display:flex;justify-content:space-between;gap:8px 12px;align-items:flex-start;flex-wrap:wrap}
+body #tools .tl-tags{display:flex;gap:5px;flex-wrap:wrap}
+body #tools .tl-exam{margin:4px 0 0;font-size:13px;line-height:1.5;color:var(--muted);max-width:80ch}
+body #tools .tl-start{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+body #tools .tl-prob{margin:0 0 10px;font-size:14px;line-height:1.6;color:var(--text);max-width:78ch}
+body #tools .tl-acts,body #tools .tl-btnrow{display:flex;flex-wrap:wrap;gap:8px}
+body #tools .tl-btnrow{margin:0 0 10px}
+body #tools .tl-btn{background:transparent;color:var(--text);border:1px solid var(--border2);padding:7px 13px;min-height:34px;font:500 13px/1.2 var(--font-sans,system-ui,sans-serif);letter-spacing:0;text-transform:none;cursor:pointer;margin:0}
+body #tools .tl-btn:hover,body #tools .tl-btn:focus-visible{background:var(--hover);border-color:var(--text)}
+body #tools .tl-btn.tl-pri{border-color:var(--gold);color:var(--text-bright,var(--text))}
+body #tools .tl-btn.tl-pri:hover{background:var(--gold-bg)}
+body #tools .tl-btn[disabled]{opacity:.45;cursor:default}
+body #tools .tl-ans{margin:10px 0 0;padding:8px 11px;border-left:2px solid var(--gold);background:var(--gold-bg);font-size:13.5px;line-height:1.55;color:var(--text);max-width:80ch}
+body #tools .tl-prac{margin-top:12px;padding:12px 14px;border:1px solid var(--gold);background:var(--surface2)}
+body #tools .tl-ask{margin:0 0 8px;font-size:14px;line-height:1.5;color:var(--text-bright,var(--text))}
+body #tools .tl-unit{display:block;margin-top:2px;font-size:12px;color:var(--muted)}
+body #tools .tl-ansrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+body #tools .tl-ansrow input{width:170px;max-width:100%;background:var(--inset);color:var(--text);border:1px solid var(--field);padding:7px 9px;font:14px var(--font-mono,monospace)}
+body #tools .tl-opts{display:flex;flex-direction:column;gap:6px;margin:0 0 10px;max-width:60ch}
+body #tools .tl-opt{display:flex;gap:9px;align-items:flex-start;padding:8px 10px;border:1px solid var(--border);background:var(--inset);font-size:13.5px;line-height:1.4;cursor:pointer;color:var(--text)}
+body #tools .tl-opt:has(input:checked){border-color:var(--gold)}
+body #tools .tl-opt input{margin:2px 0 0;accent-color:var(--gold)}
+body #tools .tl-opt.tl-optok{border-color:var(--ok);border-width:2px}
+body #tools .tl-opt.tl-optbad{border-color:var(--bad);border-width:2px}
+body #tools .tl-fb{margin:10px 0 0;padding:8px 11px;border-left:2px solid var(--ok);background:var(--inset);font-size:13.5px;line-height:1.55;color:var(--text);max-width:80ch}
+body #tools .tl-fb.tl-no{border-left-color:var(--bad)}
+body #tools .tl-fb b{color:var(--text-bright,var(--text))}
+body #tools .tl-full{margin-top:6px}
+body #tools .tl-practice [data-s2],body #tools .tl-practice [data-s3],body #tools .tl-practice.tl-mc [data-s1]{display:none}
+body #tools .tl-step{display:flex;align-items:center;gap:9px;margin:18px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;color:var(--text-bright,var(--text));letter-spacing:0;text-transform:none}
+body #tools .tl-step b{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border:1px solid var(--gold);color:var(--gold-ink,var(--gold));font:600 11px var(--font-mono,monospace)}
+body #tools .tl-sub{margin:12px 0 8px;font-size:13px;font-weight:600;color:var(--text)}
+body #tools .tl-faint{font-weight:400;color:var(--muted)}
+body #tools .tl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px 14px;margin:0 0 12px}
+body #tools .tl-grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+body #tools .tl-grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 10px}
+body #tools .tl-f{display:flex;flex-direction:column;gap:2px;min-width:0}
+body #tools .tl-f>span{font-size:12.5px;font-weight:600;color:var(--text);line-height:1.3}
+body #tools .tl-help{display:block;font-style:normal;font-size:11.5px;line-height:1.35;color:var(--muted);margin:0 0 3px}
+body #tools .tl-f input[type=number],body #tools .tl-f input[type=text],body #tools .tl-f input[type=date]{width:100%;min-width:0;background:var(--inset);color:var(--text);border:1px solid var(--field);padding:7px 9px;font:14px var(--font-mono,monospace)}
+body #tools .tl-f input:focus,body #tools .tl-ansrow input:focus{outline:2px solid var(--gold);outline-offset:1px}
+body #tools .tl-f input[readonly]{opacity:.7}
+body #tools .tl-badin{border-color:var(--bad)!important}
+body #tools .tl-f input[type=range]{width:100%;accent-color:var(--gold)}
+body #tools .tl-row{border:1px solid var(--border);background:var(--surface2);padding:10px 11px;margin:0 0 8px}
+body #tools .tl-rowhead{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;flex-wrap:wrap}
+body #tools .tl-cpmrow .tl-rowhead{margin-bottom:0;flex-wrap:nowrap}
+body #tools .tl-cpmrow:not(:first-child) .tl-help{display:none}
+body #tools .tl-grow{flex:1 1 140px}
+body #tools .tl-cpmrow .tl-grow{flex:1 1 0}
+body #tools .tl-wh{flex:0 0 120px}body #tools .tl-wr{flex:0 0 200px}
+body #tools .tl-w60{flex:0 0 66px}body #tools .tl-w80{flex:0 0 76px}
+body #tools .tl-chk{display:flex;flex-direction:column;gap:2px;font-size:12.5px;color:var(--text);font-weight:600;min-width:0}
+body #tools .tl-chk input{margin:0;accent-color:var(--gold)}
+body #tools .tl-chk>span{display:flex;align-items:center;gap:6px}
+body #tools [data-s1][inert]{opacity:.75}
+body #tools [data-s1]>[data-add]{margin:0 0 12px}
+body #tools .tl-del{width:34px;height:34px;cursor:pointer;font-size:14px;flex:0 0 auto;margin-bottom:0}
+body #tools .tl-del:hover{color:var(--bad);border-color:var(--bad)}
+body #tools .tl-rowout{margin:10px 0 0;font-size:12px;color:var(--muted)}
+body #tools .tl-rowout b{color:var(--text)}
+body #tools .tl-hint{margin:0 0 10px;font-size:12.5px;line-height:1.45;color:var(--muted);max-width:75ch}
+body #tools .tl-hint code{background:var(--inset);padding:0 4px}
+body #tools .tl-res{margin:4px 0 12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
+body #tools .tl-res>div{background:var(--inset);border:1px solid var(--border);padding:9px 11px;min-width:0}
+body #tools .tl-res dt{font-size:12px;color:var(--muted);line-height:1.3}
+body #tools .tl-res dd{margin:3px 0 0;font:500 18px/1.3 var(--font-mono,monospace);color:var(--text-bright,var(--text));overflow-wrap:anywhere}
+body #tools .tl-res dd.tl-mean{margin-top:5px;font:400 12.5px/1.45 var(--font-sans,system-ui,sans-serif);color:var(--text)}
+body #tools .tl-res .tl-strong{border-color:var(--gold)}
+body #tools .tl-phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-bottom:8px}
+body #tools .tl-phrow{display:flex;flex-direction:column;gap:3px;background:var(--inset);border:1px solid var(--border);padding:8px 10px;min-width:0}
+body #tools .tl-phrow>.tl-f{flex:1 1 auto}
+body #tools .tl-phrow .tl-f input{margin-top:auto}
+body #tools .tl-phrow b{font:500 14px var(--font-mono,monospace)}
+body #tools .tl-notes:empty{display:none}
+body #tools .tl-notes{list-style:none;margin:0 0 8px;padding:0;display:flex;flex-direction:column;gap:5px}
+body #tools .tl-note{font-size:13px;line-height:1.5;padding:6px 10px;border-left:2px solid var(--border2);background:var(--inset);max-width:85ch}
+body #tools .tl-note.tl-ok{border-left-color:var(--ok)}
+body #tools .tl-note.tl-warn{border-left-color:var(--gold)}
+body #tools .tl-note.tl-bad{border-left-color:var(--bad)}
+body #tools .tl-note.tl-info{border-left-color:var(--pjm)}
+body #tools .tl-svg{width:100%;height:auto;display:block;color:var(--text);margin:6px 0;max-width:480px}
+body #tools .tl-svgwrap{overflow-x:auto;border:1px solid var(--border);background:var(--inset);padding:6px}
+body #tools .tl-svgwrap .tl-svg{max-width:none}
+body #tools .tl-legend{font-size:12px;color:var(--muted);margin:6px 0 8px;line-height:1.5}
+body #tools .tl-key{display:inline-block;width:18px;height:0;border-top:3px solid currentColor;vertical-align:middle;margin:0 3px 0 6px}
+body #tools .tl-keyc{border-top-color:var(--gold);border-top-width:4px;margin-left:0}
+body #tools .tl-keys{border-top-style:solid;margin-left:0}
+body #tools .tl-keyd{border-top-style:dashed;border-top-color:var(--muted)}
+body #tools .tl-keyc[style],body #tools .tl-key[style]{height:8px;border:0;width:14px}
+body #tools .tl-seg{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+body #tools .tl-segbtn{padding:7px 12px;min-height:34px;cursor:pointer;font-family:inherit}
+body #tools .tl-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+body #tools .tl-table th,body #tools .tl-table td{text-align:left;vertical-align:top;padding:7px 9px;border-top:1px solid var(--border);line-height:1.45;background:transparent}
+body #tools .tl-table th{width:30%;color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;font-size:13px;white-space:normal}
+body #tools .tl-concept{margin:0 0 10px;font-size:12.5px;font-weight:600}
+body #tools .tl-how{margin:10px 0 4px;border-top:1px solid var(--border);padding-top:8px}
+body #tools .tl-how summary{cursor:pointer}
+body #tools .tl-howbody{font-size:13px;line-height:1.55;color:var(--text);max-width:85ch}
+body #tools .tl-howbody p{margin:8px 0}
+body #tools .tl-ex{background:var(--inset);padding:7px 10px;overflow-wrap:anywhere}
+body #tools .tl-src{margin:6px 0 0}
 @media (max-width:760px){
-  #tools .tl-grid-cards{grid-template-columns:1fr}
-  #tools .tl-grid4{grid-template-columns:1fr 1fr}
-  #tools .tl-f input[type=number],#tools .tl-f input[type=text],#tools .tl-f input[type=date]{font-size:16px}
-  #tools .tl-table th{width:34%}
+  body #tools .tl-grid4{grid-template-columns:1fr 1fr}
+  body #tools .tl-wh,body #tools .tl-wr{flex:1 1 120px}
+  body #tools .tl-card{padding:14px 13px 12px}
+  body #tools .tl-f input[type=number],body #tools .tl-f input[type=text],body #tools .tl-f input[type=date],body #tools .tl-ansrow input{font-size:16px}
+  body #tools .tl-acts .tl-btn{flex:1 1 auto}
+  body #tools .tl-table th{width:34%}
+  body #tools .tl-bar{align-items:flex-start}
 }`;
 
   const TOOLS = [
-    [evmCard, evmWire], [firmCard, firmWire], [feeCard, feeWire], [payCard, payWire],
-    [coCard, coWire], [cpmCard, cpmWire], [delCard, delWire], [curveCard, curveWire]
+    ["evm", evmCard, evmWire], ["firm", firmCard, firmWire], ["fee", feeCard, feeWire], ["pay", payCard, payWire],
+    ["co", coCard, coWire], ["cpm", cpmCard, cpmWire], ["del", delCard, delWire], ["curve", curveCard, curveWire]
   ];
+
+  /* ---------- card behaviour: open/close, Load this example, Try one ---------- */
+  const q = (c, s) => c.querySelector(s);
+  function setOpenState(c, on) {
+    q(c, "[data-full]").hidden = !on;
+    const b = q(c, "[data-open]");
+    b.textContent = on ? "Close tool" : "Open tool";
+    b.setAttribute("aria-expanded", on ? "true" : "false");
+    c.classList.toggle("tl-isopen", on);
+  }
+  function endPractice(c) {
+    c.classList.remove("tl-practice");
+    c.dataset.mode = "";
+    q(c, "[data-s1]").inert = false;
+    const p = q(c, "[data-prac]");
+    p.hidden = true; p.innerHTML = "";
+  }
+  function setOpen(c, on) {
+    if (!on) endPractice(c);
+    setOpenState(c, on);
+    if (!on) q(c, "[data-ans]").hidden = true;
+  }
+  function doLoad(c) {
+    const sp = SPEC[c.dataset.id], root = q(c, ".tl-body");
+    endPractice(c);
+    sp.load(root);
+    setOpenState(c, true);
+    const a = sp.answer(root), el = q(c, "[data-ans]");
+    el.textContent = a.text; el.dataset.v = fin(a.v) ? String(a.v) : ""; el.hidden = false;
+  }
+  function parseGuess(s) {
+    const t = String(s).replace(/[−–]/g, "-").replace(/[$,\s%]/g, "");
+    return t === "" || !/^-?\d*\.?\d+$/.test(t) ? NaN : Number(t);
+  }
+  function doTry(c) {
+    const sp = SPEC[c.dataset.id], root = q(c, ".tl-body"), prac = q(c, "[data-prac]");
+    let g = null, exp = NaN;
+    for (let i = 0; i < 8; i++) {
+      g = sp.gen();
+      g.apply(root);
+      if (g.options) break;
+      exp = ov(root, g.ask.key) * (g.ask.scale || 1);
+      if (fin(exp) && Math.abs(exp) > 1e-9) break;
+    }
+    q(c, "[data-ans]").hidden = true;
+    setOpenState(c, true);
+    c.classList.add("tl-practice");
+    c.classList.toggle("tl-mc", !!g.options);
+    c.dataset.mode = "practice";
+    q(c, "[data-s1]").inert = true;
+    prac.dataset.kind = g.options ? "mc" : "num";
+    if (g.options) {
+      prac.dataset.correct = g.correct;
+      prac.innerHTML = `<span class="tl-k">Try one</span><p class="tl-prob">${esc(g.prob)}</p>
+        <div class="tl-opts" role="radiogroup" aria-label="Choose one answer">${g.options.map((o, i) => `<label class="tl-opt" ${o === g.correct ? 'data-ok="1"' : ""}><input type="radio" name="tl-q-${c.dataset.id}" value="${esc(o)}" data-i="${i}"><span>${esc(o)}</span></label>`).join("")}</div>
+        <div class="tl-ansrow"><button type="button" class="tl-btn tl-pri" data-check>Check</button><button type="button" class="tl-btn" data-another>Another</button></div>
+        <p class="tl-fb" data-fb hidden></p>`;
+    } else {
+      prac.dataset.key = g.ask.key; prac.dataset.scale = String(g.ask.scale || 1); prac.dataset.exp = String(exp);
+      prac.innerHTML = `<span class="tl-k">Try one</span><p class="tl-prob">${esc(g.prob)}</p>
+        <p class="tl-ask">${esc(g.ask.label)}<span class="tl-unit">Unit: ${esc(g.ask.unit)}</span></p>
+        <div class="tl-ansrow"><input type="text" inputmode="decimal" autocomplete="off" data-guess aria-label="Your answer"><button type="button" class="tl-btn tl-pri" data-check>Check</button><button type="button" class="tl-btn" data-another>Another</button></div>
+        <p class="tl-fb" data-fb hidden></p>`;
+    }
+    c._ask = g.ask || null;
+    prac.hidden = false;
+    const inp = q(prac, "[data-guess]");
+    if (inp) inp.focus({ preventScroll: true });
+  }
+  function doCheck(c) {
+    const prac = q(c, "[data-prac]"), fb = q(prac, "[data-fb]"), root = q(c, ".tl-body");
+    if (c.dataset.mode !== "practice") return;
+    let ok, shown, typed;
+    if (prac.dataset.kind === "mc") {
+      const sel = prac.querySelector("input:checked");
+      if (!sel) { fb.className = "tl-fb"; fb.innerHTML = "Pick an answer first."; fb.hidden = false; return; }
+      typed = sel.value; ok = typed === prac.dataset.correct; shown = prac.dataset.correct;
+      prac.querySelectorAll(".tl-opt").forEach(o => { if (o.dataset.ok) o.classList.add("tl-optok"); else if (o.contains(sel)) o.classList.add("tl-optbad"); });
+      prac.querySelectorAll("input").forEach(i => { i.disabled = true; });
+    } else {
+      const inp = q(prac, "[data-guess]"), x = parseGuess(inp.value), exp = Number(prac.dataset.exp), a = c._ask;
+      if (!fin(x)) { fb.className = "tl-fb"; fb.innerHTML = "Type a number first."; fb.hidden = false; return; }
+      ok = Math.abs(x - exp) <= Math.max(Math.abs(exp) * 0.01, a.abs || 0);
+      shown = a.fmt(exp); typed = inp.value.trim(); inp.readOnly = true;
+    }
+    const ex = root.querySelector(".tl-howbody .tl-ex");
+    fb.className = "tl-fb" + (ok ? "" : " tl-no");
+    fb.dataset.ok = ok ? "1" : "0";
+    fb.innerHTML = (ok ? "<b>Right.</b> The answer is " + esc(shown) + "." : "<b>Not quite.</b> The correct answer is " + esc(shown) + "; you gave " + esc(typed) + ".") + (ex ? " <br>Worked: " + esc(ex.textContent.replace(/^With your numbers:\s*/, "")) : "") + " The full tool is open below.";
+    fb.hidden = false;
+    q(prac, "[data-check]").disabled = true;
+    c.classList.remove("tl-practice");
+    c.dataset.mode = "revealed";
+    q(c, "[data-s1]").inert = false;
+  }
 
   function buildPanel() {
     const st = document.createElement("style");
@@ -4349,22 +4825,54 @@ document.addEventListener('keydown', e=>{
     const panel = document.createElement("section");
     panel.className = "panel"; panel.id = PID;
     panel.innerHTML = `<h2 class="tl-top">Tools</h2>
-      <p class="tl-intro">Exam calculators and live diagrams. Change a number or drag a slider and the answers update. Check each tool's source line before relying on it.</p>
-      <div class="tl-chips" role="group" aria-label="Filter tools by division">${["All", "PcM", "PjM", "CE"].map((d, i) => `<button type="button" class="tl-chip ${i === 0 ? "on" : ""}" data-f="${d}" aria-pressed="${i === 0}">${d}</button>`).join("")}</div>
-      <div class="tl-grid-cards">${TOOLS.map(t => t[0]()).join("")}</div>`;
+      <div class="tl-guide">
+        <span class="tl-k">How to use these tools</span>
+        <p>These tools turn a formula into a worked answer. Pick a tool, then follow three steps: 1 Enter the givens, 2 Read the result, 3 Check the rule. Start with Load this example, or press Try one to test yourself.</p>
+        <p>First tool by division: <b>PcM</b> <button type="button" class="tl-link" data-jump="firm">Firm financial metrics</button> · <b>PjM</b> <button type="button" class="tl-link" data-jump="evm">Earned value</button> · <b>CE</b> <button type="button" class="tl-link" data-jump="pay">Pay application</button></p>
+      </div>
+      <div class="tl-bar">
+        <div class="tl-chips" role="group" aria-label="Filter tools by division">${["All", "PcM", "PjM", "CE"].map((d, i) => `<button type="button" class="tl-chip ${i === 0 ? "on" : ""}" data-f="${d}" aria-pressed="${i === 0}">${d}</button>`).join("")}</div>
+        <div class="tl-allbtns"><button type="button" class="tl-btn" data-all="open">Expand all</button><button type="button" class="tl-btn" data-all="close">Collapse all</button></div>
+      </div>
+      <div class="tl-cards">${TOOLS.map(t => t[1]()).join("")}</div>`;
     const first = document.querySelector(".panel");
     (first ? first.parentElement : document.body).appendChild(panel);
-    TOOLS.forEach((t, i) => {
-      const id = ["evm", "firm", "fee", "pay", "co", "cpm", "del", "curve"][i];
-      const root = panel.querySelector(`#tl-card-${id} .tl-body`);
-      try { t[1](root); } catch (err) { root.insertAdjacentHTML("beforeend", `<p class="tl-note tl-bad">This tool failed to load.</p>`); if (window.console) console.warn("tools:", id, err); }
+    TOOLS.forEach(t => {
+      const root = panel.querySelector(`#tl-card-${t[0]} .tl-body`);
+      try { t[2](root); } catch (err) { root.insertAdjacentHTML("beforeend", `<p class="tl-note tl-bad">This tool failed to load.</p>`); if (window.console) console.warn("tools:", t[0], err); }
     });
+    /* hide the Answer line once the person edits the givens: it no longer matches */
+    panel.querySelectorAll(".tl-body").forEach(root => {
+      const c = root.closest(".tl-card");
+      root.addEventListener("input", () => { q(c, "[data-ans]").hidden = true; });
+      root.addEventListener("click", e => { if (e.target.closest("[data-add],[data-del],[data-preset],[data-m],[data-e]")) q(c, "[data-ans]").hidden = true; });
+    });
+    panel.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.matches("[data-guess]")) { e.preventDefault(); doCheck(e.target.closest(".tl-card")); } });
     panel.addEventListener("click", e => {
-      const c = e.target.closest("[data-f]");
+      const t = e.target;
+      const chip = t.closest("[data-f]");
+      if (chip) {
+        const f = chip.dataset.f;
+        panel.querySelectorAll("[data-f]").forEach(b => { b.classList.toggle("on", b === chip); b.setAttribute("aria-pressed", b === chip); });
+        panel.querySelectorAll(".tl-card").forEach(cd => { cd.hidden = !(f === "All" || cd.dataset.divs.split(" ").includes(f)); });
+        return;
+      }
+      const all = t.closest("[data-all]");
+      if (all) { panel.querySelectorAll(".tl-card").forEach(cd => setOpen(cd, all.dataset.all === "open")); return; }
+      const jp = t.closest("[data-jump]");
+      if (jp) {
+        const cd = panel.querySelector("#tl-card-" + jp.dataset.jump);
+        if (cd.hidden) panel.querySelector('[data-f="All"]').click();
+        setOpen(cd, true);
+        cd.scrollIntoView({ block: "start", behavior: "smooth" });
+        return;
+      }
+      const c = t.closest(".tl-card");
       if (!c) return;
-      const f = c.dataset.f;
-      panel.querySelectorAll("[data-f]").forEach(b => { b.classList.toggle("on", b === c); b.setAttribute("aria-pressed", b === c); });
-      panel.querySelectorAll(".tl-card").forEach(cd => { cd.hidden = !(f === "All" || cd.dataset.divs.split(" ").includes(f)); });
+      if (t.closest("[data-load]")) doLoad(c);
+      else if (t.closest("[data-try]") || t.closest("[data-another]")) doTry(c);
+      else if (t.closest("[data-check]")) doCheck(c);
+      else if (t.closest("[data-open]")) setOpen(c, q(c, "[data-full]").hidden);
     });
   }
 
@@ -4390,7 +4898,6 @@ document.addEventListener('keydown', e=>{
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
-
 </script>
 <script id="ui-refresh-js">
 (function () {
